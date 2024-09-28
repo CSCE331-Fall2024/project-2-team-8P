@@ -87,17 +87,19 @@ CREATE TABLE menuItemToInventoryItem (
 
 #### Table Insertion
 i_employee_table = '''
-INSERT INTO employee (isManager, name) 
+INSERT INTO employee (employeeId, isManager, name) 
 
 VALUES (
+    %s,
     %s, 
     %s
 );
 '''
 i_order_table = '''
-INSERT INTO "order" (cashierID, month, day, hour, price)
+INSERT INTO "order" (orderId, cashierId, month, day, hour, price)
 
 VALUES (
+    %s,
 	%s,
 	%s,
 	%s,
@@ -106,16 +108,17 @@ VALUES (
 );
 '''
 i_menu_item_table = '''
-INSERT INTO menuItem (price, availableStock, itemName)
+INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
 
 VALUES (
+    %s,
 	%s,
 	%s,
 	%s
 );
 '''
 i_order_to_menu_item_table = '''
-INSERT INTO orderToMenuItem (orderID, menuItemID, quantity)
+INSERT INTO orderToMenuItem (orderId, menuItemId, quantity)
 
 VALUES (
 	%s,
@@ -124,9 +127,10 @@ VALUES (
 );
 '''
 i_inventory_item_table = '''
-INSERT INTO inventoryItem(cost, availableStock, itemName)
+INSERT INTO inventoryItem(inventoryItemId, cost, availableStock, itemName)
 
 VALUES (
+    %s,
 	%s,
 	%s,
 	%s
