@@ -36,11 +36,33 @@ base_menu_items = [
     (2.0, 345, 'Chicken Egg Roll')
 ]
 # scale factor 0.86
-plate_menu_items = base_menu_items[3:17]
-plate_menu_items = []
+sf_plate = 0.86
+plate_menu_items = base_menu_items[4:18]
+plate_menu_items = [(round(item[0]*sf_plate, 2), item[1], item[2] + "(Bowl)") for item in plate_menu_items]
 
-bowl_menu_items = {
+# bowl_menu_items = {
     
-}
+# }
+
+# inventory items
+inventory_items = [
+    (0.10, 1000, 'Napkin'),
+    (0.15, 800, 'Utensil'),
+    (0.05, 500, 'Fortune Cookie'),
+    (0.50, 200, 'Cup'),
+    (0.10, 300, 'Lid'),
+    (0.10, 500, 'Straw'),
+    (1.50, 100, 'White Rice'),
+    (0.25, 1000, 'Soy Sauce'),
+    (0.30, 700, 'Teriyaki Sauce'),
+    (0.50, 300, 'Bourbon Sauce'),
+    (0.60, 300, 'Orange Sauce'),
+    (0.50, 200, 'Honey Sauce'),
+    (3.00, 150, 'Chicken'),
+    (4.00, 120, 'Beef'),
+    (5.00, 100, 'Shrimp'),
+    (0.50, 400, 'Sesame Sauce')
+]
+
 
 

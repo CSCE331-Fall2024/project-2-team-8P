@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import psycopg2, psycopg2.sql as sql
-from templates import create_tables, insert_tables, i_employee_table, i_menu_item_table
-from constants import employees, base_menu_items
+from templates import create_tables, insert_tables, i_employee_table, i_menu_item_table, c_menu_item_table, i_inventory_item_table
+from constants import employees, base_menu_items, plate_menu_items, inventory_items
 import math
 # Python script to dynamically populate sql database
 # Dictionary for menu items
@@ -34,7 +34,7 @@ import math
 # counter = 0
 #  = []
 # Assigns j random orders for i days
-random.seed(10)
+# random.seed(10)
 
 # Loop until each day's total has been fulfilled
     # Pick a random order (Bowl, plate, bigger plate or individual menu item, hasdrink (bool), hasappetizer (bool))
@@ -132,14 +132,27 @@ cur = conn.cursor()
 #         [employee[0], employee[1]]
 # )
 
-# Insert items into the menu items table
-for item in base_menu_items:
-    cur.execute(
-        sql.SQL(i_menu_item_table),
-        [item[0], item[1], item[2]]
-)
 
-# Insert items into menu item table
+# # Insert base items into the menu items table
+# for item in base_menu_items:
+#     cur.execute(
+#         sql.SQL(i_menu_item_table),
+#         [item[0], item[1], item[2]]
+# )
+
+# # Insert plate items into menu items table
+# for item in plate_menu_items:
+#         cur.execute(
+#         sql.SQL(i_menu_item_table),
+#         [item[0], item[1], item[2]]
+#         )
+
+# Insert inventory items into inventory items table
+for item in inventory_items:
+    cur.execute(
+        sql.SQL(i_inventory_item_table),
+        [item[0], item[1], item[2]]
+    )
 
 print("Done executing")
 
