@@ -1,68 +1,95 @@
+from uuid import uuid4
 # Employee Data Structure (isManager, Name)
 employees = [
-    (True, "Ash"),
-    (True, "Pikachu"),
-    (False, "Charizard"),
-    (False, "Greninja"),
-    (False, "Jigglypuff"),
-    (False, "Snorlax"),
-    (False, "Mewtwo"),
-    (False, "Gengar"),
-    (False, "Magikarp"),
-    (False, "Ditto")
+    (uuid4(), True, "Ash"),
+    (uuid4(), True, "Pikachu"),
+    (uuid4(), False, "Charizard"),
+    (uuid4(), False, "Greninja"),
+    (uuid4(), False, "Jigglypuff"),
+    (uuid4(), False, "Snorlax"),
+    (uuid4(), False, "Mewtwo"),
+    (uuid4(), False, "Gengar"),
+    (uuid4(), False, "Magikarp"),
+    (uuid4(), False, "Ditto")
 ]
 
-# Menu Item Datastructure (price, availableStock, itemName)
-base_menu_items = [
-    (2.1, 451, 'Dr. Pepper'), 
-    (2.1, 835, 'Aquafina'), 
-    (2.1, 701, 'Sweet Tea'), 
-    (2.1, 529, 'Pepsi'), 
-    (4.4, 382, 'Chow Mein'), 
-    (4.4, 980, 'Fried Rice'), 
-    (4.4, 453, 'White Steamed Rice'), 
-    (4.4, 647, 'Super Greens'), 
-    (5.2, 912, 'Hot Ones Blazing Bourbon Chicken'), 
-    (5.2, 365, 'The Original Orange Chicken'), 
-    (6.7, 761, 'Black Pepper Sirloin Steak'), 
-    (6.7, 604, 'Honey Walnut Shrimp'), 
-    (5.2, 536, 'Grilled Teriyaki Shrimp'), 
-    (5.2, 245, 'Broccoli Beef'), 
-    (5.2, 412, 'Kung Pao Chicken'), 
-    (5.2, 611, 'Honey Sesame Chicken Breast'), 
-    (5.2, 133, 'Beijing Beef'), 
-    (5.2, 763, 'Black Pepper Chicken'), 
-    (2.0, 279, 'Cream Cheese Rangoon'), 
-    (2.0, 345, 'Chicken Egg Roll')
-]
-# scale factor 0.86
-sf_plate = 0.86
-plate_menu_items = base_menu_items[4:18]
-plate_menu_items = [(round(item[0]*sf_plate, 2), item[1], item[2] + "(Bowl)") for item in plate_menu_items]
+cashiers = employees[2:]
 
-# bowl_menu_items = {
+# Menu Item Datastructure (UUID, price, availableStock, itemName)
+drinks = {
+    (uuid4(), 2.1, 451, 'Dr. Pepper'), 
+    (uuid4(), 2.1, 835, 'Aquafina'), 
+    (uuid4(), 2.1, 701, 'Sweet Tea'), 
+    (uuid4(), 2.1, 529, 'Pepsi')
+}
+
+sides = {
+    (uuid4(), 4.4, 382, 'Chow Mein'),
+    (uuid4(), 4.4, 980, 'Fried Rice'), 
+    (uuid4(), 4.4, 453, 'White Steamed Rice'), 
+    (uuid4(), 4.4, 647, 'Super Greens')
     
-# }
+}
+entrees = [
+    (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken'), 
+    (uuid4(), 5.2, 365, 'The Original Orange Chicken'), 
+    (uuid4(), 6.7, 761, 'Black Pepper Sirloin Steak'), 
+    (uuid4(), 6.7, 604, 'Honey Walnut Shrimp'), 
+    (uuid4(), 5.2, 536, 'Grilled Teriyaki Shrimp'), 
+    (uuid4(), 5.2, 245, 'Broccoli Beef'), 
+    (uuid4(), 5.2, 412, 'Kung Pao Chicken'), 
+    (uuid4(), 5.2, 611, 'Honey Sesame Chicken Breast'), 
+    (uuid4(), 5.2, 133, 'Beijing Beef'), 
+    (uuid4(), 5.2, 763, 'Black Pepper Chicken'), 
+]
+
+appetizers = {
+    (uuid4(), 2.0, 279, 'Cream Cheese Rangoon'), 
+    (uuid4(), 2.0, 345, 'Chicken Egg Roll')
+}
+
 
 # inventory items
 inventory_items = [
-    (0.10, 1000, 'Napkin'),
-    (0.15, 800, 'Utensil'),
-    (0.05, 500, 'Fortune Cookie'),
-    (0.50, 200, 'Cup'),
-    (0.10, 300, 'Lid'),
-    (0.10, 500, 'Straw'),
-    (1.50, 100, 'White Rice'),
-    (0.25, 1000, 'Soy Sauce'),
-    (0.30, 700, 'Teriyaki Sauce'),
-    (0.50, 300, 'Bourbon Sauce'),
-    (0.60, 300, 'Orange Sauce'),
-    (0.50, 200, 'Honey Sauce'),
-    (3.00, 150, 'Chicken'),
-    (4.00, 120, 'Beef'),
-    (5.00, 100, 'Shrimp'),
-    (0.50, 400, 'Sesame Sauce')
+    (uuid4(), 0.10, 1000, 'Napkin'),
+    (uuid4(), 0.15, 800, 'Utensil'),
+    (uuid4(), 0.05, 500, 'Fortune Cookie'),
+    (uuid4(), 0.50, 200, 'Cup'),
+    (uuid4(), 0.10, 300, 'Lid'),
+    (uuid4(), 0.10, 500, 'Straw'),
+    (uuid4(), 1.50, 100, 'White Rice'),
+    (uuid4(), 0.25, 1000, 'Soy Sauce'),
+    (uuid4(), 0.30, 700, 'Teriyaki Sauce'),
+    (uuid4(), 0.50, 300, 'Bourbon Sauce'),
+    (uuid4(), 0.60, 300, 'Orange Sauce'),
+    (uuid4(), 0.50, 200, 'Honey Sauce'),
+    (uuid4(), 3.00, 150, 'Chicken'),
+    (uuid4(), 4.00, 120, 'Beef'),
+    (uuid4(), 5.00, 100, 'Shrimp'),
+    (uuid4(), 0.50, 400, 'Sesame Sauce')
 ]
+
+# orders (orderid, cashierid, month, day, hour, price)
+orders = [
+    
+]
+
+# month dict mapping
+
+months = {
+    9 : 30,
+    10 : 31,
+    11 : 30,
+    12 : 31,
+    1 : 31,
+    2 : 29,
+    3 : 31,
+    4 : 30,
+    5 : 31,
+    6 : 30,
+    7 : 31,
+    8 : 31,    
+}
 
 
 

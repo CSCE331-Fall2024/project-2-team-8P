@@ -2,10 +2,16 @@ from psycopg2 import sql
 # c_ = create
 # i_ = insert
 
+### Table Deleteion
+delete_all = '''
+DROP TABLE {} CASCADE;
+'''
+table_name = ["employee", "order", "menuitem", "ordertomenuitem", "inventoryitem", "ordertoinvetoryitem",  "menuitemtoinventoryitem"]
+
 ### Table Creation
 c_employee_table = '''
 CREATE TABLE employee (
-	employeeId SERIAL PRIMARY KEY,
+	employeeId UUID PRIMARY KEY,
 	isManager boolean,
 	name VARCHAR(50)
 );
@@ -13,8 +19,8 @@ CREATE TABLE employee (
 
 c_order_table = '''
 CREATE TABLE \"order\" (
-	orderId SERIAL PRIMARY KEY,
-	cashierID SERIAL,
+	orderId UUID PRIMARY KEY,
+	cashierID UUID,
 	CONSTRAINT fk_cashier
 		FOREIGN KEY (cashierId)
 		 REFERENCES employee(employeeId),
@@ -27,7 +33,7 @@ CREATE TABLE \"order\" (
 
 c_menu_item_table = '''
 CREATE TABLE menuItem (
-	menuItemId SERIAL PRIMARY KEY,
+	menuItemId UUID PRIMARY KEY,
 	price FLOAT,
 	availableStock INT,
 	itemName VARCHAR(100)
@@ -36,11 +42,11 @@ CREATE TABLE menuItem (
 
 c_order_to_menu_table = '''
 CREATE TABLE orderToMenuItem (
-	orderId SERIAL,
+	orderId UUID,
 	CONSTRAINT fk_order
 		FOREIGN KEY (orderId)
 			REFERENCES \"order\"(orderId),
-	menuItemId SERIAL,
+	menuItemId UUID,
 	CONSTRAINT fk_menuItem
 		FOREIGN KEY (menuItemId)
 			REFERENCES menuItem(menuItemId),
@@ -50,7 +56,7 @@ CREATE TABLE orderToMenuItem (
 
 c_inventory_item_table = '''
 CREATE TABLE inventoryItem (
-	inventoryItemId SERIAL PRIMARY KEY,
+	inventoryItemId UUID PRIMARY KEY,
 	cost FLOAT,
 	availableStock INT,
 	itemName VARCHAR(80)
@@ -59,11 +65,11 @@ CREATE TABLE inventoryItem (
 
 c_order_to_inventory_table = '''
 CREATE TABLE orderToInvetoryItem (
-	orderId SERIAL,
+	orderId UUID,
 	CONSTRAINT fk_order
 		FOREIGN KEY (orderId)
 			REFERENCES \"order\"(orderId),
-	inventoryItemId SERIAL,
+	inventoryItemId UUID,
 	CONSTRAINT fk_iventoryItem
 		FOREIGN KEY (inventoryItemId)
 			REFERENCES inventoryItem(inventoryItemId),
@@ -73,11 +79,11 @@ CREATE TABLE orderToInvetoryItem (
 
 c_menu_to_inventory_table = '''
 CREATE TABLE menuItemToInventoryItem (
-	menuItemId SERIAL,
+	menuItemId UUID,
 	CONSTRAINT fk_menuItem
 		FOREIGN KEY (menuItemId)
 			REFERENCES menuItem(menuItemId),
-	inventoryItemId SERIAL,
+	inventoryItemId UUID,
 	CONSTRAINT fk_iventoryItem
 		FOREIGN KEY (inventoryItemId)
 			REFERENCES inventoryItem(inventoryItemId),
