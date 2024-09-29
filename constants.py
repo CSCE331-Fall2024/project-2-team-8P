@@ -16,20 +16,20 @@ employees = [
 cashiers = employees[2:]
 
 # Menu Item Datastructure (UUID, price, availableStock, itemName)
-drinks = {
+drinks = [
     (uuid4(), 2.1, 451, 'Dr. Pepper'), 
     (uuid4(), 2.1, 835, 'Aquafina'), 
     (uuid4(), 2.1, 701, 'Sweet Tea'), 
     (uuid4(), 2.1, 529, 'Pepsi')
-}
+]
 
-sides = {
+sides = [
     (uuid4(), 4.4, 382, 'Chow Mein'),
     (uuid4(), 4.4, 980, 'Fried Rice'), 
     (uuid4(), 4.4, 453, 'White Steamed Rice'), 
     (uuid4(), 4.4, 647, 'Super Greens')
-    
-}
+]    
+
 entrees = [
     (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken'), 
     (uuid4(), 5.2, 365, 'The Original Orange Chicken'), 
@@ -43,10 +43,10 @@ entrees = [
     (uuid4(), 5.2, 763, 'Black Pepper Chicken'), 
 ]
 
-appetizers = {
+appetizers = [
     (uuid4(), 2.0, 279, 'Cream Cheese Rangoon'), 
     (uuid4(), 2.0, 345, 'Chicken Egg Roll')
-}
+]
 
 
 # inventory items
@@ -87,7 +87,8 @@ inventory_items = {
    "Tempura batter": (uuid4(), 0.6, 1, "Tempura batter"),
    "Beijing sauce": (uuid4(), 0.8, 1, "Beijing sauce"),
    "Cream Cheese Rangoon": (uuid4(), 2.0, 279, 'Cream Cheese Rangoon'), 
-   "Chicken Egg Roll" : (uuid4(), 2.0, 345, 'Chicken Egg Roll')
+   "Chicken Egg Roll" : (uuid4(), 2.0, 345, 'Chicken Egg Roll'),
+   
 }
 
 specific_items = {
@@ -98,7 +99,7 @@ specific_items = {
    ],
    "Drink": [
        inventory_items["Cup"],
-       inventory_items["Lid"],
+       inventory_items["Lid"], 
        inventory_items["Straw"]
    ],
    "Cream Cheese Rangoon": [
@@ -199,7 +200,9 @@ menu_to_inventory = [
 ]
 
 # order to inventory item (orderid, inventoryitemid, quantity)
-order_to_inventory = []
+order_to_inventory = [
+    
+]
 
 # month dict mapping
 

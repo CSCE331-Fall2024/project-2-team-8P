@@ -106,8 +106,32 @@ for month in months:
             total_sales_day += sale_order
 
 # add logic for menu item to inventory item
-for menuitem, inventoryitem in specific_items.items():
-    
+# (orderid, inventoryitemid, quantity)
+
+# Iterate through drinks
+for drink in drinks:
+    for item in specific_items["Drink"]:
+        menu_to_inventory.append(
+            (str(drink[0]), str(item[0]), 1)
+        )
+# Iterate through sides
+for side in sides:
+    for item in specific_items[side[3]]:
+        menu_to_inventory.append(
+            (str(side[0]), str(item[0]), 1)
+        )
+# Iterate through appetizers
+for app in appetizers:
+    for item in specific_items[app[3]]:
+        menu_to_inventory.append(
+            (str(app[0]), str(item[0]), 1)
+        )
+# Iterate through entrees
+for ent in entrees:
+    for item in specific_items[ent[3]]:
+        menu_to_inventory.append(
+            (str(ent[0]), str(item[0]), 1)
+        )
             
 print("Total yearly sales ($): ", total_annual_sales)
 
@@ -181,7 +205,7 @@ writer = csv.writer(file)
 writer.writerow(["orderid", "menuitemid", "quantity"])
 writer.writerows(order_to_menu)
 file.close()
-print("done creating order to menu items")
+print("Done creating order to menu items")
 
 # Insert order to inventory items
 file = open("order_to_inventory.csv", 'w')
@@ -189,7 +213,15 @@ writer = csv.writer(file)
 writer.writerow(["orderid", "inventoryitemid", "quantity"])
 writer.writerows(order_to_inventory)
 file.close()
-print("done creating order to inventory items")
+print("Done creating order to inventory items")
+
+# Insert menu items to inventory items
+file = open("menu_to_inventory.csv", 'w')
+writer = csv.writer(file)
+writer.writerow(["menuitemid", "inventoryitemid", "quantity"])
+writer.writerows(menu_to_inventory)
+file.close()
+print("Done creating menu to inventory")
 
 
     

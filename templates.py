@@ -6,7 +6,7 @@ from psycopg2 import sql
 delete_all = '''
 DROP TABLE {} CASCADE;
 '''
-table_name = ["employee", "order", "menuitem", "ordertomenuitem", "inventoryitem", "ordertoinvetoryitem",  "menuitemtoinventoryitem"]
+table_name = ["employee", "order", "menuitem", "ordertomenuitem", "inventoryitem", "ordertoinventoryitem",  "menuitemtoinventoryitem"]
 
 ### Table Creation
 c_employee_table = '''
