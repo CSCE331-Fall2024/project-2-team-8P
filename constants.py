@@ -70,27 +70,28 @@ inventory_items = {
    "Beef": (uuid4(), 4.00, 120, 'Beef'),
    "Shrimp": (uuid4(), 5.00, 100, 'Shrimp'),
    "Sesame Sauce": (uuid4(), 0.50, 400, 'Sesame Sauce'),
-   "Prepackaged noodles": (uuid4(), 1.5, 1, "Prepackaged noodles"),
-   "Sesame Oil": (uuid4(), 0.2, 1, "Sesame oil"),
-   "Eggs": (uuid4(), 0.2, 2, "Eggs"),
-   "Vegetable mix": (uuid4(), 0.5, 1, "Vegetable mix"),
-   "Broccoli": (uuid4(), 0.8, 1, "Broccoli"),
-   "Kale": (uuid4(), 0.6, 1, "Kale"),
-   "Cabbage": (uuid4(), 0.5, 1, "Cabbage"),
-   "Olive oil": (uuid4(), 0.3, 1, "Olive oil"),
-   "Black pepper sauce": (uuid4(), 0.7, 1, "Black pepper sauce"),
-   "Hot sauce": (uuid4(), 0.3, 1, "Hot sauce"),
-   "Oyster sauce": (uuid4(), 0.7, 1, "Oyster sauce"),
-   "Kung Pao sauce": (uuid4(), 0.7, 1, "Kung Pao sauce"),
-   "Peanuts": (uuid4(), 0.6, 1, "Peanuts"),
-   "Candied walnuts": (uuid4(), 0.9, 1, "Candied walnuts"),
-   "Tempura batter": (uuid4(), 0.6, 1, "Tempura batter"),
-   "Beijing sauce": (uuid4(), 0.8, 1, "Beijing sauce"),
+   "Prepackaged noodles": (uuid4(), 1.5, 1000, "Prepackaged noodles"),
+   "Sesame Oil": (uuid4(), 0.2, 1000, "Sesame oil"),
+   "Eggs": (uuid4(), 0.2, 200, "Eggs"),
+   "Vegetable mix": (uuid4(), 0.5, 1000, "Vegetable mix"),
+   "Broccoli": (uuid4(), 0.8, 1000, "Broccoli"),
+   "Kale": (uuid4(), 0.6, 1000, "Kale"),
+   "Cabbage": (uuid4(), 0.5, 1000, "Cabbage"),
+   "Olive oil": (uuid4(), 0.3, 1000, "Olive oil"),
+   "Black pepper sauce": (uuid4(), 0.7, 1000, "Black pepper sauce"),
+   "Hot sauce": (uuid4(), 0.3, 1000, "Hot sauce"),
+   "Oyster sauce": (uuid4(), 0.7, 1000, "Oyster sauce"),
+   "Kung Pao sauce": (uuid4(), 0.7, 1000, "Kung Pao sauce"),
+   "Peanuts": (uuid4(), 0.6, 1000, "Peanuts"),
+   "Candied walnuts": (uuid4(), 0.9, 1000, "Candied walnuts"),
+   "Tempura batter": (uuid4(), 0.6, 1000, "Tempura batter"),
+   "Beijing sauce": (uuid4(), 0.8, 1000, "Beijing sauce"),
    "Cream Cheese Rangoon": (uuid4(), 2.0, 279, 'Cream Cheese Rangoon'), 
    "Chicken Egg Roll" : (uuid4(), 2.0, 345, 'Chicken Egg Roll'),
    
 }
 
+# Maps menu items to their inventory items
 specific_items = {
    "All Orders": [
        inventory_items["Napkin"],
@@ -205,7 +206,8 @@ order_to_inventory = [
 ]
 
 # month dict mapping
-
+# Key: month
+# Value: number of days in that month
 months = {
     9 : 30,
     10 : 31,

@@ -25,6 +25,7 @@ CREATE TABLE \"order\" (
 		FOREIGN KEY (cashierId)
 		 REFERENCES employee(employeeId),
 	month INT,
+	week INT,
 	day INT,
 	hour INT, 
 	price FLOAT
@@ -102,12 +103,13 @@ VALUES (
 );
 '''
 i_order_table = '''
-INSERT INTO "order" (orderId, cashierId, month, day, hour, price)
+INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
 
 VALUES (
     %s,
 	%s,
 	%s,
+ 	%s,
 	%s,
 	%s,
 	%s

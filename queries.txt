@@ -1,0 +1,71 @@
+Normal Queries:
+1. Average sales by hour:
+    SELECT AVG(price) FROM "order" WHERE hour = 1;
+
+2. Averages sales by month:
+    SELECT AVG(price) FROM "order" WHERE month = 1;
+
+3. Total sales by month
+    SELECT SUM(price) FROM "order" WHERE month = 1;
+
+4. Average sales by day
+    SELECT AVG(price) FROM "order" WHERE day = 1;
+
+5. Total sales by day
+    SELECT SUM(price) FROM "order" WHERE day = 1;
+
+6. Get list of employees that are managers
+    SELECT * FROM employee WHERE isManager;
+
+7. Get list of employees that are not managers
+    SELECT * FROM employee WHERE NOT isManager;
+
+8. Get sum of item stocks across all items in inventory
+    SELECT SUM(availablestock) FROM inventoryitem;
+
+9. Get total stock of a specific inventory item
+    SELECT SUM(availablestock) FROM inventoryitem WHERE itemname = 'Napkin';
+
+10. Get number of orders that have a specific menu item (e.g., contains orange chicken)
+    SELECT COUNT(DISTINCT o.orderid) AS order_count
+    FROM "order" o
+    JOIN ordertomenuitem otm ON o.orderid = otm.orderid
+    JOIN menuitem mi ON otm.menuitemid = mi.menuitemid
+    WHERE mi.itemname = 'Fried Rice';
+
+11. Get 10 days with the least total sales
+    SELECT day, week, month, SUM(price) AS total_sales
+    FROM "order"
+    GROUP BY day, week, month
+    ORDER BY total_sales ASC
+    LIMIT 10;
+
+
+Special Queries:
+1. Get count of orders on a specific week: 
+    SELECT COUNT(*)
+    FROM "order"
+    WHERE week = 1
+    GROUP BY week;
+    
+2. Given a specific hour, get total order count and total order amount:
+    SELECT COUNT(*) total_orders, SUM(price) total_amount
+    FROM "order"
+    WHERE hour = 12
+    GROUP BY hour;
+
+3. Given a specific day, get the sum of the top 10 orders:
+    SELECT SUM(price)
+    FROM (
+        SELECT price
+        FROM "order"
+        WHERE day = 30 AND month = 8
+        ORDER BY price DESC
+        LIMIT 10
+    ) AS top_10_orders;
+
+4. How many inventory items does a specific menu item use:
+    SELECT COUNT(*)
+    FROM "menuitemtoinventoryitem" mi
+    JOIN "menuitem" m ON m.menuitemid = mi.menuitemid
+    WHERE m.itemname = 'Beijing Beef';
