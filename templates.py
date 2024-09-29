@@ -64,7 +64,7 @@ CREATE TABLE inventoryItem (
 '''
 
 c_order_to_inventory_table = '''
-CREATE TABLE orderToInvetoryItem (
+CREATE TABLE orderToInventoryItem (
 	orderId UUID,
 	CONSTRAINT fk_order
 		FOREIGN KEY (orderId)

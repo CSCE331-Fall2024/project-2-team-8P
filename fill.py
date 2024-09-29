@@ -5,6 +5,7 @@ import psycopg2, psycopg2.sql as sql
 from templates import *
 from constants import *
 import math
+import csv
 
 np.random.seed(10)
 total_annual_sales = 0
@@ -23,6 +24,10 @@ for month in months:
             hour = random.randint(1, 12)
             cashier = random.choice(cashiers)
             orderid = uuid4()
+            # keep track of which menu items we've selected
+            menu_items_order = []
+            # keep track of which inventory items we've selected
+            inventory_items_order = []
             # Let's simplify the logic a little:
             # 1. 50% of orders have a drink
             # 2. 50% of orders have a side
@@ -44,7 +49,7 @@ for month in months:
                 n_entrees = 1
                 has_side = False
             # bowl
-            elif meal_option < 0.6: 
+            elif meal_option < 0.6:
                 n_entrees = 1
             # plate
             elif meal_option < 0.8: 
@@ -56,26 +61,54 @@ for month in months:
             for _ in range(n_entrees):
                 entree = random.choice(list(entrees))
                 sale_order += entree[1]
-                
+                menu_items_order.append(entree[0])
+                # add menu item and inventory item id
+                for item in specific_items[entree[3]]:
+                    inventory_items_order.append(str(item[0]))
             if has_side:
                 side = random.choice(list(sides))
                 sale_order += entree[1]
+                menu_items_order.append(side[0])
+                # add menu item and inventory item id
+                for item in specific_items[side[3]]:
+                    inventory_items_order.append(str(item[0]))
             # TODO: add logic to populate the database based on
             # our random item selection here
             if has_appetizer:
                 appetizer = random.choice(list(appetizers))
                 sale_order += appetizer[1]
+                menu_items_order.append(appetizer[0])
+                for item in specific_items[appetizer[3]]:
+                    inventory_items_order.append(str(item[0]))
             if has_drink:
                 drink = random.choice(list(drinks))
                 sale_order += drink[1]
+                menu_items_order.append(drink[0])
+                for item in specific_items["Drink"]:
+                    inventory_items_order.append(str(item[0]))
             # appending to list of orders
             orders.append(
-                (orderid, cashier[0], month, day, hour, round(sale_order, 2))
+                (str(orderid), str(cashier[0]), month, day, hour, round(sale_order, 2))
             )
+            # create list of order to menu items
+            for item in menu_items_order:
+                order_to_menu.append((str(orderid), str(item), 1))
+            # add fortune cookie and other base items
+            for item in specific_items["All Orders"]:
+                inventory_items_order.append(str(item[0]))
+            # menu to inventory items
+            unique_inventory_items_order = set(inventory_items_order)
+            for item in unique_inventory_items_order:
+                order_to_inventory.append((
+                    (str(orderid), item, inventory_items_order.count(item))
+                ))
             # TODO: connection table population 
             total_sales_day += sale_order
-            
 
+# add logic for menu item to inventory item
+for menuitem, inventoryitem in specific_items.items():
+    
+            
 print("Total yearly sales ($): ", total_annual_sales)
 
 # connect to the local database
@@ -126,27 +159,46 @@ for appetizer in appetizers:
 print("Done Creating Appetizers")
 
 # Insert inventory items into inventory items table
-for item in inventory_items:
+
+for key, item in inventory_items.items():
     cur.execute(
         sql.SQL(i_inventory_item_table),
         [str(item[0]), item[1], item[2], item[3]]
     )
-print("Done Creating Items")
+print("Done Creating Inventory Items")
 
 # Insert orders into database
-print("Length of orders: ", len(orders))
-for order in orders[:1000]:
-    # print("Im infinite")
-    cur.execute(
-        sql.SQL(i_order_table),
-        [str(order[0]), str(order[1]), order[2], order[3], order[4], order[5]]
-    )
-print("Done Creating Orders")
+file = open("orders.csv", 'w')
+writer = csv.writer(file)
+writer.writerow(["orderid", "cashierid", "month", "day", "hour", "price"])
+writer.writerows(orders)
+file.close()
+print("Done creating orders")
 
-print("Done executing")
+# Insert order to menu item
+file  = open("order_to_menu.csv", 'w')
+writer = csv.writer(file)
+writer.writerow(["orderid", "menuitemid", "quantity"])
+writer.writerows(order_to_menu)
+file.close()
+print("done creating order to menu items")
+
+# Insert order to inventory items
+file = open("order_to_inventory.csv", 'w')
+writer = csv.writer(file)
+writer.writerow(["orderid", "inventoryitemid", "quantity"])
+writer.writerows(order_to_inventory)
+file.close()
+print("done creating order to inventory items")
+
+
+    
+print("Done Creating Orders")
+# raise RuntimeError("for fun")
 
 # commit changes and close the connection
 conn.commit()
 
 cur.close()
 conn.close()
+print("Done executing")
