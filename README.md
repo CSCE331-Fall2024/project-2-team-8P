@@ -8,4 +8,4 @@ This project creates a point of sales (POS) system for Panda Express by improvin
 2. Kevin Zhang
 3. Ryan Kha
 4. Bradley James
-5. Shreyan Sateesh
+5. Shreyan Satheesh
