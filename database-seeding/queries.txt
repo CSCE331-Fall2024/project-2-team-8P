@@ -8,13 +8,13 @@ Normal Queries:
 2. Averages sales by month:
     SELECT month, AVG(price) avg_order_price
     FROM "order"
-    WHERE month = 1
+    WHERE month = 11
     GROUP BY month;
 
 3. Total sales by month
     SELECT month, SUM(price) total_sales
     FROM "order"
-    WHERE month = 1
+    WHERE month = 2
     GROUP BY month;
 
 4. Average price per order on a specific day and month
@@ -26,7 +26,7 @@ Normal Queries:
 5. Total sales on a specific day and month
     SELECT day, month, SUM(price) total_sales
     FROM "order"
-    WHERE day = 1 AND month = 1
+    WHERE day = 20 AND month = 8
     GROUP BY day, month;
 
 6. Get list of employees that are managers
@@ -74,10 +74,10 @@ Special Queries:
 2. Given a specific hour, get total order count and total order amount:
     SELECT hour, COUNT(*) total_orders, SUM(price) total_amount
     FROM "order"
-    WHERE hour = 12
+    WHERE hour = 6
     GROUP BY hour;
 
-3. Given a specific day, get the sum of the top 10 orders:
+3. Given a specific day, get the sum of the price top 10 orders:
     SELECT day, month, SUM(price) as top_10_total
     FROM (
         SELECT day, month, price
