@@ -1,4 +1,4 @@
-package org.example.pandaexpresspos;
+package org.example.pandaexpresspos.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

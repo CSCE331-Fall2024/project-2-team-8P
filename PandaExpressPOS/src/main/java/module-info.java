@@ -7,4 +7,6 @@ module org.example.pandaexpresspos {
 
     opens org.example.pandaexpresspos to javafx.fxml;
     exports org.example.pandaexpresspos;
+    exports org.example.pandaexpresspos.controllers;
+    opens org.example.pandaexpresspos.controllers to javafx.fxml;
 }
