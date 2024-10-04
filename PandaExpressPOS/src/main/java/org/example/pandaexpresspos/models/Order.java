@@ -49,7 +49,15 @@ public class Order {
         inventoryItems.put(item, quantity);
     }
 
+    public void removeInventoryItem(InventoryItem item) {
+        inventoryItems.remove(item);
+    }
+
     public void addMenuItem(MenuItem item, int quantity) {
         menuItems.put(item, quantity);
+    }
+
+    public void removeMenuItem(MenuItem item) {
+        menuItems.remove(item);
     }
 }
