@@ -4,18 +4,18 @@ import java.util.UUID;
 
 public class InventoryItem {
     public UUID inventoryItemId;
-    public Double price;
+    public Double cost;
     public Integer availableStock;
     public String itemName;
 
-    public InventoryItem(UUID inventoryItemId, Double price, Integer availableStock, String itemName) {
+    public InventoryItem(UUID inventoryItemId, Double cost, Integer availableStock, String itemName) {
         this.inventoryItemId = inventoryItemId;
-        this.price = price;
+        this.cost = cost;
         this.availableStock = availableStock;
         this.itemName = itemName;
     }
 
-    public InventoryItem(Double price, Integer availableStock, String itemName) {
-        this(UUID.randomUUID(), price, availableStock, itemName);
+    public InventoryItem(Double cost, Integer availableStock, String itemName) {
+        this(UUID.randomUUID(), cost, availableStock, itemName);
     }
 }
