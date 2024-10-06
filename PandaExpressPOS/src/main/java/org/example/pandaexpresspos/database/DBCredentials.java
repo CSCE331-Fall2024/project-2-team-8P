@@ -5,7 +5,7 @@ Note: it's definitely bad practice to be hardcoding our credentials
 in the source code like this, but I'm doing so for simplicity for now.
 We can always change this later if it's a big deal
  */
-public class DBCredentials {
+class DBCredentials {
     public static final String username = "team_8p";
     public static final String passwd = "Electabuzz8!";
 
