@@ -48,19 +48,85 @@ public class DBDriverSingleton {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer insertOrder(Order newOrder) {
+    public void insertOrder(Order newOrder) {
+        // Insert the order entry
+        String insertOrderTemplate = """
+                INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
+                VALUES ('%s', '%s', %d, %d, %d, %d, %f);
+                """;
+        Object[] params = {
+                newOrder.orderId,
+                newOrder.cashierId,
+                newOrder.month,
+                newOrder.week,
+                newOrder.day,
+                newOrder.hour,
+                newOrder.price
+        };
+        executeUpdate(String.format(insertOrderTemplate, params));
+
+        // Handle inventory item connections:
+        String orderToInventoryTemplate = """
+                INSERT INTO orderToInventoryItem (orderId, inventoryItemId, quantity)
+                VALUES ('%s', '%s', '%s');
+                """;
+        String updateInventoryQtyTemplate = """
+                UPDATE inventoryItem
+                SET availableStock = availableStock - %d
+                WHERE inventoryItemId = '%s';
+                """;
+        for (InventoryItem item : newOrder.inventoryItems.keySet()) {
+            Integer quantity = newOrder.inventoryItems.get(item);
+
+            // Insert entry into table "orderToInventoryItem"
+            executeUpdate(String.format(orderToInventoryTemplate,
+                    newOrder.orderId,
+                    item.inventoryItemId,
+                    quantity
+            ));
+
+            // Update quantity of item in inventory table
+            executeUpdate(String.format(updateInventoryQtyTemplate,
+                    quantity,
+                    item.inventoryItemId
+            ));
+        }
+
+        // Handle menu item connections:
+        String orderToMenuTemplate = """
+                INSERT INTO orderToMenuItem (orderId, menuItemId, quantity)
+                VALUES ('%s', '%s', '%s');
+                """;
+        String updateMenuQtyTemplate = """
+                UPDATE menuItem
+                SET availableStock = availableStock - %d
+                WHERE menuItemId = '%s';
+                """;
+        for (MenuItem item : newOrder.menuItems.keySet()) {
+            Integer quantity = newOrder.menuItems.get(item);
+
+            // Insert entry into table "orderToMenuItem"
+            executeUpdate(String.format(orderToMenuTemplate,
+                    newOrder.orderId,
+                    item.menuItemId,
+                    quantity
+            ));
+
+            // Update quantity of item in menu item table
+            executeUpdate(String.format(updateMenuQtyTemplate,
+                    quantity,
+                    item.menuItemId
+            ));
+        }
+    }
+
+    public void updateOrder(Order updatedOrder) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer updateOrder(Order updatedOrder) {
+    public void deleteOrder(UUID orderId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    public Integer deleteOrder(UUID orderId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    // TODO: implement functionality to place an order
 
 
     // Employee
@@ -72,6 +138,7 @@ public class DBDriverSingleton {
                 SELECT * FROM employee
                 WHERE employeeid = '%s';
                 """;
+        String query = String.format(queryTemplate, employeeId);
 
         ResultSetMapper<Employee> employeeMapper = rs -> new Employee(
                 UUID.fromString(rs.getString("employeeid")),
@@ -79,10 +146,7 @@ public class DBDriverSingleton {
                 rs.getString("name")
         );
 
-        List<Employee> employees = executeQuery(
-                queryTemplate,
-                employeeMapper,
-                employeeId.toString());
+        List<Employee> employees = executeQuery(query, employeeMapper);
 
         if (employees.isEmpty()) {
             throw new SQLException("Employee not found");
@@ -94,15 +158,15 @@ public class DBDriverSingleton {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer insertEmployee(Employee newEmployee) {
+    public void insertEmployee(Employee newEmployee) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer updateEmployee(Order updatedEmployee) {
+    public void updateEmployee(Order updatedEmployee) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer deleteEmployee(UUID employeeId) {
+    public void deleteEmployee(UUID employeeId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -116,15 +180,15 @@ public class DBDriverSingleton {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer insertInventoryItem(InventoryItem newInventoryItem) {
+    public void insertInventoryItem(InventoryItem newInventoryItem) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer updateInventoryItem(InventoryItem newInventoryItem) {
+    public void updateInventoryItem(InventoryItem newInventoryItem) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer deleteInventoryItem(UUID inventoryItemId) {
+    public void deleteInventoryItem(UUID inventoryItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -138,15 +202,15 @@ public class DBDriverSingleton {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer insertMenuItem(MenuItem newMenuItem) {
+    public void insertMenuItem(MenuItem newMenuItem) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer updateMenuItem(MenuItem newMenuItem) {
+    public void updateMenuItem(MenuItem newMenuItem) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Integer deleteMenuItem(UUID menuItemId) {
+    public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -155,9 +219,8 @@ public class DBDriverSingleton {
 
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String template, ResultSetMapper<T> mapper, Object... args) {
+    private static <T> List<T> executeQuery(String query, ResultSetMapper<T> mapper) {
         List<T> results = new ArrayList<>();
-        String query = String.format(template, args);
 
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
@@ -184,9 +247,8 @@ public class DBDriverSingleton {
     // 1. Insert
     // 2. Update
     // 3. Delete
-    private static Integer executeUpdate(String template, Object... args) {
+    private static Integer executeUpdate(String query) {
         int rowsUpdated = 0;
-        String query = String.format(template, args);
 
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
