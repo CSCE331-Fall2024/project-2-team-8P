@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ce123c;" vgap="10" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+    <!-- Set up equal column and row constraints -->
+    <columnConstraints>
+        <ColumnConstraints percentWidth="50" />
+        <ColumnConstraints percentWidth="50" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="50" />
+        <RowConstraints percentHeight="50" />
+    </rowConstraints>
+
+    <!-- Section 1 -->
+    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <children>
+
+         <AnchorPane layoutX="11.0" layoutY="11.0" prefHeight="400.0" prefWidth="600.0">
+            <children>
+               <Button layoutX="400.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="Enter" textFill="WHITE" />
+               <Button layoutX="80.0" layoutY="245.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="7" textFill="WHITE" />
+               <Button layoutX="240.0" layoutY="245.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="8" textFill="WHITE" />
+               <Button layoutX="400.0" layoutY="245.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="9" textFill="WHITE" />
+               <Button layoutX="400.0" layoutY="178.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="6" textFill="WHITE" />
+               <Button layoutX="240.0" layoutY="178.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="5" textFill="WHITE" />
+               <Button layoutX="80.0" layoutY="178.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="4" textFill="WHITE" />
+               <Button layoutX="80.0" layoutY="114.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="1" textFill="WHITE" />
+               <Button layoutX="240.0" layoutY="114.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="2" textFill="WHITE" />
+               <Button layoutX="400.0" layoutY="114.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="3" textFill="WHITE" />
+               <Button layoutX="240.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="0" textFill="WHITE" />
+               <Button layoutX="80.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black;" text="Clear" textFill="WHITE" />
+               <ImageView fitHeight="75.0" fitWidth="413.0" layoutX="175.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@POS.png" />
+                  </image></ImageView>
+            </children>
+         </AnchorPane>
+
+        </children>
+    </StackPane>
+
+    <!-- Section 2 -->
+    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <Label style="-fx-font-size: 20px;" text="Section 2" />
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+    </StackPane>
+
+    <!-- Section 3 -->
+    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <Label style="-fx-font-size: 20px;" text="Section 3" />
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+    </StackPane>
+
+    <!-- Section 4 -->
+    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+        <Label style="-fx-font-size: 20px;" text="Section 4" />
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+    </StackPane>
+
+</GridPane>
