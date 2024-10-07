@@ -15,7 +15,6 @@ public class HelloApplication extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
-        //Checking if branch is working
     }
 
     public static void main(String[] args) {
