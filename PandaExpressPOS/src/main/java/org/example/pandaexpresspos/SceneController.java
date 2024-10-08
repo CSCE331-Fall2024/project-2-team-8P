@@ -2,7 +2,9 @@ package org.example.pandaexpresspos;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -31,28 +33,60 @@ public class SceneController {
     private HashMap<Button, ArrayList<String>> menuItems;
     private HashMap<Button, ArrayList<String>> employees;
 
-    public void deleteMenuItems(ActionEvent event) throws IOException {
-        // Load layout from FXML file
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/deleteMenuItems.fxml"));
+    /*
+            ========================================
+                      Manager Starting Page
+            ========================================
+     */
+
+    public void ManagerStartingPage(ActionEvent event) throws IOException {
+        root = FXMLLoader.load(getClass().getResource("fxml/ManagerStartingPage.fxml"));
+        screen = Screen.getPrimary().getVisualBounds();
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setX(0);
+        stage.setY(0);
+        stage.setWidth(screen.getWidth());
+        stage.setHeight(screen.getHeight());
+        stage.show();
+    }
+
+    /*
+            ========================================
+                           Menu Items
+            ========================================
+     */
+
+    public void MenuItems(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MenuItems.fxml"));
         root = loader.load();
 
-        // Get HBox from FXML using its fx:id
         HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         buttonContainer.getChildren().clear();
 
+        // Get items from DataStore
         menuItems = DataStore.getInstance().getMenuItems();
 
-        // Iterate through buttons to remove them when necessary
-        for (Button button : new ArrayList<>(menuItems.keySet())) {
+        List<Button> sortedMenuItems = new ArrayList<>(menuItems.keySet());
+        sortedMenuItems.sort(Comparator.comparing(Button::getText));
+
+        for (Button button : sortedMenuItems) {
             button.setOnAction(e -> {
-                buttonContainer.getChildren().remove(button);
-                menuItems.remove(button);
+                // Retrieve information of button clicked
+                ArrayList<String> itemInfo = menuItems.get(button);
 
-
-                DataStore.getInstance().setMenuItems(menuItems); // Update HashMap
+                // Update information
+                if (itemInfo != null) {
+                    ChangeMenuItemInfo(itemInfo, () -> {
+                        System.out.println("Popup closed and data possibly updated.");
+                    });
+                } else {
+                    System.out.println("Error: No information found for button " + button.getText());
+                }
             });
 
-            buttonContainer.getChildren().add(button); // Shows menu items that can be deleted
+            buttonContainer.getChildren().add(button);
         }
 
         setUpScene(event, root);
@@ -87,90 +121,31 @@ public class SceneController {
         });
     }
 
-
-
-    public void MenuItems(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MenuItems.fxml"));
+    public void deleteMenuItems(ActionEvent event) throws IOException {
+        // Load layout from FXML file
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/deleteMenuItems.fxml"));
         root = loader.load();
 
+        // Get HBox from FXML using its fx:id
         HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         buttonContainer.getChildren().clear();
 
-        // Get items from DataStore
         menuItems = DataStore.getInstance().getMenuItems();
 
-        for (Button button : menuItems.keySet()) {
-            button.setOnAction(e -> {
-                // Retrieve information of button clicked
-                ArrayList<String> itemInfo = menuItems.get(button);
 
-                // Update information
-                if (itemInfo != null) {
-                    ChangeMenuItemInfo(itemInfo, () -> {
-                        System.out.println("Popup closed and data possibly updated.");
-                    });
-                } else {
-                    System.out.println("Error: No information found for button " + button.getText());
-                }
+        List<Button> sortedMenuItems = new ArrayList<>(menuItems.keySet());
+        sortedMenuItems.sort(Comparator.comparing(Button::getText));
+        // Iterate through buttons to remove them when necessary
+        for (Button button : sortedMenuItems) {
+            button.setOnAction(e -> {
+                buttonContainer.getChildren().remove(button);
+                menuItems.remove(button);
+
+
+                DataStore.getInstance().setMenuItems(menuItems); // Update HashMap
             });
 
-            buttonContainer.getChildren().add(button);
-        }
-
-        setUpScene(event, root);
-    }
-
-    private void setUpScene(ActionEvent event, Parent root) {
-        screen = Screen.getPrimary().getVisualBounds();
-        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setX(0);
-        stage.setY(0);
-        stage.setWidth(screen.getWidth());
-        stage.setHeight(screen.getHeight());
-        stage.show();
-    }
-
-    public void ManagerStartingPage(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("fxml/ManagerStartingPage.fxml"));
-        screen = Screen.getPrimary().getVisualBounds();
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setX(0);
-        stage.setY(0);
-        stage.setWidth(screen.getWidth());
-        stage.setHeight(screen.getHeight());
-        stage.show();
-    }
-
-    public void Inventory(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Inventory.fxml"));
-        root = loader.load();
-
-        HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
-        buttonContainer.getChildren().clear();
-
-        // Get inventory items from DataStore
-        HashMap<Button, Integer> inventoryItems = DataStore.getInstance().getInventoryItems();
-
-        for (Button button : inventoryItems.keySet()) {
-
-            button.setOnAction(e -> {
-                // Retrieve corresponding inventory value for button clicked
-                Integer inventoryInfo = DataStore.getInstance().getInventoryForItem(button);
-
-                if (inventoryInfo != null) {
-                    ChangeInventoryItemInfo(DataStore.getInstance(), button, () -> {
-                        System.out.println("Popup closed and inventory updated.");
-                    });
-                } else {
-                    System.out.println("Error: No inventory data found for button " + button.getText());
-                }
-            });
-
-            buttonContainer.getChildren().add(button);
+            buttonContainer.getChildren().add(button); // Shows menu items that can be deleted
         }
 
         setUpScene(event, root);
@@ -238,6 +213,46 @@ public class SceneController {
 
     }
 
+    /*
+            ========================================
+                           Inventory
+            ========================================
+     */
+
+    public void Inventory(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Inventory.fxml"));
+        root = loader.load();
+
+        HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
+        buttonContainer.getChildren().clear();
+
+        // Get inventory items from DataStore
+        HashMap<Button, Integer> inventoryItems = DataStore.getInstance().getInventoryItems();
+
+        List<Button> sortedInventory = new ArrayList<>(inventoryItems.keySet());
+        sortedInventory.sort(Comparator.comparing(Button::getText));
+
+        for (Button button : sortedInventory) {
+
+            button.setOnAction(e -> {
+                // Retrieve corresponding inventory value for button clicked
+                Integer inventoryInfo = DataStore.getInstance().getInventoryForItem(button);
+
+                if (inventoryInfo != null) {
+                    ChangeInventoryItemInfo(DataStore.getInstance(), button, () -> {
+                        System.out.println("Popup closed and inventory updated.");
+                    });
+                } else {
+                    System.out.println("Error: No inventory data found for button " + button.getText());
+                }
+            });
+
+            buttonContainer.getChildren().add(button);
+        }
+
+        setUpScene(event, root);
+    }
+
     public void ChangeInventoryItemInfo(DataStore inventoryWrapper, Button button, Runnable onComplete) {
         VBox layout = new VBox(10);
 
@@ -284,22 +299,36 @@ public class SceneController {
 
     }
 
-    public void deleteEmployee(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/deleteEmployees.fxml"));
+    /*
+            ========================================
+                            Employees
+            ========================================
+     */
+
+    public void Employees(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Employees.fxml"));
         root = loader.load();
 
         HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         buttonContainer.getChildren().clear();
 
+        // Get items from DataStore
         employees = DataStore.getInstance().getEmployees();
 
-        for (Button button : new ArrayList<>(employees.keySet())) {
+        List<Button> sortedEmployees = new ArrayList<>(employees.keySet());
+        sortedEmployees.sort(Comparator.comparing(Button::getText));
+
+        for (Button button : sortedEmployees) {
             button.setOnAction(e -> {
-                buttonContainer.getChildren().remove(button);
-                employees.remove(button);
+                ArrayList<String> itemInfo = employees.get(button);
 
-
-                DataStore.getInstance().setEmployees(employees); // Update HashMap
+                if (itemInfo != null) {
+                    ChangeEmployeeInfo(itemInfo, () -> {
+                        System.out.println("Popup closed and data possibly updated.");
+                    });
+                } else {
+                    System.out.println("Error: No information found for button " + button.getText());
+                }
             });
 
             buttonContainer.getChildren().add(button);
@@ -336,29 +365,25 @@ public class SceneController {
         });
     }
 
-
-
-    public void Employees(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Employees.fxml"));
+    public void deleteEmployee(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/deleteEmployees.fxml"));
         root = loader.load();
 
         HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         buttonContainer.getChildren().clear();
 
-        // Get items from DataStore
         employees = DataStore.getInstance().getEmployees();
 
-        for (Button button : employees.keySet()) {
-            button.setOnAction(e -> {
-                ArrayList<String> itemInfo = employees.get(button);
+        List<Button> sortedEmployees = new ArrayList<>(employees.keySet());
+        sortedEmployees.sort(Comparator.comparing(Button::getText));
 
-                if (itemInfo != null) {
-                    ChangeEmployeeInfo(itemInfo, () -> {
-                        System.out.println("Popup closed and data possibly updated.");
-                    });
-                } else {
-                    System.out.println("Error: No information found for button " + button.getText());
-                }
+        for (Button button : sortedEmployees) {
+            button.setOnAction(e -> {
+                buttonContainer.getChildren().remove(button);
+                employees.remove(button);
+
+
+                DataStore.getInstance().setEmployees(employees); // Update HashMap
             });
 
             buttonContainer.getChildren().add(button);
@@ -366,6 +391,7 @@ public class SceneController {
 
         setUpScene(event, root);
     }
+
     public void ChangeEmployeeInfo(ArrayList<String> itemInfo, Runnable onComplete) {
         VBox layout = new VBox(10);
 
@@ -423,5 +449,23 @@ public class SceneController {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    /*
+            ========================================
+                         Display Scenes
+            ========================================
+     */
+
+    private void setUpScene(ActionEvent event, Parent root) {
+        screen = Screen.getPrimary().getVisualBounds();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setX(0);
+        stage.setY(0);
+        stage.setWidth(screen.getWidth());
+        stage.setHeight(screen.getHeight());
+        stage.show();
     }
 }
