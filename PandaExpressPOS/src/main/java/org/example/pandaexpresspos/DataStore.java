@@ -9,25 +9,32 @@ import java.util.HashMap;
 public class DataStore {
     private static DataStore instance = new DataStore();
     private int numItems = 3;
-    private int price = 0;
-    // Initialize the HashMap with buttons and their associated item lists
+    private HashMap<Button, Integer> inventoryItems = new HashMap<>();
     private HashMap<Button, ArrayList<String>> menuItems = new HashMap<>();
 
+    // Private constructor to enforce singleton pattern
     private DataStore() {
         // Initialize menuItems with buttons and their corresponding item lists
         menuItems.put(new Button("Button A"), new ArrayList<>(Arrays.asList("Chow Mein", "2.50")));
         menuItems.put(new Button("Button B"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
         menuItems.put(new Button("Button C"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
+
+        // Initialize inventoryItems with buttons and corresponding inventory values
+        inventoryItems.put(new Button("Napkins"), 50);
+        inventoryItems.put(new Button("Silverware"), 100);
     }
 
+    // Singleton instance getter
     public static DataStore getInstance() {
         return instance;
     }
 
+    // Get number of menu items
     public int getNumItems() {
         return numItems;
     }
 
+    // Set number of menu items
     public void setNumItems(int numItems) {
         this.numItems = numItems;
     }
@@ -42,11 +49,23 @@ public class DataStore {
         this.menuItems = menuItems;
     }
 
-    public int getPrice() {
-        return price;
+    // Get the inventoryItems HashMap
+    public HashMap<Button, Integer> getInventoryItems() {
+        return inventoryItems;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    // Set the inventoryItems HashMap directly
+    public void setInventoryItems(HashMap<Button, Integer> inventoryItems) {
+        this.inventoryItems = inventoryItems;
+    }
+
+    // Get the inventory amount for a specific button
+    public Integer getInventoryForItem(Button itemButton) {
+        return inventoryItems.get(itemButton);
+    }
+
+    // Set the inventory amount for a specific item (button)
+    public void setInventoryForItem(Button itemButton, Integer newInventory) {
+        inventoryItems.put(itemButton, newInventory);
     }
 }

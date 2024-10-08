@@ -3,12 +3,16 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="658.0" prefWidth="1066.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.SceneController">
-   <children>
-      <Button layoutX="139.0" layoutY="104.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0" prefWidth="160.0" text="Order History" />
-      <Button layoutX="139.0" layoutY="329.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0" prefWidth="160.0" text="Order Trends" />
-      <Button layoutX="639.0" layoutY="104.0" mnemonicParsing="false" onAction="#MenuItems" prefHeight="142.0" prefWidth="160.0" text="Menu Items" />
-      <Button layoutX="639.0" layoutY="329.0" mnemonicParsing="false" onAction="#Inventory" prefHeight="142.0" prefWidth="160.0" text="Inventory" />
-      <Button layoutX="383.0" layoutY="227.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0" prefWidth="160.0" text="Employees" />
-   </children>
+<AnchorPane prefHeight="658.0" prefWidth="1066.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.SceneController">
+   <Button layoutX="139.0" layoutY="104.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0"
+           prefWidth="160.0" text="Order History"/>
+   <Button layoutX="139.0" layoutY="329.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0"
+           prefWidth="160.0" text="Order Trends"/>
+   <Button layoutX="639.0" layoutY="104.0" mnemonicParsing="false" onAction="#MenuItems" prefHeight="142.0"
+           prefWidth="160.0" text="Menu Items"/>
+   <Button layoutX="639.0" layoutY="329.0" mnemonicParsing="false" onAction="#Inventory" prefHeight="142.0"
+           prefWidth="160.0" text="Inventory"/>
+   <Button layoutX="383.0" layoutY="227.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0"
+           prefWidth="160.0" text="Employees"/>
 </AnchorPane>

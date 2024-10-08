@@ -7,16 +7,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane prefHeight="577.0" prefWidth="839.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.SceneController">
-   <children>
-      <LineChart layoutX="170.0" layoutY="89.0">
-        <xAxis>
-          <CategoryAxis side="BOTTOM" />
-        </xAxis>
-        <yAxis>
-          <NumberAxis side="LEFT" />
-        </yAxis>
-      </LineChart>
-      <Button layoutX="53.0" layoutY="32.0" mnemonicParsing="false" onAction="#ManagerStartingPage" text="Back" />
-   </children>
+<AnchorPane prefHeight="577.0" prefWidth="839.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.pandaexpresspos.SceneController">
+    <LineChart layoutX="170.0" layoutY="89.0">
+      <xAxis>
+          <CategoryAxis side="BOTTOM"/>
+      </xAxis>
+      <yAxis>
+          <NumberAxis side="LEFT"/>
+      </yAxis>
+    </LineChart>
+    <Button layoutX="53.0" layoutY="32.0" mnemonicParsing="false" onAction="#ManagerStartingPage" text="Back"/>
 </AnchorPane>

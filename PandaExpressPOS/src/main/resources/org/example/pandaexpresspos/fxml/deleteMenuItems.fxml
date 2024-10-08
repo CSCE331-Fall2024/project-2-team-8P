@@ -13,8 +13,6 @@
         <!-- Initially empty, buttons will be added dynamically from the controller -->
     </HBox>
     <AnchorPane prefHeight="346.0" prefWidth="8535.0">
-        <children>
-            <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#MenuItems" text="Back" />
-        </children>
+        <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#MenuItems" text="Back"/>
     </AnchorPane>
 </VBox>
