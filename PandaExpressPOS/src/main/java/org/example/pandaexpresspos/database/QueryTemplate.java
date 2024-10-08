@@ -19,7 +19,7 @@ class QueryTemplate {
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
-            VALUES ('%s', '%s', %d, %d, %d, %d, %d);
+            VALUES ('%s', '%s', %d, %d, %d, %d, %f);
             """;
     public static final String insertOrderToMenuItem = """
             INSERT INTO orderToMenuItem (orderId, menuItemId, quantity)

@@ -9,13 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class DBDriverSingleton {
-
-    @FunctionalInterface
-    protected interface ResultSetMapper<T> {
-        T map(ResultSet resultSet) throws SQLException;
-    }
 
     private static DBDriverSingleton instance;
 
@@ -51,11 +47,7 @@ public class DBDriverSingleton {
 
     public void insertOrder(Order newOrder) {
         // Insert the order entry
-        String insertOrderTemplate = """
-                INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
-                VALUES ('%s', '%s', %d, %d, %d, %d, %f);
-                """;
-        Object[] params = {
+        executeUpdate(String.format(QueryTemplate.insertOrder,
                 newOrder.orderId,
                 newOrder.cashierId,
                 newOrder.month,
@@ -63,58 +55,39 @@ public class DBDriverSingleton {
                 newOrder.day,
                 newOrder.hour,
                 newOrder.price
-        };
-        executeUpdate(String.format(insertOrderTemplate, params));
+        ));
 
         // Handle inventory item connections:
-        String orderToInventoryTemplate = """
-                INSERT INTO orderToInventoryItem (orderId, inventoryItemId, quantity)
-                VALUES ('%s', '%s', '%s');
-                """;
-        String updateInventoryQtyTemplate = """
-                UPDATE inventoryItem
-                SET availableStock = availableStock - %d
-                WHERE inventoryItemId = '%s';
-                """;
         for (InventoryItem item : newOrder.inventoryItems.keySet()) {
             Integer quantity = newOrder.inventoryItems.get(item);
 
             // Insert entry into table "orderToInventoryItem"
-            executeUpdate(String.format(orderToInventoryTemplate,
+            executeUpdate(String.format(QueryTemplate.insertOrderToInventoryItem,
                     newOrder.orderId,
                     item.inventoryItemId,
                     quantity
             ));
 
             // Update quantity of item in inventory table
-            executeUpdate(String.format(updateInventoryQtyTemplate,
+            executeUpdate(String.format(QueryTemplate.updateInventoryItemQty,
                     quantity,
                     item.inventoryItemId
             ));
         }
 
         // Handle menu item connections:
-        String orderToMenuTemplate = """
-                INSERT INTO orderToMenuItem (orderId, menuItemId, quantity)
-                VALUES ('%s', '%s', '%s');
-                """;
-        String updateMenuQtyTemplate = """
-                UPDATE menuItem
-                SET availableStock = availableStock - %d
-                WHERE menuItemId = '%s';
-                """;
         for (MenuItem item : newOrder.menuItems.keySet()) {
             Integer quantity = newOrder.menuItems.get(item);
 
             // Insert entry into table "orderToMenuItem"
-            executeUpdate(String.format(orderToMenuTemplate,
+            executeUpdate(String.format(QueryTemplate.insertOrderToMenuItem,
                     newOrder.orderId,
                     item.menuItemId,
                     quantity
             ));
 
             // Update quantity of item in menu item table
-            executeUpdate(String.format(updateMenuQtyTemplate,
+            executeUpdate(String.format(QueryTemplate.updateMenuItemQty,
                     quantity,
                     item.menuItemId
             ));
@@ -135,19 +108,8 @@ public class DBDriverSingleton {
         // 1. Accepts employeeId
         // 2. Executes a select SQL query
         // 3. Puts the information retrieved from the DB into an `Employee` object and returns it
-        String queryTemplate = """
-                SELECT * FROM employee
-                WHERE employeeid = '%s';
-                """;
-        String query = String.format(queryTemplate, employeeId);
-
-        ResultSetMapper<Employee> employeeMapper = rs -> new Employee(
-                UUID.fromString(rs.getString("employeeid")),
-                rs.getBoolean("ismanager"),
-                rs.getString("name")
-        );
-
-        List<Employee> employees = executeQuery(query, employeeMapper);
+        String query = String.format(QueryTemplate.selectEmployee, employeeId);
+        List<Employee> employees = executeQuery(query, SQLToJavaMapper::employeeMapper);
 
         if (employees.isEmpty()) {
             throw new SQLException("Employee not found");
@@ -218,9 +180,10 @@ public class DBDriverSingleton {
 
     // Private helpers:
 
+    // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, ResultSetMapper<T> mapper) {
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
         List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
@@ -231,7 +194,7 @@ public class DBDriverSingleton {
 
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                T item = mapper.map(rs);
+                T item = mapper.apply(rs);
                 results.add(item);
             }
 
@@ -264,33 +227,36 @@ public class DBDriverSingleton {
 
 
     public static void main(String[] args) throws SQLException {
-        // Test logic to place order
-        Order newOrder = new Order(
-                UUID.randomUUID(),
-                UUID.fromString("1bbd8bdf-defc-4d6d-8cb0-7b4a5989c7ba"),
-                8,
-                35,
-                20,
-                8,
-                50.0
-        );
-        newOrder.addInventoryItem(new InventoryItem(
-                UUID.fromString("824579a8-0a41-440e-b3dd-dd90cd961b03"),
-                0.1,
-                1000,
-                "Napkin"),
-                2);
-        newOrder.addMenuItem(new MenuItem(
-                UUID.fromString("59e65561-bb65-4cf6-8d9d-965f272f55c8"),
-                2.1,
-                835,
-                "Dr. Pepper"),
-                1
-        );
-
-        out.println("Order ID: " + newOrder.orderId);
-
         DBDriverSingleton instance = DBDriverSingleton.getInstance();
-        instance.insertOrder(newOrder);
+
+        // Test logic to place order
+//        Order newOrder = new Order(
+//                UUID.randomUUID(),
+//                UUID.fromString("1bbd8bdf-defc-4d6d-8cb0-7b4a5989c7ba"),
+//                8,
+//                35,
+//                20,
+//                8,
+//                50.0
+//        );
+//        newOrder.addInventoryItem(new InventoryItem(
+//                UUID.fromString("824579a8-0a41-440e-b3dd-dd90cd961b03"),
+//                0.1,
+//                1000,
+//                "Napkin"),
+//                2);
+//        newOrder.addMenuItem(new MenuItem(
+//                UUID.fromString("59e65561-bb65-4cf6-8d9d-965f272f55c8"),
+//                2.1,
+//                835,
+//                "Dr. Pepper"),
+//                1
+//        );
+//
+//        out.println("Order ID: " + newOrder.orderId);
+//        instance.insertOrder(newOrder);
+
+        Employee emp = instance.selectEmployee(UUID.fromString("01e98262-a7a7-41f1-b347-6df6081f4563"));
+        System.out.println("Name: " + emp.name + "\nisManager: " + emp.isManager);
     }
 }
