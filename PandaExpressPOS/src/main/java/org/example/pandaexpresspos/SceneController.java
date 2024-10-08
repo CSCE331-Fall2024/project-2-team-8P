@@ -233,10 +233,25 @@ public class SceneController {
         sortedInventory.sort(Comparator.comparing(Button::getText));
 
         for (Button button : sortedInventory) {
+            Integer inventoryInfo = DataStore.getInstance().getInventoryForItem(button);
+
+            if(inventoryInfo != null) {
+                if(inventoryInfo <= 25) {
+                    if(inventoryInfo <= 10) {
+                        button.setStyle("-fx-background-color: red;");
+                    }
+                    else {
+                        button.setStyle("-fx-background-color: yellow;");
+                    }
+                }
+                else {
+                    button.setStyle("-fx-background-color: green;");
+                }
+            }
 
             button.setOnAction(e -> {
                 // Retrieve corresponding inventory value for button clicked
-                Integer inventoryInfo = DataStore.getInstance().getInventoryForItem(button);
+
 
                 if (inventoryInfo != null) {
                     ChangeInventoryItemInfo(DataStore.getInstance(), button, () -> {
@@ -276,6 +291,17 @@ public class SceneController {
                     inventoryWrapper.setInventoryForItem(button, newInventory);
 
                     onComplete.run();
+                    if(newInventory <= 25) {
+                        if(newInventory <= 10) {
+                            button.setStyle("-fx-background-color: red;");
+                        }
+                        else {
+                            button.setStyle("-fx-background-color: yellow;");
+                        }
+                    }
+                    else {
+                        button.setStyle("-fx-background-color: green;");
+                    }
                 } catch (NumberFormatException ex) {
                     System.out.println("Invalid inventory amount. Please enter a valid number.");
                 }

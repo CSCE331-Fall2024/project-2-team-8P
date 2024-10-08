@@ -18,8 +18,8 @@ public class DataStore {
         menuItems.put(new Button("Fried Rice"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
         menuItems.put(new Button("Orange Chicken"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
 
-        inventoryItems.put(new Button("Napkins"), 50);
-        inventoryItems.put(new Button("Silverware"), 100);
+        inventoryItems.put(new Button("Napkins"), 5);
+        inventoryItems.put(new Button("Silverware"), 20);
 
         employees.put(new Button("Pikachu"), new ArrayList<>(Arrays.asList("Pikachu", "Manager")));
         employees.put(new Button("Charizard"), new ArrayList<>(Arrays.asList("Charizard", "Cashier")));
