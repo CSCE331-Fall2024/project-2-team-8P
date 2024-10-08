@@ -2,6 +2,7 @@ package org.example.pandaexpresspos.database;
 
 import static java.lang.System.out;
 
+import javafx.scene.control.Menu;
 import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
@@ -263,11 +264,33 @@ public class DBDriverSingleton {
 
 
     public static void main(String[] args) throws SQLException {
-        out.println("Soham sucks!!!!");
-        DBDriverSingleton instance = DBDriverSingleton.getInstance();
-        Employee employee =
-                instance.selectEmployee(UUID.fromString("01e98262-a7a7-41f1-b347-6df6081f4563"));
+        // Test logic to place order
+        Order newOrder = new Order(
+                UUID.randomUUID(),
+                UUID.fromString("1bbd8bdf-defc-4d6d-8cb0-7b4a5989c7ba"),
+                8,
+                35,
+                20,
+                8,
+                50.0
+        );
+        newOrder.addInventoryItem(new InventoryItem(
+                UUID.fromString("824579a8-0a41-440e-b3dd-dd90cd961b03"),
+                0.1,
+                1000,
+                "Napkin"),
+                2);
+        newOrder.addMenuItem(new MenuItem(
+                UUID.fromString("59e65561-bb65-4cf6-8d9d-965f272f55c8"),
+                2.1,
+                835,
+                "Dr. Pepper"),
+                1
+        );
 
-        out.println("Name: " + employee.name + "\nisManager: " + employee.isManager);
+        out.println("Order ID: " + newOrder.orderId);
+
+        DBDriverSingleton instance = DBDriverSingleton.getInstance();
+        instance.insertOrder(newOrder);
     }
 }
