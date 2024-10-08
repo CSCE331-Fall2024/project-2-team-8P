@@ -14,9 +14,9 @@ public class DataStore {
 
     private DataStore() {
         // Arbitrary values for testing, can change later
-        menuItems.put(new Button("Button A"), new ArrayList<>(Arrays.asList("Chow Mein", "2.50")));
-        menuItems.put(new Button("Button B"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
-        menuItems.put(new Button("Button C"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
+        menuItems.put(new Button("Chow Mein"), new ArrayList<>(Arrays.asList("Chow Mein", "2.50")));
+        menuItems.put(new Button("Fried Rice"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
+        menuItems.put(new Button("Orange Chicken"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
 
         inventoryItems.put(new Button("Napkins"), 50);
         inventoryItems.put(new Button("Silverware"), 100);
