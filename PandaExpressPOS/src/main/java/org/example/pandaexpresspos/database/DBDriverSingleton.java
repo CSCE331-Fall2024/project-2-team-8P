@@ -247,22 +247,18 @@ public class DBDriverSingleton {
     // 1. Insert
     // 2. Update
     // 3. Delete
-    private static Integer executeUpdate(String query) {
-        int rowsUpdated = 0;
-
+    private static void executeUpdate(String query) {
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
                 DBCredentials.passwd);
              Statement stmt = conn.createStatement()) {
 
-            rowsUpdated = stmt.executeUpdate(query);
+            stmt.executeUpdate(query);
         } catch (SQLException e) {
             // TODO (maybe): display stack trace graphically somewhere
             e.printStackTrace();
         }
-
-        return rowsUpdated;
     }
 
 
