@@ -56,9 +56,9 @@ public class LoginController {
 
     EmployeeType getEmployeeType(String username) {
         // TODO: Query Database for name matching
-        return switch (username) {
-            case "Cashier" -> EmployeeType.CASHIER;
-            case "Manager" -> EmployeeType.MANAGER;
+        return switch (username.toLowerCase()) {
+            case "cashier" -> EmployeeType.CASHIER;
+            case "manager" -> EmployeeType.MANAGER;
             default -> EmployeeType.ERROR;
         };
     }
