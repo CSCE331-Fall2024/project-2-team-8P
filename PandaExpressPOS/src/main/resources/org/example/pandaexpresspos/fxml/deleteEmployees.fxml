@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.HBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="org.example.pandaexpresspos.SceneController">
+    <HBox fx:id="buttonContainer" alignment="CENTER" spacing="10">
+    </HBox>
+    <AnchorPane prefHeight="346.0" prefWidth="8535.0">
+        <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#Employees" text="Back"/>
+    </AnchorPane>
+</VBox>

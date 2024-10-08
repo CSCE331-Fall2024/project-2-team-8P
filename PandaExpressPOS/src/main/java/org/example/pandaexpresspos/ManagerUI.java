@@ -15,10 +15,11 @@ public class ManagerUI extends Application {
         try {
             Rectangle2D screen = Screen.getPrimary().getVisualBounds();
 
-
+            // Starts off on starting page
             Parent root = FXMLLoader.load(getClass().getResource("fxml/ManagerStartingPage.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            // Maximizes screen
             stage.setX(0);
             stage.setY(0);
             stage.setWidth(screen.getWidth());

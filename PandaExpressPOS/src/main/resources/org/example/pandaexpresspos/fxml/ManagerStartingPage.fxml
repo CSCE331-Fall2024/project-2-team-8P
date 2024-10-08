@@ -13,6 +13,6 @@
            prefWidth="160.0" text="Menu Items"/>
    <Button layoutX="639.0" layoutY="329.0" mnemonicParsing="false" onAction="#Inventory" prefHeight="142.0"
            prefWidth="160.0" text="Inventory"/>
-   <Button layoutX="383.0" layoutY="227.0" mnemonicParsing="false" onAction="#ManagerStartingPage" prefHeight="142.0"
+   <Button layoutX="383.0" layoutY="227.0" mnemonicParsing="false" onAction="#Employees" prefHeight="142.0"
            prefWidth="160.0" text="Employees"/>
 </AnchorPane>

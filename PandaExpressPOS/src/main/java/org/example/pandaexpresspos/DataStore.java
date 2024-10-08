@@ -8,64 +8,65 @@ import java.util.HashMap;
 
 public class DataStore {
     private static DataStore instance = new DataStore();
-    private int numItems = 3;
     private HashMap<Button, Integer> inventoryItems = new HashMap<>();
     private HashMap<Button, ArrayList<String>> menuItems = new HashMap<>();
+    private HashMap<Button, ArrayList<String>> employees = new HashMap<>();
 
-    // Private constructor to enforce singleton pattern
     private DataStore() {
-        // Initialize menuItems with buttons and their corresponding item lists
+        // Arbitrary values for testing, can change later
         menuItems.put(new Button("Button A"), new ArrayList<>(Arrays.asList("Chow Mein", "2.50")));
         menuItems.put(new Button("Button B"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
         menuItems.put(new Button("Button C"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
 
-        // Initialize inventoryItems with buttons and corresponding inventory values
         inventoryItems.put(new Button("Napkins"), 50);
         inventoryItems.put(new Button("Silverware"), 100);
+
+        employees.put(new Button("Pikachu"), new ArrayList<>(Arrays.asList("Pikachu", "Manager")));
+        employees.put(new Button("Charizard"), new ArrayList<>(Arrays.asList("Charizard", "Cashier")));
     }
 
-    // Singleton instance getter
     public static DataStore getInstance() {
         return instance;
     }
 
-    // Get number of menu items
-    public int getNumItems() {
-        return numItems;
-    }
-
-    // Set number of menu items
-    public void setNumItems(int numItems) {
-        this.numItems = numItems;
-    }
-
-    // Get the menuItems HashMap
+    // Get menuItems
     public HashMap<Button, ArrayList<String>> getMenuItems() {
         return menuItems;
     }
 
-    // Set the menuItems HashMap directly
+    // Set menuItems
     public void setMenuItems(HashMap<Button, ArrayList<String>> menuItems) {
         this.menuItems = menuItems;
     }
 
-    // Get the inventoryItems HashMap
+    // Get inventoryItems
     public HashMap<Button, Integer> getInventoryItems() {
         return inventoryItems;
     }
 
-    // Set the inventoryItems HashMap directly
+    // Set inventoryItems
     public void setInventoryItems(HashMap<Button, Integer> inventoryItems) {
         this.inventoryItems = inventoryItems;
     }
 
-    // Get the inventory amount for a specific button
+    // Get inventory amount for specific item
     public Integer getInventoryForItem(Button itemButton) {
         return inventoryItems.get(itemButton);
     }
 
-    // Set the inventory amount for a specific item (button)
+    // Set inventory amount for specific item
     public void setInventoryForItem(Button itemButton, Integer newInventory) {
         inventoryItems.put(itemButton, newInventory);
     }
+
+    // Get employees
+    public HashMap<Button, ArrayList<String>> getEmployees() {
+        return employees;
+    }
+
+    // Set employees
+    public void setEmployees(HashMap<Button, ArrayList<String>> employees) {
+        this.employees = employees;
+    }
+
 }
