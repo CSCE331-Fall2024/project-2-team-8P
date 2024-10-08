@@ -14,6 +14,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -28,22 +30,6 @@ public class SceneController {
 
     HashMap<Button, ArrayList<String>> items = new HashMap<>();  // Declare the HashMap
 
-    // Initialize Buttons
-    Button buttonA = new Button("Button A");
-    Button buttonB = new Button("Button B");
-    Button buttonC = new Button("Button C");
-
-    {
-        // Initialize ArrayLists of Strings for each button
-        ArrayList<String> listA = new ArrayList<>(Arrays.asList("Item A1", "Item A2"));
-        ArrayList<String> listB = new ArrayList<>(Arrays.asList("Item B1", "Item B2"));
-        ArrayList<String> listC = new ArrayList<>(Arrays.asList("Item C1", "Item C2"));
-
-        // Add Buttons and their corresponding ArrayLists to the HashMap
-        items.put(buttonA, listA);
-        items.put(buttonB, listB);
-        items.put(buttonC, listC);
-    }
 
     public void deleteButtons(ActionEvent event) throws IOException {
         // Load the layout from FXML file
@@ -73,66 +59,76 @@ public class SceneController {
     }
 
     public void addButton(ActionEvent event) throws IOException {
-        // Load the layout or popup as necessary
-        popup();
+        ArrayList<String> newItem = new ArrayList<>();
+        newItem.add("");  // Placeholder for the name (index 0)
+        newItem.add("");  // Placeholder for the price (index 1)
 
-        // Ensure buttonContainer is initialized
         if (buttonContainer == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MenuItems.fxml"));
             Parent root = loader.load();
             buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         }
 
-        HashMap<Button, ArrayList<String>> items = DataStore.getInstance().getMenuItems();
+        popup(newItem, () -> {
+            // This block will execute after the user enters the name and presses "Change Name"
+            if (!newItem.get(0).isEmpty()) {
+                // Add new button to the container and items map
+                Button newButton = new Button(newItem.get(0));  // Set the button's label to the entered name
+                HashMap<Button, ArrayList<String>> items = DataStore.getInstance().getMenuItems();
 
-        // Add new button to the container and items map
-        Button newButton = new Button("Button D");
-        ArrayList<String> newList = new ArrayList<>(); // Create a new ArrayList for the new button
-        items.put(newButton, newList); // Associate the new button with its item list
-        buttonContainer.getChildren().add(newButton);
+                // Add the new button and associate it with the newItem list in the HashMap
+                items.put(newButton, newItem);
+                buttonContainer.getChildren().add(newButton);
 
-        DataStore.getInstance().setMenuItems(items); // Update HashMap
-        DataStore.getInstance().setNumItems(items.size()); // Update numItems
+                // Update DataStore to reflect the changes
+                DataStore.getInstance().setMenuItems(items);  // Update the items map in DataStore
+                DataStore.getInstance().setNumItems(items.size());  // Update the number of items
 
-        // For debugging
-        System.out.println("Number of items: " + DataStore.getInstance().getNumItems());
+                // Debugging output to confirm the new button was added
+                System.out.println("Added new button: " + newButton.getText());
+                System.out.println("Number of items: " + DataStore.getInstance().getNumItems());
+            } else {
+                System.out.println("Failed to add new button: No name provided.");
+            }
+        });
     }
+
+
 
     public void switchToScene1(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MenuItems.fxml"));
         Parent root = loader.load();
 
+        // Get the HBox container from the FXML file
         HBox buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         buttonContainer.getChildren().clear();
 
         // Get the items from DataStore
         HashMap<Button, ArrayList<String>> items = DataStore.getInstance().getMenuItems();
 
-        // Label or TextArea to display the information
-        Label infoLabel = new Label();
-        buttonContainer.getChildren().add(infoLabel);
-
         // Iterate over each button in the HashMap
         for (Button button : items.keySet()) {
-            // Set the event handler for each button
             button.setOnAction(e -> {
-                // Retrieve the corresponding list of strings
+                // Retrieve the corresponding ArrayList of strings for the clicked button
                 ArrayList<String> itemInfo = items.get(button);
 
-                // Display the information in the label
-                StringBuilder info = new StringBuilder();
-                for (String infoItem : itemInfo) {
-                    info.append(infoItem).append("\n");
+                // Call the popup2 method and pass the itemInfo along with a callback (Runnable)
+                if (itemInfo != null) {
+                    popup(itemInfo, () -> {
+                        System.out.println("Popup closed and data possibly updated.");
+                    });
+                } else {
+                    System.out.println("Error: No information found for button " + button.getText());
                 }
-                infoLabel.setText(info.toString());
             });
 
-            // Add the button to the HBox container
             buttonContainer.getChildren().add(button);
         }
 
         setUpScene(event, root);
     }
+
+
 
 
 
@@ -177,41 +173,69 @@ public class SceneController {
         stage.show();
     }
 
-    public Stage popup() {
+    public Stage popup(ArrayList<String> itemInfo, Runnable onComplete) {
         VBox layout = new VBox(10);  // VBox layout with 10px spacing
 
-        Label label = new Label("Select an option");
+        Label label = new Label("Item Information:");
 
-        // Create buttons
-        Button button1 = new Button("Change Name");
-        Button button2 = new Button("Change Price");
+        ListView<String> listView = new ListView<>();
+        listView.getItems().addAll(itemInfo);
 
-        // Set button actions to update the label and change num
-        button1.setOnAction(e -> {
-            label.setText(button1.getText());
-            DataStore.getInstance().setPrice(1);  // Update num to 1 when button1 is clicked
+        // Create a TextField for the user to enter a new name
+        TextField nameField = new TextField();
+        nameField.setPromptText("Enter new name");
+
+        // Create a TextField for the user to enter a new price (or any other attribute)
+        TextField priceField = new TextField();
+        priceField.setPromptText("Enter new price");
+
+        // Create buttons for further actions (e.g., changing values)
+        Button changeNameButton = new Button("Change Name");
+        Button changePriceButton = new Button("Change Price");
+
+        // Handle changing name
+        changeNameButton.setOnAction(e -> {
+            String newName = nameField.getText();
+            if (!newName.isEmpty()) {
+                itemInfo.set(0, newName);  // Modify the first element in the list
+                listView.getItems().clear();
+                listView.getItems().addAll(itemInfo);  // Update ListView after modification
+
+                // Call the onComplete callback after setting the new name
+                if (onComplete != null) {
+                    onComplete.run();  // This will trigger the callback to finish the task
+                }
+            } else {
+                System.out.println("Name cannot be empty.");
+            }
         });
 
-        button2.setOnAction(e -> {
-            label.setText(button2.getText());
-            DataStore.getInstance().setPrice(2);
+        // Handle changing price (or any other attribute)
+        changePriceButton.setOnAction(e -> {
+            String newPrice = priceField.getText();
+            if (!newPrice.isEmpty()) {
+                itemInfo.set(1, newPrice);  // Modify the second element in the list
+                listView.getItems().clear();
+                listView.getItems().addAll(itemInfo);  // Update ListView after modification
+            } else {
+                System.out.println("Price cannot be empty.");
+            }
         });
+
+        layout.getChildren().addAll(label, listView, nameField, changeNameButton, priceField, changePriceButton);
 
         Stage stage = new Stage();
         stage.setWidth(300);
-        stage.setHeight(200);
+        stage.setHeight(300);
         stage.setX(500);
         stage.setY(500);
 
-        // Use VBox layout for vertical stacking
-        layout.setAlignment(Pos.CENTER);  // Center the content in the popup
-
-        layout.getChildren().addAll(label, button1, button2);
-
+        layout.setAlignment(Pos.CENTER);
         Scene scene = new Scene(layout);
         stage.setScene(scene);
         stage.show();
 
         return stage;
     }
+
 }

@@ -15,9 +15,9 @@ public class DataStore {
 
     private DataStore() {
         // Initialize menuItems with buttons and their corresponding item lists
-        menuItems.put(new Button("Button A"), new ArrayList<>(Arrays.asList("Item A1", "Item A2")));
-        menuItems.put(new Button("Button B"), new ArrayList<>(Arrays.asList("Item B1", "Item B2")));
-        menuItems.put(new Button("Button C"), new ArrayList<>(Arrays.asList("Item C1", "Item C2")));
+        menuItems.put(new Button("Button A"), new ArrayList<>(Arrays.asList("Chow Mein", "2.50")));
+        menuItems.put(new Button("Button B"), new ArrayList<>(Arrays.asList("Fried Rice", "2.50")));
+        menuItems.put(new Button("Button C"), new ArrayList<>(Arrays.asList("Orange Chicken", "2.50")));
     }
 
     public static DataStore getInstance() {
