@@ -14,7 +14,7 @@
     </HBox>
     <AnchorPane prefHeight="346.0" prefWidth="8535.0">
         <children>
-            <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToScene1" text="Back" />
+            <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#MenuItems" text="Back" />
         </children>
     </AnchorPane>
 </VBox>

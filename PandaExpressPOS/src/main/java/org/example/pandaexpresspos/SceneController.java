@@ -31,7 +31,7 @@ public class SceneController {
     HashMap<Button, ArrayList<String>> items = new HashMap<>();  // Declare the HashMap
 
 
-    public void deleteButtons(ActionEvent event) throws IOException {
+    public void deleteMenuItems(ActionEvent event) throws IOException {
         // Load the layout from FXML file
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/deleteMenuItems.fxml"));
         Parent root = loader.load();
@@ -58,7 +58,7 @@ public class SceneController {
         setUpScene(event, root);
     }
 
-    public void addButton(ActionEvent event) throws IOException {
+    public void addMenuItem(ActionEvent event) throws IOException {
         ArrayList<String> newItem = new ArrayList<>();
         newItem.add("");  // Placeholder for the name (index 0)
         newItem.add("");  // Placeholder for the price (index 1)
@@ -69,7 +69,7 @@ public class SceneController {
             buttonContainer = (HBox) loader.getNamespace().get("buttonContainer");
         }
 
-        popup(newItem, () -> {
+        ChangeMenuItemInfo(newItem, () -> {
             // This block will execute after the user enters the name and presses "Change Name"
             if (!newItem.get(0).isEmpty()) {
                 // Add new button to the container and items map
@@ -95,7 +95,7 @@ public class SceneController {
 
 
 
-    public void switchToScene1(ActionEvent event) throws IOException {
+    public void MenuItems(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MenuItems.fxml"));
         Parent root = loader.load();
 
@@ -114,7 +114,7 @@ public class SceneController {
 
                 // Call the popup2 method and pass the itemInfo along with a callback (Runnable)
                 if (itemInfo != null) {
-                    popup(itemInfo, () -> {
+                    ChangeMenuItemInfo(itemInfo, () -> {
                         System.out.println("Popup closed and data possibly updated.");
                     });
                 } else {
@@ -128,10 +128,6 @@ public class SceneController {
         setUpScene(event, root);
     }
 
-
-
-
-
     private void setUpScene(ActionEvent event, Parent root) {
         Rectangle2D screen = Screen.getPrimary().getVisualBounds();
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -144,7 +140,7 @@ public class SceneController {
         stage.show();
     }
 
-    public void switchToScene2(ActionEvent event) throws IOException {
+    public void ManagerStartingPage(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("fxml/ManagerStartingPage.fxml"));
         Rectangle2D screen = Screen.getPrimary().getVisualBounds();
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -157,7 +153,7 @@ public class SceneController {
         stage.show();
     }
 
-    public void switchToScene3(ActionEvent event) throws IOException {
+    public void Inventory(ActionEvent event) throws IOException {
         DataStore.getInstance().setNumItems(5);
         Parent root = FXMLLoader.load(getClass().getResource("fxml/Inventory.fxml"));
 
@@ -173,7 +169,7 @@ public class SceneController {
         stage.show();
     }
 
-    public Stage popup(ArrayList<String> itemInfo, Runnable onComplete) {
+    public Stage ChangeMenuItemInfo(ArrayList<String> itemInfo, Runnable onComplete) {
         VBox layout = new VBox(10);  // VBox layout with 10px spacing
 
         Label label = new Label("Item Information:");

@@ -14,9 +14,9 @@
    </HBox>
    <AnchorPane prefHeight="346.0" prefWidth="8535.0">
       <children>
-         <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#switchToScene2" text="Back" />
-         <Button layoutX="223.0" layoutY="243.0" mnemonicParsing="false" onAction="#deleteButtons" text="Delete" />
-         <Button layoutX="744.0" layoutY="309.0" mnemonicParsing="false" onAction="#addButton" text="Add" />
+         <Button layoutX="109.0" layoutY="21.0" mnemonicParsing="false" onAction="#ManagerStartingPage" text="Back" />
+         <Button layoutX="223.0" layoutY="243.0" mnemonicParsing="false" onAction="#deleteMenuItems" text="Delete" />
+         <Button layoutX="744.0" layoutY="309.0" mnemonicParsing="false" onAction="#addMenuItem" text="Add" />
       </children>
    </AnchorPane>
 </VBox>
