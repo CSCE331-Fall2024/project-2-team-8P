@@ -22,6 +22,11 @@ class QueryTemplate {
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
             VALUES ('%s', '%s', %d, %d, %d, %d, %f);
             """;
+    public static final String updateOrder = """
+            UPDATE "order"
+            SET month = %d, week = '%s', day = %d, hour = %d, price = %f
+            WHERE orderId = '%s';
+            """;
     public static final String insertOrderToMenuItem = """
             INSERT INTO orderToMenuItem (orderId, menuItemId, quantity)
             VALUES ('%s', '%s', %d);
@@ -45,7 +50,7 @@ class QueryTemplate {
             """;
     public static final String updateEmployee = """
             UPDATE employee
-            SET isManager = %b, name='%s'
+            SET isManager = %b, name = '%s'
             WHERE employeeId = '%s';
             """;
 

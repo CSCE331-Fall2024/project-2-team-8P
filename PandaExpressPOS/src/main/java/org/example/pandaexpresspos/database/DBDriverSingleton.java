@@ -5,10 +5,13 @@ import static java.lang.System.out;
 import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import javafx.util.Pair;
 
 public class DBDriverSingleton {
 
@@ -17,6 +20,11 @@ public class DBDriverSingleton {
     // Why a private constructor?
     // This is how we implement the *singleton* design pattern
     private DBDriverSingleton() {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static DBDriverSingleton getInstance() {
@@ -36,38 +44,31 @@ public class DBDriverSingleton {
                     String.format(QueryTemplate.selectEmployee, orderId),
                     SQLToJavaMapper::orderMapper
             );
-
             if (orders.isEmpty()) {
-                throw new SQLException("Employee not found");
+                throw new SQLException("Order not found");
             }
             order = orders.getFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return order;
     }
 
     public List<Order> selectOrders(Integer mostRecent) {
-        Order order = null;
+        List<Order> orders = null;
         try {
-            List<Order> orders = executeQuery(
-                    String.format(QueryTemplate.selectRecentOrders, orderId),
+            int currentMonth = LocalDate.now().getMonthValue();
+            orders = executeQuery(
+                    String.format(QueryTemplate.selectRecentOrders, currentMonth, mostRecent),
                     SQLToJavaMapper::orderMapper
             );
-
-            if (orders.isEmpty()) {
-                throw new SQLException("Employee not found");
-            }
-            order = orders.getFirst();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return order;
+        return orders;
     }
 
-    public List<Order> selectOrders(Integer startDate, Integer endDate) {
+    public Map<Integer, Double> selectOrders(Integer startDate, Integer endDate) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -95,7 +96,7 @@ public class DBDriverSingleton {
             ));
 
             // Update quantity of item in inventory table
-            executeUpdate(String.format(QueryTemplate.updateInventoryItemQty,
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
                     quantity,
                     item.inventoryItemId
             ));
@@ -113,7 +114,7 @@ public class DBDriverSingleton {
             ));
 
             // Update quantity of item in menu item table
-            executeUpdate(String.format(QueryTemplate.updateMenuItemQty,
+            executeUpdate(String.format(QueryTemplate.decreaseMenuItemQty,
                     quantity,
                     item.menuItemId
             ));
@@ -121,7 +122,14 @@ public class DBDriverSingleton {
     }
 
     public void updateOrder(Order updatedOrder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executeUpdate(String.format(QueryTemplate.updateOrder,
+                updatedOrder.month,
+                updatedOrder.week,
+                updatedOrder.day,
+                updatedOrder.hour,
+                updatedOrder.price,
+                updatedOrder.orderId
+        ));
     }
 
     public void deleteOrder(UUID orderId) {
@@ -140,7 +148,6 @@ public class DBDriverSingleton {
                     String.format(QueryTemplate.selectEmployee, employeeId),
                     SQLToJavaMapper::employeeMapper
             );
-
             if (employees.isEmpty()) {
                 throw new SQLException("Employee not found");
             }
@@ -148,16 +155,23 @@ public class DBDriverSingleton {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return employee;
     }
 
     public List<Employee> selectEmployees() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Employee> employees = null;
+        try {
+            employees = executeQuery(
+                    String.format(QueryTemplate.selectAllEmployees),
+                    SQLToJavaMapper::employeeMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
     }
 
-    public void insertEmployee(Employee newEmployee)
-    {
+    public void insertEmployee(Employee newEmployee) {
         executeUpdate(String.format(QueryTemplate.insertEmployee,
                 newEmployee.employeeID,
                 newEmployee.isManager,
@@ -180,11 +194,34 @@ public class DBDriverSingleton {
 
     // Inventory
     public InventoryItem selectInventoryItem(UUID inventoryItemId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        InventoryItem item = null;
+        try {
+            List<InventoryItem> items = executeQuery(
+                    String.format(QueryTemplate.selectInventoryItem, inventoryItemId),
+                    SQLToJavaMapper::inventoryItemMapper
+            );
+
+            if (items.isEmpty()) {
+                throw new SQLException("Inventory Item not found");
+            }
+            item = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     public List<InventoryItem> selectInventoryItems() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<InventoryItem> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.selectAllInventoryItems),
+                    SQLToJavaMapper::inventoryItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
     }
 
     public void insertInventoryItem(InventoryItem newInventoryItem) {
@@ -212,11 +249,34 @@ public class DBDriverSingleton {
 
     // Menu items
     public MenuItem selectMenuItem(UUID menuItemId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        MenuItem item = null;
+        try {
+            List<MenuItem> items = executeQuery(
+                    String.format(QueryTemplate.selectMenuItem, menuItemId),
+                    SQLToJavaMapper::menuItemMapper
+            );
+
+            if (items.isEmpty()) {
+                throw new SQLException("Menu Item not found");
+            }
+            item = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     public List<MenuItem> selectMenuItems() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<MenuItem> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.selectAllMenuItems),
+                    SQLToJavaMapper::menuItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
     }
 
     public void insertMenuItem(MenuItem newMenuItem) {
@@ -293,22 +353,28 @@ public class DBDriverSingleton {
     public static void main(String[] args) throws SQLException {
         DBDriverSingleton instance = DBDriverSingleton.getInstance();
 
+        // Test logic to select multiple items
 
+        // Employee
+        List<Employee> employees = instance.selectEmployees();
+        for (Employee employee : employees) {
+            out.println("Name: " + employee.name + "\nisManager: " + employee.isManager);
+        }
+        out.println("\nNumber of employees: " + employees.size());
+        out.println();
 
-
+        //
 
 //         Test logic to place order
-            MenuItem newMenu = new MenuItem(
-//                    UUID.randomUUID(),
-                    UUID.fromString("a18045d1-1e46-4104-8b6c-c8f65eb3bf27"),
-                    420.69,
-                    420,
-                    "Lean"
+//        MenuItem newMenu = new MenuItem(
+//                UUID.fromString("a18045d1-1e46-4104-8b6c-c8f65eb3bf27"),
+//                420.69,
+//                420,
+//                "Lean"
+//        );
 
-            );
-
-        System.out.println("UUID: " + newMenu.menuItemId +"\nCost: " + newMenu.price + "\nStock: " + newMenu.availableStock + "\nItem Name:" + newMenu.itemName);
-        instance.updateMenuItem(newMenu);
+//        System.out.println("UUID: " + newMenu.menuItemId + "\nCost: " + newMenu.price + "\nStock: " + newMenu.availableStock + "\nItem Name:" + newMenu.itemName);
+//        instance.updateMenuItem(newMenu);
 //          InventoryItem newItem = new InventoryItem(
 ////                  UUID.randomUUID(),
 //                  UUID.fromString("0e2ab524-0593-4648-86e7-90a9ea102e2f"),
