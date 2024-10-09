@@ -110,12 +110,17 @@ public class ManagerController {
     public void addItem() throws RuntimeException {
         // check if inventory items, menuitems, or employees is selected
         Tab selectedTab = Tab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
+        TextInputDialog dialog = new TextInputDialog();
         switch (selectedTab) {
             case INVENTORYITEMS:
+                addInventoryItem();
                 break;
             case MENUITEMS:
+//                addMenuItem();
+                dialog.show();
                 break;
             case EMPLOYEES:
+//                addEmployee();
                 break;
             default:
                 throw new RuntimeException();
@@ -164,6 +169,35 @@ public class ManagerController {
 
         });
 
+    }
+
+    public void addInventoryItem() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Add Inventory Item");
+        dialog.setHeaderText("Add Inventory Item");
+
+        // Create the layout
+        VBox inputs = new VBox();
+        Label itemNameLabel = new Label("Item Name: ");
+        TextField itemName = new TextField();
+
+        Label itemCostLabel = new Label("Item Cost: ");
+        TextField itemCost = new TextField();
+
+        Label availableStockLabel = new Label("Available Stock: ");
+        TextField availableStock = new TextField();
+
+        Label imageUrlLabel = new Label("Image Url: ");
+        TextField imageUrl = new TextField();
+
+        // Add to field
+        inputs.getChildren().addAll(itemNameLabel, itemName, itemCostLabel, itemCost, availableStockLabel, availableStock, imageUrlLabel, imageUrl);
+        dialog.getDialogPane().setContent(inputs);
+
+        // Add buttons
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.show();
     }
 
     // Populate mock objects
