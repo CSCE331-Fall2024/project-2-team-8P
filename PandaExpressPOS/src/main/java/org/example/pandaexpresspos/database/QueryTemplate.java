@@ -67,7 +67,7 @@ class QueryTemplate {
             """;
     public static final String updateInventoryItem = """
             UPDATE inventoryItem
-            SET price = %f, availableStock = %d, itemName = '%s'
+            SET cost = %f, availableStock = %d, itemName = '%s'
             WHERE inventoryItemId = '%s';
             """;
 

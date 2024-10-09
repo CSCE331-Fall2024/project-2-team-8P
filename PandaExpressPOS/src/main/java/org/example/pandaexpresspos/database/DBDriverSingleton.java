@@ -35,6 +35,7 @@ public class DBDriverSingleton {
     // Order
     public Order selectOrder(UUID orderId) {
         throw new UnsupportedOperationException("Not supported yet.");
+
     }
 
     public List<Order> selectOrders(Integer mostRecent) {
@@ -121,12 +122,27 @@ public class DBDriverSingleton {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void insertEmployee(Employee newEmployee) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void insertEmployee(Employee newEmployee)
+    {
+        executeUpdate(String.format(QueryTemplate.insertEmployee,
+                newEmployee.employeeID,
+                newEmployee.isManager,
+                newEmployee.name
+                ));
+
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateEmployee(Order updatedEmployee) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void updateEmployee(Employee updatedEmployee) {
+        executeUpdate(String.format(QueryTemplate.updateEmployee,
+                updatedEmployee.isManager,
+                updatedEmployee.name,
+                updatedEmployee.employeeID
+                ));
+
+//        throw new UnsupportedOperationException("Not supported yet.");
+
+
     }
 
     public void deleteEmployee(UUID employeeId) {
@@ -144,11 +160,28 @@ public class DBDriverSingleton {
     }
 
     public void insertInventoryItem(InventoryItem newInventoryItem) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executeUpdate(String.format(QueryTemplate.insertInventoryItem,
+                newInventoryItem.inventoryItemId,
+                newInventoryItem.cost,
+                newInventoryItem.availableStock,
+                newInventoryItem.itemName
+
+        ));
+
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void updateInventoryItem(InventoryItem newInventoryItem) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        executeUpdate(String.format(QueryTemplate.updateInventoryItem,
+                newInventoryItem.cost,
+                newInventoryItem.availableStock,
+                newInventoryItem.itemName,
+                newInventoryItem.inventoryItemId
+
+        ));
+//        throw new UnsupportedOperationException("Not supported yet.");
+
     }
 
     public void deleteInventoryItem(UUID inventoryItemId) {
@@ -166,11 +199,25 @@ public class DBDriverSingleton {
     }
 
     public void insertMenuItem(MenuItem newMenuItem) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executeUpdate(String.format(QueryTemplate.insertMenuItem,
+                newMenuItem.menuItemId,
+                newMenuItem.price,
+                newMenuItem.availableStock,
+                newMenuItem.itemName
+
+        ));
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void updateMenuItem(MenuItem newMenuItem) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        executeUpdate(String.format(QueryTemplate.updateMenuItem,
+                newMenuItem.price,
+                newMenuItem.availableStock,
+                newMenuItem.itemName,
+                newMenuItem.menuItemId
+
+        ));
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void deleteMenuItem(UUID menuItemId) {
@@ -229,7 +276,43 @@ public class DBDriverSingleton {
     public static void main(String[] args) throws SQLException {
         DBDriverSingleton instance = DBDriverSingleton.getInstance();
 
-        // Test logic to place order
+
+
+
+
+//         Test logic to place order
+            MenuItem newMenu = new MenuItem(
+//                    UUID.randomUUID(),
+                    UUID.fromString("a18045d1-1e46-4104-8b6c-c8f65eb3bf27"),
+                    420.69,
+                    420,
+                    "Lean"
+
+            );
+
+        System.out.println("UUID: " + newMenu.menuItemId +"\nCost: " + newMenu.price + "\nStock: " + newMenu.availableStock + "\nItem Name:" + newMenu.itemName);
+        instance.updateMenuItem(newMenu);
+//          InventoryItem newItem = new InventoryItem(
+////                  UUID.randomUUID(),
+//                  UUID.fromString("0e2ab524-0593-4648-86e7-90a9ea102e2f"),
+//                  69.69,
+//                  690,
+//                  "Codeine"
+//          );
+//        System.out.println("UUID: " + newItem.inventoryItemId +"\nCost: " + newItem.cost + "\nStock: " + newItem.availableStock + "\nItem Name:" + newItem.itemName);
+//        instance.updateInventoryItem(newItem);
+
+//        Employee newemployee = new Employee(
+//                UUID.randomUUID(),
+//                UUID.fromString("aa3b94bb-4dc2-4d4b-b20b-c23646a1237e"),
+//                true,
+//                "Ryandumb"
+//        );
+//        instance.updateEmployee(newemployee);
+//        instance.insertEmployee(newemployee);
+//
+//        System.out.println("UUID: " + newemployee.employeeID +"\nName: " + newemployee.name + "\nisManager: " + newemployee.isManager);
+
 //        Order newOrder = new Order(
 //                UUID.randomUUID(),
 //                UUID.fromString("1bbd8bdf-defc-4d6d-8cb0-7b4a5989c7ba"),
@@ -256,7 +339,8 @@ public class DBDriverSingleton {
 //        out.println("Order ID: " + newOrder.orderId);
 //        instance.insertOrder(newOrder);
 
-        Employee emp = instance.selectEmployee(UUID.fromString("01e98262-a7a7-41f1-b347-6df6081f4563"));
-        System.out.println("Name: " + emp.name + "\nisManager: " + emp.isManager);
+//
+//        Employee emp = instance.selectEmployee(UUID.fromString("01e98262-a7a7-41f1-b347-6df6081f4563"));
+//        System.out.println("Name: " + emp.name + "\nisManager: " + emp.isManager);
     }
 }
