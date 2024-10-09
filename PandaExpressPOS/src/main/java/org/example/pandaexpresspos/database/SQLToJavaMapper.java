@@ -19,7 +19,19 @@ class SQLToJavaMapper {
         }
     }
 
-//    public static Order orderMapper(ResultSet rs) {
-//
-//    }
+    public static Order orderMapper(ResultSet rs) {
+        try {
+            return new Order(
+                    UUID.fromString(rs.getString("orderId")),
+                    UUID.fromString(rs.getString("cashierId")),
+                    rs.getInt("month"),
+                    rs.getInt("week"),
+                    rs.getInt("day"),
+                    rs.getInt("hour"),
+                    rs.getDouble("price")
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Error mapping ResultSet to Order", e);
+        }
+    }
 }

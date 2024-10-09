@@ -2,7 +2,6 @@ package org.example.pandaexpresspos.database;
 
 import static java.lang.System.out;
 
-import javafx.scene.control.Menu;
 import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
@@ -28,18 +27,44 @@ public class DBDriverSingleton {
     }
 
     // Public methods:
-    /*
-    TODO: since the method signatures look very similar for all of the database
-     tables we could perhaps make them generic
-     */
+
     // Order
     public Order selectOrder(UUID orderId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Order order = null;
+        try {
+            List<Order> orders = executeQuery(
+                    String.format(QueryTemplate.selectEmployee, orderId),
+                    SQLToJavaMapper::orderMapper
+            );
 
+            if (orders.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            order = orders.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return order;
     }
 
     public List<Order> selectOrders(Integer mostRecent) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Order order = null;
+        try {
+            List<Order> orders = executeQuery(
+                    String.format(QueryTemplate.selectRecentOrders, orderId),
+                    SQLToJavaMapper::orderMapper
+            );
+
+            if (orders.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            order = orders.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return order;
     }
 
     public List<Order> selectOrders(Integer startDate, Integer endDate) {
@@ -105,17 +130,26 @@ public class DBDriverSingleton {
 
 
     // Employee
-    public Employee selectEmployee(UUID employeeId) throws SQLException {
+    public Employee selectEmployee(UUID employeeId) {
         // 1. Accepts employeeId
         // 2. Executes a select SQL query
         // 3. Puts the information retrieved from the DB into an `Employee` object and returns it
-        String query = String.format(QueryTemplate.selectEmployee, employeeId);
-        List<Employee> employees = executeQuery(query, SQLToJavaMapper::employeeMapper);
+        Employee employee = null;
+        try {
+            List<Employee> employees = executeQuery(
+                    String.format(QueryTemplate.selectEmployee, employeeId),
+                    SQLToJavaMapper::employeeMapper
+            );
 
-        if (employees.isEmpty()) {
-            throw new SQLException("Employee not found");
+            if (employees.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            employee = employees.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return employees.getFirst();
+
+        return employee;
     }
 
     public List<Employee> selectEmployees() {
@@ -128,9 +162,7 @@ public class DBDriverSingleton {
                 newEmployee.employeeID,
                 newEmployee.isManager,
                 newEmployee.name
-                ));
-
-//        throw new UnsupportedOperationException("Not supported yet.");
+        ));
     }
 
     public void updateEmployee(Employee updatedEmployee) {
@@ -138,11 +170,7 @@ public class DBDriverSingleton {
                 updatedEmployee.isManager,
                 updatedEmployee.name,
                 updatedEmployee.employeeID
-                ));
-
-//        throw new UnsupportedOperationException("Not supported yet.");
-
-
+        ));
     }
 
     public void deleteEmployee(UUID employeeId) {
@@ -165,23 +193,16 @@ public class DBDriverSingleton {
                 newInventoryItem.cost,
                 newInventoryItem.availableStock,
                 newInventoryItem.itemName
-
         ));
-
-//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateInventoryItem(InventoryItem newInventoryItem) {
-
+    public void updateInventoryItem(InventoryItem updatedInventoryItem) {
         executeUpdate(String.format(QueryTemplate.updateInventoryItem,
-                newInventoryItem.cost,
-                newInventoryItem.availableStock,
-                newInventoryItem.itemName,
-                newInventoryItem.inventoryItemId
-
+                updatedInventoryItem.cost,
+                updatedInventoryItem.availableStock,
+                updatedInventoryItem.itemName,
+                updatedInventoryItem.inventoryItemId
         ));
-//        throw new UnsupportedOperationException("Not supported yet.");
-
     }
 
     public void deleteInventoryItem(UUID inventoryItemId) {
@@ -204,20 +225,16 @@ public class DBDriverSingleton {
                 newMenuItem.price,
                 newMenuItem.availableStock,
                 newMenuItem.itemName
-
         ));
-//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void updateMenuItem(MenuItem newMenuItem) {
+    public void updateMenuItem(MenuItem updatedMenuItem) {
         executeUpdate(String.format(QueryTemplate.updateMenuItem,
-                newMenuItem.price,
-                newMenuItem.availableStock,
-                newMenuItem.itemName,
-                newMenuItem.menuItemId
-
+                updatedMenuItem.price,
+                updatedMenuItem.availableStock,
+                updatedMenuItem.itemName,
+                updatedMenuItem.menuItemId
         ));
-//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void deleteMenuItem(UUID menuItemId) {
