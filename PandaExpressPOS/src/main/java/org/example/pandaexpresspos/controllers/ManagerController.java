@@ -17,20 +17,21 @@ import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 
 import javafx.event.ActionEvent;
+import org.example.pandaexpresspos.models.InventoryItem;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ManagerController {
 
     @FXML
-    private GridPane inventoryItems;
+    private GridPane inventoryItemsGridPane;
     @FXML
-    private GridPane menuItems;
+    private GridPane menuItemsGridPane;
     @FXML
-    private GridPane employeeItems;
+    private GridPane employeeItemsGridPane;
     @FXML
     private Button logoutButton;
     @FXML
@@ -38,10 +39,12 @@ public class ManagerController {
     @FXML
     private TabPane itemsTabPane;
 
-    // Map inventory item name to [stock, image url]
-    Map<String, String[]> inventoryList = new HashMap<>();
-    Map<String, Object[]> menuList = new HashMap<>();
-    Map<String, String[]> employeeList = new HashMap<>();
+    // Global Constant for Images
+    String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+
+
+    Map<String, Object[]> menuGridList = new HashMap<>();
+    Map<String, String[]> employeeGridList = new HashMap<>();
 
     enum Tab {
         INVENTORYITEMS(0),
@@ -70,16 +73,17 @@ public class ManagerController {
             throw new IllegalArgumentException("No tab found with value: " + value);
         }
     }
-    enum Mode {
-        UPDATE,
-        ADD,
-        DELETE
-    }
+
 
     // Arbitrary values for inventory items, menu items, and employees
-    String[] itemNames = {
-            "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
-    };
+//    String[] itemNames = {
+//            "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
+//    };
+    ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
+// Add multiple items to the ArrayList
+
+
+
 
     String[] menuNames = {
             "Orange Chicken", "Chow Mein", "Fried Rice", "Beijing Beef", "Super Greens"
@@ -116,7 +120,7 @@ public class ManagerController {
         TextInputDialog dialog = new TextInputDialog();
         switch (selectedTab) {
             case INVENTORYITEMS:
-                updateInventoryItems(Mode.ADD, Optional.empty());
+                updateInventoryItems(Optional.empty());
                 break;
             case MENUITEMS:
 //                addMenuItem();
@@ -131,61 +135,8 @@ public class ManagerController {
         }
     }
 
-    // Handle adding and removing inventory items
-    public void handleInventoryItemClicked(Button button, String name) {
-        //        button.setOnMouseClicked(e -> {
-//            // Create a TextInputDialog to add to inventory
-//            TextInputDialog dialog = new TextInputDialog();
-//            dialog.setTitle("Update Inventory");
-//            dialog.setHeaderText("Enter amount to add to inventory");
-//            dialog.setContentText("Amount:");
-//
-//            // Show the dialog and capture the input
-//            Optional<String> result = dialog.showAndWait();
-//
-//            // Only process if user provides value
-//            if (result.isPresent()) {
-//                String newInventoryText = result.get();
-//                try {
-//                    String inventoryStock = inventoryList.get(name)[0];
-//                    int currentStock = Integer.parseInt(inventoryStock);
-//                    int addedStock = Integer.parseInt(newInventoryText);
-//
-//                    if (addedStock > 0) {
-//                        String newInventory = String.valueOf(currentStock + addedStock);
-//                        String inventoryImg = inventoryList.get(name)[1];
-//                        inventoryList.put(name, new String[]{newInventory, inventoryImg});
-//                        // redraw the grid
-//                        inventoryItems.getChildren().clear();
-//                        createInventoryGrid();
-//
-//                    } else {
-//                        // Alert user for invalid input
-//                        showAlert("Invalid inventory amount", "Please enter a positive number.");
-//                    }
-//                } catch (NumberFormatException ex) {
-//                    // Alert user for invalid number format
-//                    showAlert("Invalid input", "Please enter a valid number.");
-//                }
-//            }
-//
-//        });
-        button.setOnMouseClicked(e ->{
-            this.updateInventoryItems(Mode.UPDATE, Optional.of(name));
-        });
-    }
-
-    public void updateInventoryItems(Mode mode, Optional<String> inventoryItemName) {
-        // Change the title of the popup depending on the mode
-        String dialogLabelName = "";
-        switch (mode) {
-            case ADD -> dialogLabelName = "Add";
-            case UPDATE -> dialogLabelName = "Update";
-        }
-
+    public void updateInventoryItems(Optional<InventoryItem> inventoryItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle(dialogLabelName + " Inventory Item");
-        dialog.setHeaderText(dialogLabelName + " Inventory Item");
 
         // Create the layout
         VBox inputs = new VBox();
@@ -201,13 +152,20 @@ public class ManagerController {
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
 
+        AtomicReference<String> dialogLabelName = new AtomicReference<>("Add");
+
         // If name is non-empty, we are in update mode
-        inventoryItemName.ifPresent(safeName -> {
-            itemName.setText(safeName);
-            itemCost.setText("TODO:");
-            availableStock.setText(inventoryList.get(safeName)[0]);
-            imageUrl.setText(inventoryList.get(safeName)[1]);
+        inventoryItem.ifPresent(safeItem -> {
+            itemName.setText(safeItem.itemName);
+            itemCost.setText(String.valueOf(safeItem.cost));
+            availableStock.setText(String.valueOf(safeItem.availableStock));
+            imageUrl.setText(sampleImg);
+            dialogLabelName.set("Update");
+
         });
+
+        dialog.setTitle(dialogLabelName + " Inventory Item");
+        dialog.setHeaderText(dialogLabelName + " Inventory Item");
 
 
         // Add to field
@@ -238,14 +196,25 @@ public class ManagerController {
             String cost = outputs[1];
             String stock = outputs[2];
             String url = outputs[3];
-            // Remove the previous name if we are updating, in case name changed
-            inventoryItemName.ifPresent(safeName->{
-                inventoryList.remove(safeName);
+
+            // Remove the previous item if we are updating, in case name changed
+            inventoryItem.ifPresent(safeItem->{
+                inventoryItems.removeIf(item -> (
+                        item.itemName.equals(safeItem.itemName)
+                ));
+                inventoryItems.add(new InventoryItem(safeItem.inventoryItemId, Double.parseDouble(cost),
+                        Integer.parseInt(stock), name));
+                inventoryItemsGridPane.getChildren().clear();
             });
-            // Add to existing list of inventory items
-            inventoryList.put(name, new String[]{stock, url});
-            // redraw the grid
-            inventoryItems.getChildren().clear();
+
+            // If we need to add a new item, no inventory item will be passed in
+            if (inventoryItem.isEmpty()) {
+                inventoryItems.add(new InventoryItem(Double.parseDouble(cost),
+                        Integer.parseInt(stock), name));
+            }
+
+            // redraw the grid to reflect the updates
+            inventoryItemsGridPane.getChildren().clear();
             createInventoryGrid();
 
         });
@@ -253,19 +222,13 @@ public class ManagerController {
 
     // Populate mock objects
     public void populateInventory() {
-        try {
-            String inventoryItemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
-            String inventoryItemCount = "50";
-            for (String name : itemNames) {
-                // Store the stock amount and image in the map
-                inventoryList.put(name, new String[]{inventoryItemCount, inventoryItemImg});
-            }
-        } catch (Exception e) {
-            System.out.println("Image not found");
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
+        inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
+        inventoryItems.add(new InventoryItem(9.99, 50, "Silverware"));
+        inventoryItems.add(new InventoryItem(3.99, 200, "Orange Sauce"));
+        inventoryItems.add(new InventoryItem(2.99, 150, "Soy Sauce"));
+        inventoryItems.add(new InventoryItem(1.49, 300, "Prepackaged Noodles"));
+        inventoryItems.add(new InventoryItem(7.99, 80, "Beef"));
+        inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
     }
 
     public void createInventoryGrid() {
@@ -273,13 +236,13 @@ public class ManagerController {
         int x = 0;
         int y = 0;
 
-        inventoryItems.setHgap(10);
+        inventoryItemsGridPane.setHgap(10);
 //        inventoryItems.setVgap(-30);
-        inventoryItems.setAlignment(Pos.CENTER);
+        inventoryItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (String name : inventoryList.keySet()) {
-            String itemStock = inventoryList.get(name)[0];
-            String itemImg = inventoryList.get(name)[1];
+        for (InventoryItem item : inventoryItems) {
+            String itemStock = String.valueOf(item.availableStock);
+            String itemImg = sampleImg;
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
@@ -288,8 +251,10 @@ public class ManagerController {
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
                             "-fx-background-size: cover;");
-            handleInventoryItemClicked(button, name);
-            Label nameLabel = new Label(name);
+            button.setOnMouseClicked(e ->{
+                this.updateInventoryItems(Optional.of(item));
+            });
+            Label nameLabel = new Label(item.itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             Label itemStockLabel = new Label("Qty: " + itemStock);
 
@@ -302,7 +267,7 @@ public class ManagerController {
             layout.getChildren().addAll(button, nameLabel, itemStockLabel);
 
 
-            inventoryItems.add(layout, x, y);
+            inventoryItemsGridPane.add(layout, x, y);
 
             // Update grid position
             x++;
@@ -325,7 +290,7 @@ public class ManagerController {
             Image menuImage = new Image(imageUrl.toExternalForm());
             for (String name : menuNames) {
                 // Store stock amount and image in map
-                menuList.put(name, new Object[]{"2.50", menuImage});
+                menuGridList.put(name, new Object[]{"2.50", menuImage});
             }
         } else {
             System.out.println("Image not found");
@@ -339,12 +304,12 @@ public class ManagerController {
 
         // Set gaps for GridPane
 //        inventoryItems.setVgap(30); // Vertical gap between rows
-        menuItems.setHgap(10); // Horizontal gap between columns
-        menuItems.setAlignment(Pos.CENTER);
+        menuItemsGridPane.setHgap(10); // Horizontal gap between columns
+        menuItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (String name : menuList.keySet()) {
-            ImageView menuImage = new ImageView((Image) menuList.get(name)[1]);
-            String menuPrice = (String) menuList.get(name)[0];
+        for (String name : menuGridList.keySet()) {
+            ImageView menuImage = new ImageView((Image) menuGridList.get(name)[1]);
+            String menuPrice = (String) menuGridList.get(name)[0];
 
             menuImage.setFitHeight(60);
             menuImage.setFitWidth(60);
@@ -371,7 +336,7 @@ public class ManagerController {
 
                         if (newPrice > 0) {
                             label.setText(name + ": " + newPrice);
-                            menuList.put(name, new Object[]{String.valueOf(newPrice), menuImage.getImage()});
+                            menuGridList.put(name, new Object[]{String.valueOf(newPrice), menuImage.getImage()});
 
                         } else {
                             // Alert user for invalid input
@@ -386,7 +351,7 @@ public class ManagerController {
 
             layout.getChildren().addAll(menuImage, label);
 
-            menuItems.add(layout, x, y);
+            menuItemsGridPane.add(layout, x, y);
 
             // Update grid position
             x++;
@@ -403,7 +368,7 @@ public class ManagerController {
             String employeePosition = "Cashier";
             for (String name : employees) {
                 // Store the stock amount and image in the map
-                employeeList.put(name, new String[]{employeePosition, employeeImg});
+                employeeGridList.put(name, new String[]{employeePosition, employeeImg});
             }
         } catch (Exception e) {
             System.out.println("Image not found");
@@ -420,13 +385,13 @@ public class ManagerController {
 
         // Set gaps for GridPane
 //        inventoryItems.setVgap(30); // Vertical gap between rows
-        employeeItems.setHgap(10); // Horizontal gap between columns
-        employeeItems.setAlignment(Pos.CENTER);
+        employeeItemsGridPane.setHgap(10); // Horizontal gap between columns
+        employeeItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (String name : employeeList.keySet()) {
+        for (String name : employeeGridList.keySet()) {
 //            System.out.println(name);
-            String employeeImage = employeeList.get(name)[1];
-            String employeePosition = employeeList.get(name)[0];
+            String employeeImage = employeeGridList.get(name)[1];
+            String employeePosition = employeeGridList.get(name)[0];
 
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
@@ -448,7 +413,7 @@ public class ManagerController {
 
             layout.getChildren().addAll(button, employeeLabel, employeePositionLabel);
 
-            employeeItems.add(layout, x, y);
+            employeeItemsGridPane.add(layout, x, y);
 
             // Update grid position
             x++;
