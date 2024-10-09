@@ -40,6 +40,7 @@ public class ManagerController {
     @FXML
     private TabPane itemsTabPane;
 
+    // Map inventory item name to [stock, image url]
     Map<String, String[]> inventoryList = new HashMap<>();
     Map<String, Object[]> menuList = new HashMap<>();
     Map<String, Object[]> employeeList = new HashMap<>();
@@ -197,7 +198,34 @@ public class ManagerController {
         // Add buttons
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        dialog.show();
+        // Handle the result
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                //TODO: add validation
+                return new ButtonType(
+                        itemName.getText() + "," +
+                           itemCost.getText() + ", " +
+                           availableStock.getText() + ", " +
+                           imageUrl.getText()
+                );
+            }
+            return null;
+        });
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        result.ifPresent(outputFields -> {
+            String[] outputs = outputFields.getText().split(",");
+            String name = outputs[0];
+            String cost = outputs[1];
+            String stock = outputs[2];
+            String url = outputs[3];
+            // Add to existing list of inventory items
+            inventoryList.put(name, new String[]{stock, url});
+            // redraw the grid
+            inventoryItems.getChildren().clear();
+            createInventoryGrid();
+
+        });
     }
 
     // Populate mock objects
