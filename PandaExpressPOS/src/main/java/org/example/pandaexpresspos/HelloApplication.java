@@ -13,9 +13,9 @@ public class HelloApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("fxml/hello-view.fxml"));
         FXMLLoader CashierLoader = new FXMLLoader(getClass().getResource("fxml/cashier-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        //Scene cashierApp = new Scene(CashierLoader.load(), 1200, 800);
+        Scene cashierApp = new Scene(CashierLoader.load(), 1200, 800);
         stage.setTitle("Hello!");
-        stage.setScene(scene);
+        stage.setScene(cashierApp);
         stage.show();
 
     }
