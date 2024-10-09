@@ -42,7 +42,7 @@ public class ManagerController {
 
     // Map inventory item name to [stock, image url]
     Map<String, String[]> inventoryList = new HashMap<>();
-    Map<String, Object[]> menuList = new HashMap<>();
+    Map<String, String[]> menuList = new HashMap<>();
     Map<String, String[]> employeeList = new HashMap<>();
 
     enum Tab {
@@ -297,71 +297,54 @@ public class ManagerController {
 
 
     public void populateMenuItems() {
-        URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
-        if (imageUrl != null) {
-            Image menuImage = new Image(imageUrl.toExternalForm());
+        try {
+            String menuItemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+            String menuItemCost = "2.50";
             for (String name : menuNames) {
-                // Store stock amount and image in map
-                menuList.put(name, new Object[]{"2.50", menuImage});
+                // Store the stock amount and image in the map
+                menuList.put(name, new String[]{menuItemCost, menuItemImg});
             }
-        } else {
+        } catch (Exception e) {
             System.out.println("Image not found");
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+
     }
 
     public void createMenuItemsGrid() {
-        int columns = 5; // Max number of columns in row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
-        // Set gaps for GridPane
-//        inventoryItems.setVgap(30); // Vertical gap between rows
-        menuItems.setHgap(10); // Horizontal gap between columns
+        menuItems.setHgap(10);
+//        inventoryItems.setVgap(-30);
         menuItems.setAlignment(Pos.CENTER);
 
         for (String name : menuList.keySet()) {
-            ImageView menuImage = new ImageView((Image) menuList.get(name)[1]);
-            String menuPrice = (String) menuList.get(name)[0];
+            String menuPrice = menuList.get(name)[0];
+            String menuItemImg = menuList.get(name)[1];
 
-            menuImage.setFitHeight(60);
-            menuImage.setFitWidth(60);
-            menuImage.setPreserveRatio(true);
-
-
+            // Create a vertical box for image and label
             VBox layout = new VBox(10);
-            layout.setPadding(new Insets(10));
             layout.setAlignment(Pos.CENTER);
-            Label label = new Label(name + ": " + menuPrice);
+            Button button = new Button();
+            button.setMinSize(60, 60);
+            button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
+                    "-fx-background-size: cover;");
+//            handleInventoryItemClicked(button, name);
+            Label nameLabel = new Label(name);
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            Label menuPriceLabel = new Label(menuPrice);
 
-            menuImage.setOnMouseClicked(e -> {
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Update Menu Item");
-                dialog.setHeaderText("Enter new price");
-                dialog.setContentText("Price:");
+            // Allow the VBox to grow in the GridPane cell
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
-                Optional<String> result = dialog.showAndWait();
+            // Add items to vbox
+            layout.getChildren().addAll(button, nameLabel, menuPriceLabel);
 
-                if (result.isPresent()) {
-                    String newMenuText = result.get();
-                    try {
-                        double newPrice = Double.parseDouble(newMenuText);
-
-                        if (newPrice > 0) {
-                            label.setText(name + ": " + newPrice);
-                            menuList.put(name, new Object[]{String.valueOf(newPrice), menuImage.getImage()});
-
-                        } else {
-                            // Alert user for invalid input
-                            showAlert("Invalid price", "Please enter a positive number.");
-                        }
-                    } catch (NumberFormatException ex) {
-                        // Alert user for invalid number format
-                        showAlert("Invalid input", "Please enter a valid number.");
-                    }
-                }
-            });
-
-            layout.getChildren().addAll(menuImage, label);
 
             menuItems.add(layout, x, y);
 
@@ -371,7 +354,10 @@ public class ManagerController {
                 x = 0;
                 y++;
             }
+
         }
+
+
     }
 
     public void populateEmployees() {
@@ -393,7 +379,6 @@ public class ManagerController {
         int columns = 5; // Max number of columns in row
         int x = 0;
         int y = 0;
-        System.out.println("hi");
 
         // Set gaps for GridPane
 //        inventoryItems.setVgap(30); // Vertical gap between rows
