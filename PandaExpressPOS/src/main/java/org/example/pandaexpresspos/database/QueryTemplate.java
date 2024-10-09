@@ -8,6 +8,7 @@ class QueryTemplate {
             """;
     public static final String selectRecentOrders = """
             SELECT * FROM "order"
+            WHERE month = %d
             ORDER BY month DESC, day DESC, hour DESC
             LIMIT %d;
             """;
@@ -51,7 +52,7 @@ class QueryTemplate {
     // Inventory items
     public static final String selectInventoryItem = """
             SELECT * FROM inventoryItem
-            WHERE inventoryId = '%s';
+            WHERE inventoryItemId = '%s';
             """;
     public static final String selectAllInventoryItems = """
             SELECT * FROM inventoryItem;
@@ -60,9 +61,14 @@ class QueryTemplate {
             INSERT INTO inventoryItem (inventoryItemId, cost, availableStock, itemName)
             VALUES ('%s', %f, %d, '%s');
             """;
-    public static final String updateInventoryItemQty = """
+    public static final String decreaseInventoryItemQty = """
             UPDATE inventoryItem
             SET availableStock = availableStock - %d
+            WHERE inventoryItemId = '%s';
+            """;
+    public static final String increaseInventoryItemQty = """
+            UPDATE inventoryItem
+            SET availableStock = availableStock + %d
             WHERE inventoryItemId = '%s';
             """;
     public static final String updateInventoryItem = """
@@ -83,9 +89,14 @@ class QueryTemplate {
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
             VALUES ('%s', %f, %d, '%s');
             """;
-    public static final String updateMenuItemQty = """
+    public static final String decreaseMenuItemQty = """
             UPDATE menuItem
             SET availableStock = availableStock - %d
+            WHERE menuItemId = '%s';
+            """;
+    public static final String increaseMenuItemQty = """
+            UPDATE menuItem
+            SET availableStock = availableStock + %d
             WHERE menuItemId = '%s';
             """;
     public static final String updateMenuItem = """
