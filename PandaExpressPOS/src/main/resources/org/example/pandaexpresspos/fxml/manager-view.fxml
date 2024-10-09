@@ -126,12 +126,13 @@
             </Tab>
          </TabPane>
          <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
-            <Button fx:id="addItemButton" minWidth="100.0" mnemonicParsing="false" onAction="#addItem" text="Add item" />
-            <Button fx:id="logoutButton" minWidth="100.0" mnemonicParsing="false" onAction="#logout" text="Logout">
+            <Button fx:id="addItemButton" mnemonicParsing="false" onAction="#addItem" text="Add item" />
+            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" text="Logout">
                <HBox.margin>
                   <Insets bottom="5.0" right="5.0" />
                </HBox.margin>
             </Button>
+            <Button mnemonicParsing="false" text="Generate Report" />
          </HBox>
       </VBox>
    </HBox>
