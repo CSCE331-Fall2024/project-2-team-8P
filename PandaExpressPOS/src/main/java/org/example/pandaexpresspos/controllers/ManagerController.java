@@ -1,6 +1,5 @@
 package org.example.pandaexpresspos.controllers;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -10,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -72,7 +70,11 @@ public class ManagerController {
             throw new IllegalArgumentException("No tab found with value: " + value);
         }
     }
-
+    enum Mode {
+        UPDATE,
+        ADD,
+        DELETE
+    }
 
     // Arbitrary values for inventory items, menu items, and employees
     String[] itemNames = {
@@ -114,7 +116,7 @@ public class ManagerController {
         TextInputDialog dialog = new TextInputDialog();
         switch (selectedTab) {
             case INVENTORYITEMS:
-                addInventoryItem();
+                updateInventoryItems(Mode.ADD, Optional.empty());
                 break;
             case MENUITEMS:
 //                addMenuItem();
@@ -129,53 +131,61 @@ public class ManagerController {
         }
     }
 
-    // Handle inventory items
+    // Handle adding and removing inventory items
     public void handleInventoryItemClicked(Button button, String name) {
-
-        button.setOnMouseClicked(e -> {
-            // Create a TextInputDialog to add to inventory
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Update Inventory");
-            dialog.setHeaderText("Enter amount to add to inventory");
-            dialog.setContentText("Amount:");
-
-            // Show the dialog and capture the input
-            Optional<String> result = dialog.showAndWait();
-
-            // Only process if user provides value
-            if (result.isPresent()) {
-                String newInventoryText = result.get();
-                try {
-                    String inventoryStock = inventoryList.get(name)[0];
-                    int currentStock = Integer.parseInt(inventoryStock);
-                    int addedStock = Integer.parseInt(newInventoryText);
-
-                    if (addedStock > 0) {
-                        String newInventory = String.valueOf(currentStock + addedStock);
-                        String inventoryImg = inventoryList.get(name)[1];
-                        inventoryList.put(name, new String[]{newInventory, inventoryImg});
-                        // redraw the grid
-                        inventoryItems.getChildren().clear();
-                        createInventoryGrid();
-
-                    } else {
-                        // Alert user for invalid input
-                        showAlert("Invalid inventory amount", "Please enter a positive number.");
-                    }
-                } catch (NumberFormatException ex) {
-                    // Alert user for invalid number format
-                    showAlert("Invalid input", "Please enter a valid number.");
-                }
-            }
-
+        //        button.setOnMouseClicked(e -> {
+//            // Create a TextInputDialog to add to inventory
+//            TextInputDialog dialog = new TextInputDialog();
+//            dialog.setTitle("Update Inventory");
+//            dialog.setHeaderText("Enter amount to add to inventory");
+//            dialog.setContentText("Amount:");
+//
+//            // Show the dialog and capture the input
+//            Optional<String> result = dialog.showAndWait();
+//
+//            // Only process if user provides value
+//            if (result.isPresent()) {
+//                String newInventoryText = result.get();
+//                try {
+//                    String inventoryStock = inventoryList.get(name)[0];
+//                    int currentStock = Integer.parseInt(inventoryStock);
+//                    int addedStock = Integer.parseInt(newInventoryText);
+//
+//                    if (addedStock > 0) {
+//                        String newInventory = String.valueOf(currentStock + addedStock);
+//                        String inventoryImg = inventoryList.get(name)[1];
+//                        inventoryList.put(name, new String[]{newInventory, inventoryImg});
+//                        // redraw the grid
+//                        inventoryItems.getChildren().clear();
+//                        createInventoryGrid();
+//
+//                    } else {
+//                        // Alert user for invalid input
+//                        showAlert("Invalid inventory amount", "Please enter a positive number.");
+//                    }
+//                } catch (NumberFormatException ex) {
+//                    // Alert user for invalid number format
+//                    showAlert("Invalid input", "Please enter a valid number.");
+//                }
+//            }
+//
+//        });
+        button.setOnMouseClicked(e ->{
+            this.updateInventoryItems(Mode.UPDATE, Optional.of(name));
         });
-
     }
 
-    public void addInventoryItem() {
+    public void updateInventoryItems(Mode mode, Optional<String> inventoryItemName) {
+        // Change the title of the popup depending on the mode
+        String dialogLabelName = "";
+        switch (mode) {
+            case ADD -> dialogLabelName = "Add";
+            case UPDATE -> dialogLabelName = "Update";
+        }
+
         Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Add Inventory Item");
-        dialog.setHeaderText("Add Inventory Item");
+        dialog.setTitle(dialogLabelName + " Inventory Item");
+        dialog.setHeaderText(dialogLabelName + " Inventory Item");
 
         // Create the layout
         VBox inputs = new VBox();
@@ -190,6 +200,15 @@ public class ManagerController {
 
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
+
+        // If name is non-empty, we are in update mode
+        inventoryItemName.ifPresent(safeName -> {
+            itemName.setText(safeName);
+            itemCost.setText("TODO:");
+            availableStock.setText(inventoryList.get(safeName)[0]);
+            imageUrl.setText(inventoryList.get(safeName)[1]);
+        });
+
 
         // Add to field
         inputs.getChildren().addAll(itemNameLabel, itemName, itemCostLabel, itemCost, availableStockLabel, availableStock, imageUrlLabel, imageUrl);
@@ -219,6 +238,10 @@ public class ManagerController {
             String cost = outputs[1];
             String stock = outputs[2];
             String url = outputs[3];
+            // Remove the previous name if we are updating, in case name changed
+            inventoryItemName.ifPresent(safeName->{
+                inventoryList.remove(safeName);
+            });
             // Add to existing list of inventory items
             inventoryList.put(name, new String[]{stock, url});
             // redraw the grid
@@ -235,7 +258,7 @@ public class ManagerController {
             String inventoryItemCount = "50";
             for (String name : itemNames) {
                 // Store the stock amount and image in the map
-                inventoryList.put(name, new String[]{"50", inventoryItemImg});
+                inventoryList.put(name, new String[]{inventoryItemCount, inventoryItemImg});
             }
         } catch (Exception e) {
             System.out.println("Image not found");
