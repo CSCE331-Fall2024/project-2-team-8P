@@ -1,5 +1,6 @@
 package org.example.pandaexpresspos.controllers;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -9,8 +10,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 
@@ -31,13 +35,45 @@ public class ManagerController {
     private GridPane employeeItems;
     @FXML
     private Button logoutButton;
+    @FXML
+    private Button addItemButton;
+    @FXML
+    private TabPane itemsTabPane;
 
-    // Each inventory Item: Name, amount, Image
-    Map<String, Object[]> inventoryList = new HashMap<>();
+    Map<String, String[]> inventoryList = new HashMap<>();
     Map<String, Object[]> menuList = new HashMap<>();
     Map<String, Object[]> employeeList = new HashMap<>();
 
-    // Arbitrary values to be changed later
+    enum Tab {
+        INVENTORYITEMS(0),
+        MENUITEMS(1),
+        EMPLOYEES(2);
+
+        private final int value;
+
+        // Constructor
+        Tab(int value) {
+            this.value = value;
+        }
+
+        // Method to get the value
+        public int getValue() {
+            return value;
+        }
+
+        // Static method to convert an integer to an enum value
+        public static Tab fromValue(int value) {
+            for (Tab tab : Tab.values()) {
+                if (tab.getValue() == value) {
+                    return tab;
+                }
+            }
+            throw new IllegalArgumentException("No tab found with value: " + value);
+        }
+    }
+
+
+    // Arbitrary values for inventory items, menu items, and employees
     String[] itemNames = {
             "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
     };
@@ -60,13 +96,8 @@ public class ManagerController {
         createEmployeesGrid();
     }
 
-    /*
-            ========================================
-                          Logout Button
-            ========================================
-     */
-
-    public void backToLoginPage(ActionEvent event) throws IOException {
+    // Handle logout button click
+    public void logout(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         // Create a new scene and set it to the stage
         Scene scene = new Scene(loader.load(), 1200, 800);
@@ -75,93 +106,116 @@ public class ManagerController {
         stage.show();
     }
 
-    /*
-            ========================================
-                           Inventory
-            ========================================
-     */
+    // Handle adding items
+    public void addItem() throws RuntimeException {
+        // check if inventory items, menuitems, or employees is selected
+        Tab selectedTab = Tab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
+        switch (selectedTab) {
+            case INVENTORYITEMS:
+                break;
+            case MENUITEMS:
+                break;
+            case EMPLOYEES:
+                break;
+            default:
+                throw new RuntimeException();
 
-    public void populateInventory() {
-        // Load image from resources
-        URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
-        if (imageUrl != null) {
-            Image inventoryImage = new Image(imageUrl.toExternalForm());
-            for (String name : itemNames) {
-                System.out.println(name);
-                // Store the stock amount and image in the map
-                inventoryList.put(name, new Object[]{"50", inventoryImage});
-            }
-        } else {
-            System.out.println("Image not found");
         }
     }
 
+    // Handle inventory items
+    public void handleInventoryItemClicked(Button button, String name) {
+
+        button.setOnMouseClicked(e -> {
+            // Create a TextInputDialog to add to inventory
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Update Inventory");
+            dialog.setHeaderText("Enter amount to add to inventory");
+            dialog.setContentText("Amount:");
+
+            // Show the dialog and capture the input
+            Optional<String> result = dialog.showAndWait();
+
+            // Only process if user provides value
+            if (result.isPresent()) {
+                String newInventoryText = result.get();
+                try {
+                    String inventoryStock = inventoryList.get(name)[0];
+                    int currentStock = Integer.parseInt(inventoryStock);
+                    int addedStock = Integer.parseInt(newInventoryText);
+
+                    if (addedStock > 0) {
+                        String newInventory = String.valueOf(currentStock + addedStock);
+                        String inventoryImg = inventoryList.get(name)[1];
+                        inventoryList.put(name, new String[]{newInventory, inventoryImg});
+                        // redraw the grid
+                        inventoryItems.getChildren().clear();
+                        createInventoryGrid();
+
+                    } else {
+                        // Alert user for invalid input
+                        showAlert("Invalid inventory amount", "Please enter a positive number.");
+                    }
+                } catch (NumberFormatException ex) {
+                    // Alert user for invalid number format
+                    showAlert("Invalid input", "Please enter a valid number.");
+                }
+            }
+
+        });
+
+    }
+
+    // Populate mock objects
+    public void populateInventory() {
+        try {
+            String inventoryItemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+            String inventoryItemCount = "50";
+            for (String name : itemNames) {
+                // Store the stock amount and image in the map
+                inventoryList.put(name, new String[]{"50", inventoryItemImg});
+            }
+        } catch (Exception e) {
+            System.out.println("Image not found");
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public void createInventoryGrid() {
-        int columns = 5; // Max number of columns in row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
-        // Set gaps for GridPane
-//        inventoryItems.setVgap(30); // Vertical gap between rows
-        inventoryItems.setHgap(10); // Horizontal gap between columns
+        inventoryItems.setHgap(10);
+//        inventoryItems.setVgap(-30);
         inventoryItems.setAlignment(Pos.CENTER);
 
         for (String name : inventoryList.keySet()) {
-            ImageView inventoryImage = new ImageView((Image) inventoryList.get(name)[1]);
-            String inventoryStock = (String) inventoryList.get(name)[0];
+            String itemStock = inventoryList.get(name)[0];
+            String itemImg = inventoryList.get(name)[1];
 
-            inventoryImage.setFitHeight(60);
-            inventoryImage.setFitWidth(60);
-            inventoryImage.setPreserveRatio(true);
-
-
+            // Create a vertical box for image and label
             VBox layout = new VBox(10);
-            layout.setPadding(new Insets(10));
             layout.setAlignment(Pos.CENTER);
-            Label label = new Label(name + ": " + inventoryStock);
+            Button button = new Button();
+            button.setMinSize(60, 60);
+            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+                            "-fx-background-size: cover;");
+            handleInventoryItemClicked(button, name);
+            Label nameLabel = new Label(name);
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            Label itemStockLabel = new Label("Qty: " + itemStock);
 
-            inventoryImage.setOnMouseClicked(e -> {
-                // Create a TextInputDialog to add to inventory
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Update Inventory");
-                dialog.setHeaderText("Enter amount to add to inventory");
-                dialog.setContentText("Amount:");
+            // Allow the VBox to grow in the GridPane cell
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
-                // Show the dialog and capture the input
-                Optional<String> result = dialog.showAndWait();
+            // Add items to vbox
+            layout.getChildren().addAll(button, nameLabel, itemStockLabel);
 
-                // Only process if user provides value
-                if (result.isPresent()) {
-                    String newInventoryText = result.get();
-                    try {
-                        int currentStock = Integer.parseInt(inventoryStock);
-                        int addedStock = Integer.parseInt(newInventoryText);
-
-                        if (addedStock > 0) {
-                            int newInventory = currentStock + addedStock;
-                            label.setText(name + ": " + newInventory);
-                            inventoryList.put(name, new Object[]{String.valueOf(newInventory), inventoryImage.getImage()});
-
-                            // Change button color based on new inventory value
-//                            if (newInventory <= 10) {
-//                                changeInventoryButton.setStyle("-fx-background-color: red;");
-//                            } else if (newInventory <= 25) {
-//                                changeInventoryButton.setStyle("-fx-background-color: yellow;");
-//                            } else {
-//                                changeInventoryButton.setStyle("-fx-background-color: green;");
-//                            }
-                        } else {
-                            // Alert user for invalid input
-                            showAlert("Invalid inventory amount", "Please enter a positive number.");
-                        }
-                    } catch (NumberFormatException ex) {
-                        // Alert user for invalid number format
-                        showAlert("Invalid input", "Please enter a valid number.");
-                    }
-                }
-            });
-
-            layout.getChildren().addAll(inventoryImage, label);
 
             inventoryItems.add(layout, x, y);
 
@@ -171,21 +225,20 @@ public class ManagerController {
                 x = 0;
                 y++;
             }
+
         }
+
+
     }
 
-    /*
-            ========================================
-                           Menu Items
-            ========================================
-     */
+
+
 
     public void populateMenuItems() {
         URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
         if (imageUrl != null) {
             Image menuImage = new Image(imageUrl.toExternalForm());
             for (String name : menuNames) {
-                System.out.println(name);
                 // Store stock amount and image in map
                 menuList.put(name, new Object[]{"2.50", menuImage});
             }
@@ -259,18 +312,11 @@ public class ManagerController {
         }
     }
 
-    /*
-            ========================================
-                            Employees
-            ========================================
-     */
-
     public void populateEmployees() {
         URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
         if (imageUrl != null) {
             Image employeeImage = new Image(imageUrl.toExternalForm());
             for (String name : employees) {
-                System.out.println(name);
                 // Store stock amount and image in map
                 employeeList.put(name, new Object[]{"Cashier", employeeImage});
             }

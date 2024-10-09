@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
    <HBox layoutX="183.0" layoutY="150.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <padding>
          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -40,7 +40,7 @@
          </TableView>
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <TabPane fx:id="itemsTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
             <Tab text="Inventory Items">
                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <GridPane fx:id="inventoryItems" prefHeight="213.5" prefWidth="195.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -125,8 +125,9 @@
                </AnchorPane>
             </Tab>
          </TabPane>
-         <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#backToLoginPage" prefHeight="46.0" prefWidth="106.0" text="Logout">
+         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+            <Button fx:id="addItemButton" minWidth="100.0" mnemonicParsing="false" onAction="#addItem" text="Add item" />
+            <Button fx:id="logoutButton" minWidth="100.0" mnemonicParsing="false" onAction="#logout" text="Logout">
                <HBox.margin>
                   <Insets bottom="5.0" right="5.0" />
                </HBox.margin>
