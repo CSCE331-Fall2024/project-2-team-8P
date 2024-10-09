@@ -37,6 +37,7 @@ public class ManagerController {
     Map<String, Object[]> menuList = new HashMap<>();
     Map<String, Object[]> employeeList = new HashMap<>();
 
+    // Arbitrary values to be changed later
     String[] itemNames = {
             "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
     };
@@ -59,6 +60,12 @@ public class ManagerController {
         createEmployeesGrid();
     }
 
+    /*
+            ========================================
+                          Logout Button
+            ========================================
+     */
+
     public void backToLoginPage(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         // Create a new scene and set it to the stage
@@ -67,6 +74,12 @@ public class ManagerController {
         stage.setScene(scene);
         stage.show();
     }
+
+    /*
+            ========================================
+                           Inventory
+            ========================================
+     */
 
     public void populateInventory() {
         // Load image from resources
@@ -161,6 +174,12 @@ public class ManagerController {
         }
     }
 
+    /*
+            ========================================
+                           Menu Items
+            ========================================
+     */
+
     public void populateMenuItems() {
         URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
         if (imageUrl != null) {
@@ -216,14 +235,6 @@ public class ManagerController {
                             label.setText(name + ": " + newPrice);
                             menuList.put(name, new Object[]{String.valueOf(newPrice), menuImage.getImage()});
 
-                            // Change button color based on new inventory value
-//                            if (newInventory <= 10) {
-//                                changeInventoryButton.setStyle("-fx-background-color: red;");
-//                            } else if (newInventory <= 25) {
-//                                changeInventoryButton.setStyle("-fx-background-color: yellow;");
-//                            } else {
-//                                changeInventoryButton.setStyle("-fx-background-color: green;");
-//                            }
                         } else {
                             // Alert user for invalid input
                             showAlert("Invalid price", "Please enter a positive number.");
@@ -247,6 +258,12 @@ public class ManagerController {
             }
         }
     }
+
+    /*
+            ========================================
+                            Employees
+            ========================================
+     */
 
     public void populateEmployees() {
         URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
