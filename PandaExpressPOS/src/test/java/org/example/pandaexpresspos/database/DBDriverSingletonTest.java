@@ -169,7 +169,7 @@ class DBDriverSingletonTest {
         out.println("Inventory item after updating:");
         printInventoryItem(fortuneCookie);
 
-        // Restore the employee's name so this test can be reused
+        // Restore the inventory item's status so this test can be reused
         fortuneCookie.availableStock = originalQty;
         driver.updateInventoryItem(fortuneCookie);
     }
@@ -217,7 +217,7 @@ class DBDriverSingletonTest {
         out.println("Menu item after updating:");
         printMenuItem(beijingBeef);
 
-        // Restore the employee's name so this test can be reused
+        // Restore the menu item's status so this test can be reused
         beijingBeef.availableStock = originalQty;
         driver.updateMenuItem(beijingBeef);
     }
