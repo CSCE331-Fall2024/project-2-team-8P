@@ -4,6 +4,7 @@ module org.example.pandaexpresspos {
 
     requires org.controlsfx.controls;
     requires org.kordamp.bootstrapfx.core;
+    requires java.desktop;
 
     opens org.example.pandaexpresspos to javafx.fxml;
     exports org.example.pandaexpresspos;

@@ -1,14 +1,21 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.example.pandaexpresspos.LoginApplication;
 
+import javafx.event.ActionEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +27,15 @@ public class ManagerController {
     private GridPane inventoryItems;
     @FXML
     private GridPane menuItems;
+    @FXML
+    private GridPane employeeItems;
+    @FXML
+    private Button logoutButton;
 
     // Each inventory Item: Name, amount, Image
     Map<String, Object[]> inventoryList = new HashMap<>();
     Map<String, Object[]> menuList = new HashMap<>();
+    Map<String, Object[]> employeeList = new HashMap<>();
 
     String[] itemNames = {
             "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
@@ -33,12 +45,27 @@ public class ManagerController {
             "Orange Chicken", "Chow Mein", "Fried Rice", "Beijing Beef", "Super Greens"
     };
 
+    String[] employees = {
+            "Pikachu", "Ash", "Charizard"
+    };
+
     @FXML
     public void initialize() {
         populateInventory();
         populateMenuItems();
+        populateEmployees();
         createInventoryGrid();
         createMenuItemsGrid();
+        createEmployeesGrid();
+    }
+
+    public void backToLoginPage(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
+        // Create a new scene and set it to the stage
+        Scene scene = new Scene(loader.load(), 1200, 800);
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 
     public void populateInventory() {
@@ -221,6 +248,83 @@ public class ManagerController {
         }
     }
 
+    public void populateEmployees() {
+        URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
+        if (imageUrl != null) {
+            Image employeeImage = new Image(imageUrl.toExternalForm());
+            for (String name : employees) {
+                System.out.println(name);
+                // Store stock amount and image in map
+                employeeList.put(name, new Object[]{"Cashier", employeeImage});
+            }
+        } else {
+            System.out.println("Image not found");
+        }
+    }
+
+    public void createEmployeesGrid() {
+        int columns = 5; // Max number of columns in row
+        int x = 0;
+        int y = 0;
+
+        // Set gaps for GridPane
+//        inventoryItems.setVgap(30); // Vertical gap between rows
+        employeeItems.setHgap(10); // Horizontal gap between columns
+        employeeItems.setAlignment(Pos.CENTER);
+
+        for (String name : employeeList.keySet()) {
+            ImageView employeeImage = new ImageView((Image) employeeList.get(name)[1]);
+            String employeePosition = (String) employeeList.get(name)[0];
+
+            employeeImage.setFitHeight(60);
+            employeeImage.setFitWidth(60);
+            employeeImage.setPreserveRatio(true);
+
+
+            VBox layout = new VBox(10);
+            layout.setPadding(new Insets(10));
+            layout.setAlignment(Pos.CENTER);
+            Label label = new Label(name + ": " + employeePosition);
+
+            employeeImage.setOnMouseClicked(e -> {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Update Position");
+                dialog.setHeaderText("Enter new position");
+                dialog.setContentText("Position:");
+
+                Optional<String> result = dialog.showAndWait();
+
+                if (result.isPresent()) {
+                    String newPositionText = result.get();
+                    try {
+
+                        if ((newPositionText.equals("Manager")) || (newPositionText.equals("Cashier"))) {
+                            label.setText(name + ": " + newPositionText);
+                            employeeList.put(name, new Object[]{newPositionText, employeeImage.getImage()});
+                        } else {
+                            // Alert user for invalid input
+                            showAlert("Invalid position", "Please enter either Manager or Cashier.");
+                        }
+                    } catch (NumberFormatException ex) {
+                        // Alert user for invalid number format
+                        showAlert("Invalid input", "Please enter a valid position.");
+                    }
+                }
+            });
+
+            layout.getChildren().addAll(employeeImage, label);
+
+            employeeItems.add(layout, x, y);
+
+            // Update grid position
+            x++;
+            if (x == columns) {
+                x = 0;
+                y++;
+            }
+        }
+    }
+
 
     // Helper method to display error alert
     private void showAlert(String title, String message) {
@@ -230,4 +334,5 @@ public class ManagerController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 }
