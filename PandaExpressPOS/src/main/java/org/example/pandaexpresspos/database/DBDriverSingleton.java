@@ -1,7 +1,5 @@
 package org.example.pandaexpresspos.database;
 
-import static java.lang.System.out;
-
 import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
-import javafx.util.Pair;
 
 public class DBDriverSingleton {
 
@@ -20,11 +17,6 @@ public class DBDriverSingleton {
     // Why a private constructor?
     // This is how we implement the *singleton* design pattern
     private DBDriverSingleton() {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     public static DBDriverSingleton getInstance() {
@@ -41,7 +33,7 @@ public class DBDriverSingleton {
         Order order = null;
         try {
             List<Order> orders = executeQuery(
-                    String.format(QueryTemplate.selectEmployee, orderId),
+                    String.format(QueryTemplate.selectOrder, orderId),
                     SQLToJavaMapper::orderMapper
             );
             if (orders.isEmpty()) {
@@ -173,7 +165,7 @@ public class DBDriverSingleton {
 
     public void insertEmployee(Employee newEmployee) {
         executeUpdate(String.format(QueryTemplate.insertEmployee,
-                newEmployee.employeeID,
+                newEmployee.employeeId,
                 newEmployee.isManager,
                 newEmployee.name
         ));
@@ -183,7 +175,7 @@ public class DBDriverSingleton {
         executeUpdate(String.format(QueryTemplate.updateEmployee,
                 updatedEmployee.isManager,
                 updatedEmployee.name,
-                updatedEmployee.employeeID
+                updatedEmployee.employeeId
         ));
     }
 
@@ -193,7 +185,7 @@ public class DBDriverSingleton {
 
 
     // Inventory
-    public InventoryItem selectInventoryItem(UUID inventoryItemId) throws SQLException {
+    public InventoryItem selectInventoryItem(UUID inventoryItemId) {
         InventoryItem item = null;
         try {
             List<InventoryItem> items = executeQuery(
@@ -248,7 +240,7 @@ public class DBDriverSingleton {
 
 
     // Menu items
-    public MenuItem selectMenuItem(UUID menuItemId) throws SQLException {
+    public MenuItem selectMenuItem(UUID menuItemId) {
         MenuItem item = null;
         try {
             List<MenuItem> items = executeQuery(
@@ -317,6 +309,11 @@ public class DBDriverSingleton {
              Statement stmt = conn.createStatement()) {
 
             ResultSet rs = stmt.executeQuery(query);
+
+            if (!rs.isBeforeFirst()) {
+                throw new SQLException("Query returned empty result");
+            }
+
             while (rs.next()) {
                 T item = mapper.apply(rs);
                 results.add(item);
@@ -356,12 +353,16 @@ public class DBDriverSingleton {
         // Test logic to select multiple items
 
         // Employee
-        List<Employee> employees = instance.selectEmployees();
-        for (Employee employee : employees) {
-            out.println("Name: " + employee.name + "\nisManager: " + employee.isManager);
-        }
-        out.println("\nNumber of employees: " + employees.size());
-        out.println();
+//        List<Employee> employees = instance.selectEmployees();
+//        for (Employee employee : employees) {
+//            out.println("Name: " + employee.name + "\nisManager: " + employee.isManager);
+//        }
+//        out.println("\nNumber of employees: " + employees.size());
+//        out.println();
+
+//        Order order = instance.selectOrder(
+//                UUID.fromString("39de3ee8-d39d-4dd2-b67c-2aa0a6236166")
+//        );
 
         //
 
