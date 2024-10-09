@@ -1,5 +1,6 @@
 package org.example.pandaexpresspos.controllers;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -9,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -21,8 +23,10 @@ import org.example.pandaexpresspos.models.InventoryItem;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 
 public class ManagerController {
 
@@ -43,7 +47,7 @@ public class ManagerController {
     String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
 
 
-    Map<String, Object[]> menuGridList = new HashMap<>();
+    Map<String, String[]> menuGridList = new HashMap<>();
     Map<String, String[]> employeeGridList = new HashMap<>();
 
     enum Tab {
@@ -285,20 +289,23 @@ public class ManagerController {
 
 
     public void populateMenuItems() {
-        URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
-        if (imageUrl != null) {
-            Image menuImage = new Image(imageUrl.toExternalForm());
+        try {
+            String menuItemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+            String menuItemCost = "2.50";
             for (String name : menuNames) {
-                // Store stock amount and image in map
-                menuGridList.put(name, new Object[]{"2.50", menuImage});
+                // Store the stock amount and image in the map
+                menuGridList.put(name, new String[]{menuItemCost, menuItemImg});
             }
-        } else {
+        } catch (Exception e) {
             System.out.println("Image not found");
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+
     }
 
     public void createMenuItemsGrid() {
-        int columns = 5; // Max number of columns in row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
@@ -308,48 +315,29 @@ public class ManagerController {
         menuItemsGridPane.setAlignment(Pos.CENTER);
 
         for (String name : menuGridList.keySet()) {
-            ImageView menuImage = new ImageView((Image) menuGridList.get(name)[1]);
-            String menuPrice = (String) menuGridList.get(name)[0];
+            String menuPrice = menuGridList.get(name)[0];
+            String menuItemImg = menuGridList.get(name)[1];
 
-            menuImage.setFitHeight(60);
-            menuImage.setFitWidth(60);
-            menuImage.setPreserveRatio(true);
-
-
+            // Create a vertical box for image and label
             VBox layout = new VBox(10);
-            layout.setPadding(new Insets(10));
             layout.setAlignment(Pos.CENTER);
-            Label label = new Label(name + ": " + menuPrice);
+            Button button = new Button();
+            button.setMinSize(60, 60);
+            button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
+                    "-fx-background-size: cover;");
+//            handleInventoryItemClicked(button, name);
+            Label nameLabel = new Label(name);
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            Label menuPriceLabel = new Label(menuPrice);
 
-            menuImage.setOnMouseClicked(e -> {
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Update Menu Item");
-                dialog.setHeaderText("Enter new price");
-                dialog.setContentText("Price:");
+            // Allow the VBox to grow in the GridPane cell
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
-                Optional<String> result = dialog.showAndWait();
+            // Add items to vbox
+            layout.getChildren().addAll(button, nameLabel, menuPriceLabel);
 
-                if (result.isPresent()) {
-                    String newMenuText = result.get();
-                    try {
-                        double newPrice = Double.parseDouble(newMenuText);
-
-                        if (newPrice > 0) {
-                            label.setText(name + ": " + newPrice);
-                            menuGridList.put(name, new Object[]{String.valueOf(newPrice), menuImage.getImage()});
-
-                        } else {
-                            // Alert user for invalid input
-                            showAlert("Invalid price", "Please enter a positive number.");
-                        }
-                    } catch (NumberFormatException ex) {
-                        // Alert user for invalid number format
-                        showAlert("Invalid input", "Please enter a valid number.");
-                    }
-                }
-            });
-
-            layout.getChildren().addAll(menuImage, label);
 
             menuItemsGridPane.add(layout, x, y);
 
@@ -359,7 +347,10 @@ public class ManagerController {
                 x = 0;
                 y++;
             }
+
         }
+
+
     }
 
     public void populateEmployees() {
@@ -381,7 +372,6 @@ public class ManagerController {
         int columns = 5; // Max number of columns in row
         int x = 0;
         int y = 0;
-        System.out.println("hi");
 
         // Set gaps for GridPane
 //        inventoryItems.setVgap(30); // Vertical gap between rows
