@@ -43,7 +43,7 @@ public class ManagerController {
     // Map inventory item name to [stock, image url]
     Map<String, String[]> inventoryList = new HashMap<>();
     Map<String, Object[]> menuList = new HashMap<>();
-    Map<String, Object[]> employeeList = new HashMap<>();
+    Map<String, String[]> employeeList = new HashMap<>();
 
     enum Tab {
         INVENTORYITEMS(0),
@@ -375,15 +375,17 @@ public class ManagerController {
     }
 
     public void populateEmployees() {
-        URL imageUrl = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png");
-        if (imageUrl != null) {
-            Image employeeImage = new Image(imageUrl.toExternalForm());
+        try {
+            String employeeImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+            String employeePosition = "Cashier";
             for (String name : employees) {
-                // Store stock amount and image in map
-                employeeList.put(name, new Object[]{"Cashier", employeeImage});
+                // Store the stock amount and image in the map
+                employeeList.put(name, new String[]{employeePosition, employeeImg});
             }
-        } else {
+        } catch (Exception e) {
             System.out.println("Image not found");
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -391,6 +393,7 @@ public class ManagerController {
         int columns = 5; // Max number of columns in row
         int x = 0;
         int y = 0;
+        System.out.println("hi");
 
         // Set gaps for GridPane
 //        inventoryItems.setVgap(30); // Vertical gap between rows
@@ -398,46 +401,29 @@ public class ManagerController {
         employeeItems.setAlignment(Pos.CENTER);
 
         for (String name : employeeList.keySet()) {
-            ImageView employeeImage = new ImageView((Image) employeeList.get(name)[1]);
-            String employeePosition = (String) employeeList.get(name)[0];
-
-            employeeImage.setFitHeight(60);
-            employeeImage.setFitWidth(60);
-            employeeImage.setPreserveRatio(true);
-
+//            System.out.println(name);
+            String employeeImage = employeeList.get(name)[1];
+            String employeePosition = employeeList.get(name)[0];
 
             VBox layout = new VBox(10);
-            layout.setPadding(new Insets(10));
             layout.setAlignment(Pos.CENTER);
-            Label label = new Label(name + ": " + employeePosition);
+            Button button = new Button();
+            button.setMinSize(60, 60);
+            button.setStyle("-fx-background-image: url('" + employeeImage + "');" +
+                    "-fx-background-size: cover;");
 
-            employeeImage.setOnMouseClicked(e -> {
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Update Position");
-                dialog.setHeaderText("Enter new position");
-                dialog.setContentText("Position:");
+//            handleInventoryItemClicked(button, name);
+            Label nameLabel = new Label(name);
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            Label employeeLabel = new Label(name);
+            Label employeePositionLabel = new Label(employeePosition);
 
-                Optional<String> result = dialog.showAndWait();
+            // Allow the VBox to grow in the GridPane cell
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
-                if (result.isPresent()) {
-                    String newPositionText = result.get();
-                    try {
-
-                        if ((newPositionText.equals("Manager")) || (newPositionText.equals("Cashier"))) {
-                            label.setText(name + ": " + newPositionText);
-                            employeeList.put(name, new Object[]{newPositionText, employeeImage.getImage()});
-                        } else {
-                            // Alert user for invalid input
-                            showAlert("Invalid position", "Please enter either Manager or Cashier.");
-                        }
-                    } catch (NumberFormatException ex) {
-                        // Alert user for invalid number format
-                        showAlert("Invalid input", "Please enter a valid position.");
-                    }
-                }
-            });
-
-            layout.getChildren().addAll(employeeImage, label);
+            layout.getChildren().addAll(button, employeeLabel, employeePositionLabel);
 
             employeeItems.add(layout, x, y);
 
