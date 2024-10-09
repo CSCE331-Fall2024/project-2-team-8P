@@ -206,15 +206,15 @@ public class ManagerController {
                 inventoryItems.removeIf(item -> (
                         item.itemName.equals(safeItem.itemName)
                 ));
-                inventoryItems.add(new InventoryItem(safeItem.inventoryItemId, Double.parseDouble(cost),
-                        Integer.parseInt(stock), name));
+                inventoryItems.add(new InventoryItem(safeItem.inventoryItemId, Double.parseDouble(cost.trim()),
+                        Integer.parseInt(stock.trim()), name));
                 inventoryItemsGridPane.getChildren().clear();
             });
 
             // If we need to add a new item, no inventory item will be passed in
             if (inventoryItem.isEmpty()) {
-                inventoryItems.add(new InventoryItem(Double.parseDouble(cost),
-                        Integer.parseInt(stock), name));
+                inventoryItems.add(new InventoryItem(Double.parseDouble(cost.trim()),
+                        Integer.parseInt(stock.trim()), name));
             }
 
             // redraw the grid to reflect the updates
