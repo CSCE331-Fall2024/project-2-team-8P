@@ -42,6 +42,7 @@ public class LoginController {
                 // Create a new scene and set it to the stage
                 Scene scene = new Scene(loader.load(), 1200, 800);
                 Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                stage.setTitle("Cashier View - Panda POS");
                 stage.setScene(scene);
                 stage.show();
                 break;

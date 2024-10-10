@@ -50,7 +50,7 @@
                     <Button fx:id="button0" layoutX="240.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="0" textFill="WHITE" />
                     <Button fx:id="Enter" layoutX="400.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Enter" textFill="WHITE" />
                     <Button fx:id="clearNum" layoutX="80.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear" textFill="WHITE" />
-                    <Button fx:id="Logout" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Log Out" textFill="WHITE">
+                    <Button fx:id="Logout" onAction="#logOutUser" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Log Out" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="12.0" />
                         </font></Button>
