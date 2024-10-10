@@ -325,7 +325,111 @@ public class ManagerController {
     }
 
     // Use this to update or add employees; if null employee is passed in, add new employee
-    public void updateEmployee(Optional<Employee> employee) {}
+    public void updateEmployee(Optional<Employee> employee) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+
+        // Create the layout to add to dialog
+        VBox inputsContainer = new VBox();
+
+        Label employeeNameLabel = new Label("Employee Name: ");
+        TextField employeeName = new TextField();
+
+        Label isManagerLabel = new Label("Manager: ");
+        ToggleButton isManagerButton = new ToggleButton("NO");
+        isManagerButton.setSelected(false);
+
+        // Style button appropriately
+        isManagerButton.setOnAction(e -> {
+            if (isManagerButton.isSelected()) {
+                isManagerButton.setText("YES");
+            } else {
+                isManagerButton.setText("NO");
+            }
+        });
+
+        Label imageUrlLabel = new Label("Image Url: ");
+        TextField imageUrl = new TextField();
+
+        AtomicReference<String> dialogLabelName = new AtomicReference<>("Add");
+
+        // If non-empty menu item, populate text fields with employee properties
+        employee.ifPresent(safeEmployee -> {
+            employeeName.setText(safeEmployee.name);
+            isManagerButton.setSelected(safeEmployee.isManager);
+            if (safeEmployee.isManager) {
+                isManagerButton.setText("YES");
+            } else {
+                isManagerButton.setText("NO");
+            }
+            imageUrl.setText(sampleImg);
+            dialogLabelName.set("Update");
+        });
+
+        // Set the header and dialog to either Update or Add Employee
+        dialog.setTitle(dialogLabelName + " Employee");
+        dialog.setHeaderText(dialogLabelName + " Employee");
+
+        // Add to dialog box
+        inputsContainer.getChildren().addAll(
+                employeeNameLabel,
+                employeeName,
+                isManagerLabel,
+                isManagerButton,
+                imageUrlLabel,
+                imageUrl
+        );
+
+        dialog.getDialogPane().setContent(inputsContainer);
+
+        // Add buttons to dialog pane
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Handle the result
+        dialog.setResultConverter(dialogButton -> {
+            // TODO: add validation
+            if (dialogButton == ButtonType.OK) {
+                return new ButtonType(
+                        employeeName.getText() + "," +
+                                isManagerButton.isSelected() + ',' +
+                                imageUrl.getText()
+                );
+            }
+            return null;
+        });
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        result.ifPresent(outputFields -> {
+            String[] outputs = outputFields.getText().split(",");
+            String name = outputs[0];
+            String isManager = outputs[1];
+            String url = outputs[2];
+
+        // remove the previous employee if we are updating
+        employee.ifPresent( safeEmployee -> {
+            employees.removeIf(person ->(
+                person.name.equals(safeEmployee.name)
+            ));
+            employees.add(new Employee(
+                    safeEmployee.employeeID,
+                    Boolean.parseBoolean(isManager.trim()),
+                    name
+            ));
+        });
+
+        // If no employee is passed in, we need to create a new one
+        if (employee.isEmpty()) {
+            employees.add(new Employee(
+                    Boolean.parseBoolean(isManager.trim()),
+                    name
+            ));
+        }
+
+        // redraw the grid to reflect the updates
+        employeeItemsGridPane.getChildren().clear();
+        createEmployeesGrid();
+        });
+
+    }
 
     //TODO: Retrieve Inventory Items from Database
     public void populateInventory() {
@@ -500,6 +604,11 @@ public class ManagerController {
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + employeeImage + "');" +
                     "-fx-background-size: cover;");
+
+            // Handle the button click
+            button.setOnMouseClicked(e -> {
+                updateEmployee(Optional.of(employee));
+            });
 
             // Create name and position labels
             Label employeeNameLabel = new Label(employeeName);
