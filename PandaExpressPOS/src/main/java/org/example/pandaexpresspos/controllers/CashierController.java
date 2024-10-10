@@ -286,8 +286,21 @@ public class CashierController {
 
     @FXML
     private void clearTable() {
+        // Remove all items from the menuItems map in the current order
+        currentOrder.menuItems.clear();
+
+        // Clear the observable list to reflect the deletion in the UI
         orderItems.clear();
-        //currentOrder = new Order(UUID.randomUUID(), /* cashierId */, /* month */, /* week */, /* day */, /* hour */, 0.0); // Reset current order
+        orderTable.setItems(orderItems);
+
+        // Reset tax and total fields to $0.00
+        taxField.setText("Tax: $0.00");
+        totalField.setText("Total: $0.00");
+
+        // Reset the price in the current order
+        currentOrder.setPrice(0.0);
+
+        // Update totals to reflect the reset
         updateTotals();
     }
 
