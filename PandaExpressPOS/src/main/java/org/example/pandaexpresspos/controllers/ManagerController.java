@@ -201,6 +201,7 @@ public class ManagerController {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
                 //TODO: add validation
+
                 return new ButtonType(
                         inventoryItemName.getText() + "," +
                            inventoryItemCost.getText() + ", " +
