@@ -8,6 +8,7 @@ This JavaFX project was created using Oracle OpenJDK 21.0.2 and Maven 3.9.9
 
 ## Directory Structure
 ![img.png](dir_structure.png)
+### src
 - **Controllers:** "controller" classes that facilitate the interaction between the frontend and backend
 - **Database:** logic that connects & interacts with the PSQL database
 - **Models:** definitions of Java objects we use to represent SQL entries (e.g. Order, MenuItem, etc.)
