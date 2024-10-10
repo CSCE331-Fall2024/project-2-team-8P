@@ -202,7 +202,7 @@ public class ManagerController {
         });
     }
 
-    // Populate mock objects
+    //TODO: Retrieve Inventory Items from Database
     public void populateInventory() {
         inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
         inventoryItems.add(new InventoryItem(9.99, 50, "Silverware"));
@@ -213,30 +213,61 @@ public class ManagerController {
         inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
     }
 
+    //TODO: Retrieve Employees from Database
+    public void populateEmployees() {
+        employees.add(new Employee(true, "Ash"));
+        employees.add(new Employee(true, "Brock"));
+        employees.add(new Employee(false, "Pikachu"));
+        employees.add(new Employee(false, "Charmander"));
+        employees.add(new Employee(false, "Bulbasaur"));
+        employees.add(new Employee(false, "Squirtle"));
+        employees.add(new Employee(false, "Jigglypuff"));
+        employees.add(new Employee(false, "Meowth"));
+        employees.add(new Employee(false, "Psyduck"));
+    }
+
+    //TODO: Retrieve Menu Items from Database
+    public void populateMenuItems() {
+        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
+        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
+        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
+        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
+        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
+    }
+
+
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
         inventoryItemsGridPane.setHgap(10);
-//        inventoryItems.setVgap(-30);
         inventoryItemsGridPane.setAlignment(Pos.CENTER);
 
         for (InventoryItem item : inventoryItems) {
-            String itemStock = String.valueOf(item.availableStock);
+
             String itemImg = sampleImg;
+            String itemName = item.itemName;
+            String itemStock = String.valueOf(item.availableStock);
+
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
+
+            // Create a button, set background to img
             Button button = new Button();
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
                             "-fx-background-size: cover;");
+
+            // Handle clicks
             button.setOnMouseClicked(e ->{
                 this.updateInventoryItems(Optional.of(item));
             });
-            Label nameLabel = new Label(item.itemName);
+
+            // Create labels
+            Label nameLabel = new Label(itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             Label itemStockLabel = new Label("Qty: " + itemStock);
 
@@ -248,7 +279,7 @@ public class ManagerController {
             // Add items to vbox
             layout.getChildren().addAll(button, nameLabel, itemStockLabel);
 
-
+            // Add vbox to grid
             inventoryItemsGridPane.add(layout, x, y);
 
             // Update grid position
@@ -263,40 +294,33 @@ public class ManagerController {
 
     }
 
-
-
-
-    public void populateMenuItems() {
-        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
-        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
-        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
-        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
-        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
-    }
-
     public void createMenuItemsGrid() {
         int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
         // Set gaps for GridPane
-//        inventoryItems.setVgap(30); // Vertical gap between rows
         menuItemsGridPane.setHgap(10); // Horizontal gap between columns
         menuItemsGridPane.setAlignment(Pos.CENTER);
 
         for (MenuItem menuItem : menuItems) {
+
+            String menuItemName = menuItem.itemName;
             String menuItemStock = String.valueOf(menuItem.availableStock);
             String menuItemImg = sampleImg;
 
-            // Create a vertical box for image and label
+            // Create a vertical box for button and label
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
+
+            // Create a button; set background
             Button button = new Button();
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
                     "-fx-background-size: cover;");
-//            handleInventoryItemClicked(button, name);
-            Label nameLabel = new Label(menuItem.itemName);
+
+            // Create a quantity label
+            Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             Label menuStockLabel = new Label("Qty: " + menuItemStock);
 
@@ -308,7 +332,7 @@ public class ManagerController {
             // Add items to vbox
             layout.getChildren().addAll(button, nameLabel, menuStockLabel);
 
-
+            // Add Vbox to grid
             menuItemsGridPane.add(layout, x, y);
 
             // Update grid position
@@ -323,18 +347,6 @@ public class ManagerController {
 
     }
 
-    public void populateEmployees() {
-        employees.add(new Employee(true, "Ash"));
-        employees.add(new Employee(true, "Brock"));
-        employees.add(new Employee(false, "Pikachu"));
-        employees.add(new Employee(false, "Charmander"));
-        employees.add(new Employee(false, "Bulbasaur"));
-        employees.add(new Employee(false, "Squirtle"));
-        employees.add(new Employee(false, "Jigglypuff"));
-        employees.add(new Employee(false, "Meowth"));
-        employees.add(new Employee(false, "Psyduck"));
-    }
-
     public void createEmployeesGrid() {
         int columns = 5; // Max number of columns in row
         int x = 0;
@@ -345,17 +357,22 @@ public class ManagerController {
         employeeItemsGridPane.setAlignment(Pos.CENTER);
 
         for (Employee employee : employees) {
-
+            String employeeName = employee.name;
             String employeeImage = sampleImg;
             String employeePosition = employee.isManager ? "Manager" : "Cashier";
 
+            // Create a vbox to store items
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
+
+            // Create a button; set background
             Button button = new Button();
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + employeeImage + "');" +
                     "-fx-background-size: cover;");
-            Label employeeNameLabel = new Label(employee.name);
+
+            // Create name and position labels
+            Label employeeNameLabel = new Label(employeeName);
             Label employeePositionLabel = new Label(employeePosition);
 
             // Allow the VBox to grow in the GridPane cell
@@ -363,8 +380,10 @@ public class ManagerController {
             GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
+            // Add items to vbox
             layout.getChildren().addAll(button, employeeNameLabel, employeePositionLabel);
 
+            // Add vbox to grid pane
             employeeItemsGridPane.add(layout, x, y);
 
             // Update grid position
