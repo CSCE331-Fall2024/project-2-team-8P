@@ -433,6 +433,32 @@ public class ManagerController {
                 imageUrl
         );
 
+        // If in update mode add a remove button and handle appropriately
+        employee.ifPresent(safeEmployee -> {
+            Label removeLabel = new Label("Remove Item: ");
+            Button removeButton = new Button("Remove");
+
+            // Handle button click
+            removeButton.setOnMouseClicked(e -> {
+                employees.removeIf(person -> (
+                        person.name.equals(safeEmployee.name)
+                ));
+
+                // Added for thread safety
+                Platform.runLater(() -> {
+                    // Repopulate the grid
+                    employeeItemsGridPane.getChildren().clear();
+                    createEmployeesGrid();
+                });
+
+                dialog.close();
+            });
+
+            // Add to view hierarcy
+            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+
+        });
+
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
