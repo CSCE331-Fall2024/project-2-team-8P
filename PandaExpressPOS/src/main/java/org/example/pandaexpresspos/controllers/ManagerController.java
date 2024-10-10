@@ -189,7 +189,6 @@ public class ManagerController {
             // Add to view hierarcy
             inputsContainer.getChildren().addAll(removeLabel, removeButton);
 
-//            dialog.close();
         });
 
 
@@ -294,6 +293,32 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
+
+        // If in update mode add a remove button and handle appropriately
+        menuItem.ifPresent(safeItem -> {
+            Label removeLabel = new Label("Remove Item: ");
+            Button removeButton = new Button("Remove");
+
+            // Handle button click
+            removeButton.setOnMouseClicked(e -> {
+                menuItems.removeIf(item -> (
+                        item.itemName.equals(safeItem.itemName)
+                ));
+
+                // Added for thread safety
+                Platform.runLater(() -> {
+                    // Repopulate the grid
+                    menuItemsGridPane.getChildren().clear();
+                    createMenuItemsGrid();
+                });
+
+                dialog.close();
+            });
+
+            // Add to view hierarcy
+            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+
+        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
