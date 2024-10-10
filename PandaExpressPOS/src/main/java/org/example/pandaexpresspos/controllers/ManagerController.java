@@ -490,7 +490,7 @@ public class ManagerController {
                 person.name.equals(safeEmployee.name)
             ));
             employees.add(new Employee(
-                    safeEmployee.employeeID,
+                    safeEmployee.employeeId,
                     Boolean.parseBoolean(isManager.trim()),
                     name
             ));
