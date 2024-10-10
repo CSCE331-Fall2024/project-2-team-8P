@@ -200,8 +200,13 @@ public class ManagerController {
         // Handle the result
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
-                //TODO: add validation
+                double inventoryCostCheck = Double.parseDouble(inventoryItemCost.getText());
+                int availableStockCheck = Integer.parseInt(availableStock.getText());
 
+                if((inventoryCostCheck <= 0) || (availableStockCheck <= 0)) {
+                    showAlert("Invalid number", "Error: must input a positive number");
+                    return null;
+                }
                 return new ButtonType(
                         inventoryItemName.getText() + "," +
                            inventoryItemCost.getText() + ", " +
