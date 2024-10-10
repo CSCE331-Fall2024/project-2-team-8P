@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
@@ -19,59 +18,28 @@ import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order; // Import Order class
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 public class CashierController {
-
-    public static class OrderItem { // OrderItem
-        private String name;
-        private int quantity;
-        private double price;
-
-        public OrderItem(String name, int quantity, double price) { // Updated constructor
-            this.name = name;
-            this.quantity = quantity;
-            this.price = price;
-        }
-
-        public String getItemName() {
-            return name;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-        public void setQuantity(int quantity) {
-            this.quantity = quantity;
-        }
-
-        public void setPrice(double price) {
-            this.price = price;
-        }
-    }
 
     // New Order instance
     private Order currentOrder; // Added to manage the current order
 
     @FXML
-    private TableView<OrderItem> orderTable; // Updated type to OrderItem
+    private TableView<Map.Entry<MenuItem, Integer>> orderTable; // Updated type to OrderItem
 
     @FXML
-    private TableColumn<OrderItem, String> itemColumn; // Updated type to OrderItem
+    private TableColumn<Map.Entry<MenuItem, Integer>, String> nameColumn; // Updated type to OrderItem
 
     @FXML
-    private TableColumn<OrderItem, Integer> quantityColumn; // Updated type to OrderItem
+    private TableColumn<Map.Entry<MenuItem, Integer>, Integer> quantityColumn; // Updated type to OrderItem
 
     @FXML
-    private TableColumn<OrderItem, Double> priceColumn; // Updated type to OrderItem
+    private TableColumn<Map.Entry<MenuItem, Integer>, Double> priceColumn; // Updated type to OrderItem
 
     @FXML
     public Button clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9,Logout;
@@ -81,15 +49,24 @@ public class CashierController {
     @FXML
     private GridPane menuItemGridPane;
 
-    private ObservableList<OrderItem> orderItems = FXCollections.observableArrayList(); // Updated type to OrderItem
-    private static final double TAX_RATE = 0.0825;
+    private ObservableList<Map.Entry<MenuItem, Integer>> orderItems;
 
-    private String lastSelectedItem = null;
-    private double lastSelectedPrice = 0.0;
+    // constants for global use
+    private static final double TAX_RATE = 0.0825;
+    private UUID cashierID = UUID.randomUUID();
+    private LocalDate currentDate = LocalDate.now();
+    private Integer month = currentDate.getMonthValue();
+    private Integer week = (currentDate.getMonthValue()
+                           * currentDate.getDayOfMonth())/7;
+    private Integer day = currentDate.getDayOfMonth();
+    private Integer hour = Calendar.HOUR_OF_DAY;
+
+
+    private MenuItem lastSelectedItem = null;
+
     private StringBuilder currentQuantity = new StringBuilder();
 
     ArrayList<MenuItem> menuItems = new ArrayList<>();
-    ArrayList<String> urls = new ArrayList<>();
 
     @FXML
     void logOutUser(ActionEvent event) throws IOException{
@@ -101,9 +78,25 @@ public class CashierController {
         stage.show();
     }
 
-    // Global sample image
-    // Global Constant for Images
+    // Constant sample image
     String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/BeijingBeef.png").toExternalForm();
+
+    @FXML
+    public void initialize() {// Initialize current order
+        currentOrder = new Order(
+                cashierID,
+                month,
+                week,
+                day,
+                hour,
+                0.0
+        );
+        populateMenuItems();
+        createInventoryGrid();
+        initializeButtons();
+        initializeTableView();
+
+    }
 
     //TODO: Query database for items
     public void populateMenuItems() {
@@ -154,7 +147,7 @@ public class CashierController {
 
             // Handle clicks
             button.setOnMouseClicked(e -> {
-                selectItem(itemName, item.price);
+                selectItem(item);
             });
 
             // Create labels with styles
@@ -185,18 +178,22 @@ public class CashierController {
         }
     }
 
-    @FXML
-    public void initialize() {
-        //currentOrder = new Order(UUID.randomUUID(), /* cashierId */, /* month */, /* week */, /* day */, /* hour */, 0.0); // Initialize current order
-        populateMenuItems();
-        createInventoryGrid();
+    private void initializeTableView() {
+        nameColumn.setCellValueFactory( cellData->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getKey().itemName)
+        );
+        quantityColumn.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getValue())
+        );
+        priceColumn.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleObjectProperty<>(cellData.getValue().getKey().price)
+        );
 
-        itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-
+        orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
+    }
 
+    private void initializeButtons() {
         // Numpad buttons
         Button[] numpadButtons = {button0, button1, button2, button3, button4, button5, button6, button7, button8, button9};
         for (int i = 0; i < numpadButtons.length; i++) {
@@ -211,11 +208,10 @@ public class CashierController {
         placeOrder.setOnAction(event -> addOrder());
     }
 
-    private void selectItem(String itemName, double price) {
-        lastSelectedItem = itemName;
-        lastSelectedPrice = price;
+    private void selectItem(MenuItem item) {
+        lastSelectedItem = item;
         currentQuantity.setLength(0); // Clear the current quantity
-        addItemToOrder(itemName, 1, price); // Add one item immediately
+        addItemToOrder(item); // Add one item immediately
     }
 
     private void appendQuantity(int num) {
@@ -223,9 +219,10 @@ public class CashierController {
     }
 
     private void updateSelectedItemQuantity() {
-        if (lastSelectedItem != null && currentQuantity.length() > 0) {
+
+        if (lastSelectedItem != null && !currentQuantity.isEmpty()) {
             int quantity = Integer.parseInt(currentQuantity.toString());
-            updateItemQuantity(lastSelectedItem, quantity, lastSelectedPrice);
+            updateItemQuantity(lastSelectedItem, quantity);
             currentQuantity.setLength(0); // Clear the quantity after updating
         }
     }
@@ -234,49 +231,56 @@ public class CashierController {
         currentQuantity.setLength(0);
     }
 
-    private void updateItemQuantity(String itemName, int quantity, double price) {
-        BigDecimal priceBD = BigDecimal.valueOf(price).setScale(2, RoundingMode.HALF_UP);
+    private void updateItemQuantity(MenuItem item, int quantity) {
+        BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
 
-        for (OrderItem item : orderItems) { // Updated to OrderItem
-            if (item.getItemName().equals(itemName)) {
-                item.setQuantity(quantity);
+        for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
 
-                // Calculate the new price based on the new quantity
-                BigDecimal newPrice = priceBD.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+            MenuItem prevItem = existingItem.getKey();
 
-                item.setPrice(newPrice.doubleValue());
-                orderTable.refresh();
+            if (prevItem.itemName.equals(item.itemName)) {
+                currentOrder.menuItems.put(prevItem, quantity);
+                orderItems.clear();
+                orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
+                orderTable.setItems(orderItems);
                 updateTotals();
                 return;
             }
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        orderItems.add(new OrderItem(itemName, quantity, priceBD.multiply(BigDecimal.valueOf(quantity)).doubleValue()));
+        currentOrder.menuItems.put(item, quantity);
+        orderItems.clear();
+        orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
+        orderTable.setItems(orderItems);
         //currentOrder.addMenuItem(new MenuItem(itemName, price), quantity); // Add to current order
         updateTotals();
     }
 
-    private void addItemToOrder(String itemName, int quantity, double price) {
-        BigDecimal priceBD = BigDecimal.valueOf(price).setScale(2, RoundingMode.HALF_UP);
+    private void addItemToOrder(MenuItem item) {
+        BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
 
-        for (OrderItem item : orderItems) { // Updated to OrderItem
-            if (item.getItemName().equals(itemName)) {
-                item.setQuantity(item.getQuantity() + quantity);
+        for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) { // Updated to OrderItem
 
-                // Calculate the new price and round it
-                BigDecimal newPrice = priceBD.multiply(BigDecimal.valueOf(item.getQuantity())).setScale(2, RoundingMode.HALF_UP);
+            MenuItem prevItem = existingItem.getKey();
+            Integer quantity = existingItem.getValue();
 
-                item.setPrice(newPrice.doubleValue());
-                orderTable.refresh();
+            if (prevItem.itemName.equals(item.itemName)) {
+
+                currentOrder.menuItems.replace(prevItem, quantity, quantity+1);
+                orderItems.clear();
+                orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
+                orderTable.setItems(orderItems);
                 updateTotals();
                 return;
             }
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        orderItems.add(new OrderItem(itemName, quantity, priceBD.multiply(BigDecimal.valueOf(quantity)).doubleValue()));
-        //currentOrder.addMenuItem(new MenuItem(itemName, price), quantity); // Add to current order
+        currentOrder.menuItems.put(item, 1);
+        orderItems.clear();
+        orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
+        orderTable.setItems(orderItems);
         updateTotals();
     }
 
@@ -290,13 +294,29 @@ public class CashierController {
     private void addOrder() {
         // TODO: have to add order to the database
         // Add current order to the database logic here
-        //currentOrder = new Order(UUID.randomUUID(), /* cashierId */, /* month */, /* week */, /* day */, /* hour */, 0.0); // Reset current order
+        currentOrder = new Order(
+                cashierID,
+                month,
+                week,
+                day,
+                hour,
+                0.0
+        ); // Reset current order
         orderItems.clear();
         updateTotals();
     }
 
     private void updateTotals() {
-        double subtotal = orderItems.stream().mapToDouble(OrderItem::getPrice).sum(); // Updated to OrderItem
+//        double subtotal = orderItems.stream().mapToDouble(OrderItem::getPrice).sum(); // Updated to OrderItem
+        double subtotal = 0;
+        for (Map.Entry<MenuItem, Integer> entry : currentOrder.menuItems.entrySet()) {
+            MenuItem currentItem = entry.getKey();
+            Integer quantity = entry.getValue();
+            Double price = currentItem.price;
+
+            subtotal += quantity * price;
+        }
+
         BigDecimal subtotalBD = BigDecimal.valueOf(subtotal).setScale(2, RoundingMode.HALF_UP);
 
         double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
