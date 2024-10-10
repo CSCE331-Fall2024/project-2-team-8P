@@ -36,9 +36,25 @@ public class ManagerController {
     private Button addItemButton;
     @FXML
     private TabPane itemsTabPane;
+    @FXML
+    private Button reportButton;
+
+    public ManagerController() {
+    }
 
     // Global Constant for Images
     String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+
+    public void report(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(ManagerController.class.getResource("fxml/manager-report.fxml"));
+        // Create a new scene and set it to the stage
+        Scene scene = new Scene(loader.load(), 1200, 800);
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
+
+
 
     // Enum to check which tab user has selected
     enum Tab {
@@ -95,6 +111,7 @@ public class ManagerController {
         stage.setScene(scene);
         stage.show();
     }
+
 
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
@@ -335,6 +352,18 @@ public class ManagerController {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
                 //TODO: add validation
+
+                if(menuItemName.getText().isEmpty() || menuItemPrice.getText().isEmpty() ||
+                        availableStock.getText().isEmpty()) {
+                    showAlert("Invalid input", "Error: Text box is empty");
+                    return null;
+                }
+                double menuPriceCheck = Double.parseDouble(menuItemPrice.getText());
+                int menuStockCheck = Integer.parseInt(availableStock.getText());
+                if((menuPriceCheck <= 0) || (menuStockCheck <= 0)) {
+                    showAlert("Invalid number", "Error: Must input a positive number");
+                    return null;
+                }
                 return new ButtonType(
                         menuItemName.getText() + "," +
                                 menuItemPrice.getText() + ", " +
