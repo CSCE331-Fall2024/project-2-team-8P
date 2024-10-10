@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
@@ -16,7 +17,6 @@ import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
@@ -95,21 +95,21 @@ public class ManagerController {
         stage.show();
     }
 
-    // Handle adding items
+    // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
         // check if inventory items, menuitems, or employees is selected
         Tab selectedTab = Tab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
-        TextInputDialog dialog = new TextInputDialog();
+
+
         switch (selectedTab) {
             case INVENTORYITEMS:
-                updateInventoryItems(Optional.empty());
+                updateInventoryItem(Optional.empty());
                 break;
             case MENUITEMS:
-//                addMenuItem();
-                dialog.show();
+                updateMenuItem(Optional.empty());
                 break;
             case EMPLOYEES:
-//                addEmployee();
+                updateEmployee(Optional.empty());
                 break;
             default:
                 throw new RuntimeException();
@@ -117,16 +117,18 @@ public class ManagerController {
         }
     }
 
-    public void updateInventoryItems(Optional<InventoryItem> inventoryItem) {
+    // Use this to update or add new inventory items; if null inventory item is passed in, add new item
+    public void updateInventoryItem(Optional<InventoryItem> inventoryItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
-        // Create the layout
-        VBox inputs = new VBox();
-        Label itemNameLabel = new Label("Item Name: ");
-        TextField itemName = new TextField();
+        // Create the layout to add to dialog
+        VBox inputsContainer = new VBox();
 
-        Label itemCostLabel = new Label("Item Cost: ");
-        TextField itemCost = new TextField();
+        Label inventoryItemNameLabel = new Label("Item Name: ");
+        TextField inventoryItemName = new TextField();
+
+        Label inventoryItemCostLabel = new Label("Inventory Item Cost: ");
+        TextField inventoryItemCost = new TextField();
 
         Label availableStockLabel = new Label("Available Stock: ");
         TextField availableStock = new TextField();
@@ -138,8 +140,8 @@ public class ManagerController {
 
         // If name is non-empty, we are in update mode
         inventoryItem.ifPresent(safeItem -> {
-            itemName.setText(safeItem.itemName);
-            itemCost.setText(String.valueOf(safeItem.cost));
+            inventoryItemName.setText(safeItem.itemName);
+            inventoryItemCost.setText(String.valueOf(safeItem.cost));
             availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");
@@ -151,10 +153,20 @@ public class ManagerController {
 
 
         // Add to field
-        inputs.getChildren().addAll(itemNameLabel, itemName, itemCostLabel, itemCost, availableStockLabel, availableStock, imageUrlLabel, imageUrl);
-        dialog.getDialogPane().setContent(inputs);
+        inputsContainer.getChildren().addAll(
+                inventoryItemNameLabel,
+                inventoryItemName,
+                inventoryItemCostLabel,
+                inventoryItemCost,
+                availableStockLabel,
+                availableStock,
+                imageUrlLabel,
+                imageUrl
+        );
 
-        // Add buttons
+        dialog.getDialogPane().setContent(inputsContainer);
+
+        // Add buttons to dialog pane
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         // Handle the result
@@ -162,8 +174,8 @@ public class ManagerController {
             if (dialogButton == ButtonType.OK) {
                 //TODO: add validation
                 return new ButtonType(
-                        itemName.getText() + "," +
-                           itemCost.getText() + ", " +
+                        inventoryItemName.getText() + "," +
+                           inventoryItemCost.getText() + ", " +
                            availableStock.getText() + ", " +
                            imageUrl.getText()
                 );
@@ -179,20 +191,26 @@ public class ManagerController {
             String stock = outputs[2];
             String url = outputs[3];
 
-            // Remove the previous item if we are updating, in case name changed
+            // Remove the previous item if we are updating
             inventoryItem.ifPresent(safeItem->{
                 inventoryItems.removeIf(item -> (
                         item.itemName.equals(safeItem.itemName)
                 ));
-                inventoryItems.add(new InventoryItem(safeItem.inventoryItemId, Double.parseDouble(cost.trim()),
-                        Integer.parseInt(stock.trim()), name));
-                inventoryItemsGridPane.getChildren().clear();
+                inventoryItems.add(new InventoryItem(
+                        safeItem.inventoryItemId,
+                        Double.parseDouble(cost.trim()),
+                        Integer.parseInt(stock.trim()),
+                        name
+                ));
             });
 
-            // If we need to add a new item, no inventory item will be passed in
+            // If no inventory item is passed in, we need to add a new one
             if (inventoryItem.isEmpty()) {
-                inventoryItems.add(new InventoryItem(Double.parseDouble(cost.trim()),
-                        Integer.parseInt(stock.trim()), name));
+                inventoryItems.add(new InventoryItem(
+                        Double.parseDouble(cost.trim()),
+                        Integer.parseInt(stock.trim()),
+                        name
+                ));
             }
 
             // redraw the grid to reflect the updates
@@ -201,6 +219,113 @@ public class ManagerController {
 
         });
     }
+
+    // Use this to update or add new menu items; if null menu item is passed in, add new item
+    public void updateMenuItem(Optional<MenuItem> menuItem) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+
+        // Create the layout to add to dialog
+        VBox inputsContainer = new VBox();
+
+        Label menuItemNameLabel = new Label("Menu Item Name: ");
+        TextField menuItemName = new TextField();
+
+        Label menuItemPriceLabel = new Label("Menu Item Cost: ");
+        TextField menuItemPrice = new TextField();
+
+        Label availableStockLabel = new Label("Available Stock: ");
+        TextField availableStock = new TextField();
+
+        Label imageUrlLabel = new Label("Image Url: ");
+        TextField imageUrl = new TextField();
+
+        AtomicReference<String> dialogLabelName = new AtomicReference<>("Add");
+
+        // If non-empty menu item, populate text fields with item properties
+        menuItem.ifPresent(safeItem -> {
+            menuItemName.setText(safeItem.itemName);
+            menuItemPrice.setText(String.valueOf(safeItem.price));
+            availableStock.setText(String.valueOf(safeItem.availableStock));
+            imageUrl.setText(sampleImg);
+            dialogLabelName.set("Update");
+        });
+
+        // Set the header and dialog to either Update or Add Menu Item
+        dialog.setTitle(dialogLabelName + " Menu Item");
+        dialog.setHeaderText(dialogLabelName + " Menu Item");
+
+        // Add to dialog box
+        inputsContainer.getChildren().addAll(
+                menuItemNameLabel,
+                menuItemName,
+                menuItemPriceLabel,
+                menuItemPrice,
+                availableStockLabel,
+                availableStock,
+                imageUrlLabel,
+                imageUrl
+        );
+
+        dialog.getDialogPane().setContent(inputsContainer);
+
+        // Add buttons to dialog pane
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Handle the result
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                //TODO: add validation
+                return new ButtonType(
+                        menuItemName.getText() + "," +
+                                menuItemPrice.getText() + ", " +
+                                availableStock.getText() + ", " +
+                                imageUrl.getText()
+                );
+            }
+            return null;
+        });
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        result.ifPresent(outputFields -> {
+            String[] outputs = outputFields.getText().split(",");
+            String name = outputs[0];
+            String price = outputs[1];
+            String stock = outputs[2];
+            String url = outputs[3];
+
+            // remove the previous item if we are updating
+            menuItem.ifPresent(safeItem -> {
+                menuItems.removeIf(item -> (
+                        item.itemName.equals(safeItem.itemName)
+                ));
+                menuItems.add(new MenuItem(
+                        safeItem.menuItemId,
+                        Double.parseDouble(price.trim()),
+                        Integer.parseInt(stock.trim()),
+                        name
+                ));
+            });
+
+            // If no menu item is passed in, we need to add a new one
+            if (menuItem.isEmpty()) {
+                menuItems.add(new MenuItem(
+                        Double.parseDouble(price.trim()),
+                        Integer.parseInt(stock.trim()),
+                        name
+                ));
+            }
+
+            // redraw the grid to reflect the updates
+            menuItemsGridPane.getChildren().clear();
+            createMenuItemsGrid();
+        });
+
+
+
+    }
+
+    // Use this to update or add employees; if null employee is passed in, add new employee
+    public void updateEmployee(Optional<Employee> employee) {}
 
     //TODO: Retrieve Inventory Items from Database
     public void populateInventory() {
@@ -263,7 +388,7 @@ public class ManagerController {
 
             // Handle clicks
             button.setOnMouseClicked(e ->{
-                this.updateInventoryItems(Optional.of(item));
+                this.updateInventoryItem(Optional.of(item));
             });
 
             // Create labels
@@ -318,6 +443,11 @@ public class ManagerController {
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
                     "-fx-background-size: cover;");
+
+            // Handle the button click
+            button.setOnMouseClicked(e -> {
+                updateMenuItem(Optional.of(menuItem));
+            });
 
             // Create a quantity label
             Label nameLabel = new Label(menuItemName);
