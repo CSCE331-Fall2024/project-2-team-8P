@@ -146,7 +146,6 @@ public class ManagerController {
             availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");
-
         });
 
         dialog.setTitle(dialogLabelName + " Inventory Item");
@@ -166,32 +165,32 @@ public class ManagerController {
         );
 
         // If in update mode add a remove button and handle appropriately
-        inventoryItem.ifPresent(safeItem -> {
-            Label removeLabel = new Label("Remove Item: ");
-            Button removeButton = new Button("Remove");
-
-            // Handle button click
-            removeButton.setOnMouseClicked(e -> {
-//                inventoryItems.removeIf(item -> (
-//                        item.itemName.equals(safeItem.itemName)
-//                ));
-                // Backend call here
-
-
-                // Added for thread safety
-                Platform.runLater(() -> {
-                    // Repopulate the grid
-                    inventoryItemsGridPane.getChildren().clear();
-                    createInventoryGrid();
-                });
-
-                dialog.close();
-            });
-
-            // Add to view hierarcy
-            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-
-        });
+//        inventoryItem.ifPresent(safeItem -> {
+//            Label removeLabel = new Label("Remove Item: ");
+//            Button removeButton = new Button("Remove");
+//
+//            // Handle button click
+//            removeButton.setOnMouseClicked(e -> {
+////                inventoryItems.removeIf(item -> (
+////                        item.itemName.equals(safeItem.itemName)
+////                ));
+//                // Backend call here
+//
+//
+//                // Added for thread safety
+//                Platform.runLater(() -> {
+//                    // Repopulate the grid
+//                    inventoryItemsGridPane.getChildren().clear();
+//                    createInventoryGrid();
+//                });
+//
+//                dialog.close();
+//            });
+//
+//            // Add to view hierarcy
+//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+//
+//        });
 
 
         dialog.getDialogPane().setContent(inputsContainer);
@@ -221,18 +220,18 @@ public class ManagerController {
             String stock = outputs[2];
             String url = outputs[3];
 
-            // Remove the previous item if we are updating
-            inventoryItem.ifPresent(safeItem->{
-                inventoryItems.removeIf(item -> (
-                        item.itemName.equals(safeItem.itemName)
-                ));
-                inventoryItems.add(new InventoryItem(
-                        safeItem.inventoryItemId,
-                        Double.parseDouble(cost.trim()),
-                        Integer.parseInt(stock.trim()),
-                        name
-                ));
-            });
+//            // Remove the previous item if we are updating
+//            inventoryItem.ifPresent(safeItem->{
+//                inventoryItems.removeIf(item -> (
+//                        item.itemName.equals(safeItem.itemName)
+//                ));
+//                inventoryItems.add(new InventoryItem(
+//                        safeItem.inventoryItemId,
+//                        Double.parseDouble(cost.trim()),
+//                        Integer.parseInt(stock.trim()),
+//                        name
+//                ));
+//            });
 
             // If no inventory item is passed in, we need to add a new one
             if (inventoryItem.isEmpty()) {
@@ -297,30 +296,30 @@ public class ManagerController {
         );
 
         // If in update mode add a remove button and handle appropriately
-        menuItem.ifPresent(safeItem -> {
-            Label removeLabel = new Label("Remove Item: ");
-            Button removeButton = new Button("Remove");
-
-            // Handle button click
-            removeButton.setOnMouseClicked(e -> {
-                menuItems.removeIf(item -> (
-                        item.itemName.equals(safeItem.itemName)
-                ));
-
-                // Added for thread safety
-                Platform.runLater(() -> {
-                    // Repopulate the grid
-                    menuItemsGridPane.getChildren().clear();
-                    createMenuItemsGrid();
-                });
-
-                dialog.close();
-            });
-
-            // Add to view hierarcy
-            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-
-        });
+//        menuItem.ifPresent(safeItem -> {
+//            Label removeLabel = new Label("Remove Item: ");
+////            Button removeButton = new Button("Remove");
+//
+//            // Handle button click
+//            removeButton.setOnMouseClicked(e -> {
+//                menuItems.removeIf(item -> (
+//                        item.itemName.equals(safeItem.itemName)
+//                ));
+//
+//                // Added for thread safety
+//                Platform.runLater(() -> {
+//                    // Repopulate the grid
+//                    menuItemsGridPane.getChildren().clear();
+//                    createMenuItemsGrid();
+//                });
+//
+//                dialog.close();
+//            });
+//
+//            // Add to view hierarcy
+//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+//
+//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
