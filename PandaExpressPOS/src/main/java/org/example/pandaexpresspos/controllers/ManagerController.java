@@ -1,4 +1,5 @@
 package org.example.pandaexpresspos.controllers;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,7 @@ import org.example.pandaexpresspos.database.DBSnapshotSingleton;
 import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,7 +46,7 @@ public class ManagerController {
 
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
-            .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
+                    .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
             .toExternalForm();
 
     // Enum to check which tab user has selected
@@ -91,7 +93,7 @@ public class ManagerController {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         // Create a new scene and set it to the stage
         Scene scene = new Scene(loader.load(), 1200, 800);
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
     }
@@ -107,10 +109,10 @@ public class ManagerController {
                 addOrUpdateInventoryItem(Optional.empty());
                 break;
             case MENU_ITEMS:
-                updateMenuItem(Optional.empty());
+                addOrUpdateMenuItem(Optional.empty());
                 break;
             case EMPLOYEES:
-                updateEmployee(Optional.empty());
+                addOrUpdateEmployee(Optional.empty());
                 break;
             default:
                 throw new RuntimeException();
@@ -192,57 +194,53 @@ public class ManagerController {
 //
 //        });
 
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Handle the result
+        // Define the "OK" button for the popup
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
                 //TODO: add validation
                 return new ButtonType(
                         inventoryItemName.getText() + "," +
-                           inventoryItemCost.getText() + ", " +
-                           availableStock.getText() + ", " +
-                           imageUrl.getText()
+                                inventoryItemCost.getText() + ", " +
+                                availableStock.getText() + ", " +
+                                imageUrl.getText()
                 );
             }
             return null;
         });
 
+        // Handle the result when the user clicks "OK"
         Optional<ButtonType> result = dialog.showAndWait();
         result.ifPresent(outputFields -> {
             String[] outputs = outputFields.getText().split(",");
             String name = outputs[0];
             String cost = outputs[1];
             String stock = outputs[2];
-            String url = outputs[3];
-
-//            // Remove the previous item if we are updating
-//            inventoryItem.ifPresent(safeItem->{
-//                inventoryItems.removeIf(item -> (
-//                        item.itemName.equals(safeItem.itemName)
-//                ));
-//                inventoryItems.add(new InventoryItem(
-//                        safeItem.inventoryItemId,
-//                        Double.parseDouble(cost.trim()),
-//                        Integer.parseInt(stock.trim()),
-//                        name
-//                ));
-//            });
+            String imgUrl = outputs[3];
 
             // If no inventory item is passed in, we need to add a new one
             if (inventoryItem.isEmpty()) {
-                inventoryItems.add(new InventoryItem(
+                dbDriver.insertInventoryItem(new InventoryItem(
                         Double.parseDouble(cost.trim()),
                         Integer.parseInt(stock.trim()),
-                        name
-                ));
+                        name)
+                );
+            } else {
+                // If the inventoryItem is not null, we are updating an existing item
+                InventoryItem item = inventoryItem.get();
+                item.cost = Double.parseDouble(cost.trim());
+                item.availableStock = Integer.parseInt(stock.trim());
+                item.itemName = name;
             }
 
-            // redraw the grid to reflect the updates
+            // Refresh our snapshot
+            dbSnapshot.refreshInventorySnapshot();
+
+            // Redraw the grid to reflect the updates
             inventoryItemsGridPane.getChildren().clear();
             createInventoryGrid();
 
@@ -250,7 +248,7 @@ public class ManagerController {
     }
 
     // Use this to update or add new menu items; if null menu item is passed in, add new item
-    public void updateMenuItem(Optional<MenuItem> menuItem) {
+    public void addOrUpdateMenuItem(Optional<MenuItem> menuItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
         // Create the layout to add to dialog
@@ -346,41 +344,34 @@ public class ManagerController {
             String name = outputs[0];
             String price = outputs[1];
             String stock = outputs[2];
-            String url = outputs[3];
-
-            // remove the previous item if we are updating
-            menuItem.ifPresent(safeItem -> {
-                menuItems.removeIf(item -> (
-                        item.itemName.equals(safeItem.itemName)
-                ));
-                menuItems.add(new MenuItem(
-                        safeItem.menuItemId,
-                        Double.parseDouble(price.trim()),
-                        Integer.parseInt(stock.trim()),
-                        name
-                ));
-            });
+            String imgUrl = outputs[3];
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
-                menuItems.add(new MenuItem(
+                dbDriver.insertInventoryItem(new InventoryItem(
                         Double.parseDouble(price.trim()),
                         Integer.parseInt(stock.trim()),
-                        name
-                ));
+                        name)
+                );
+            } else {
+                // If the menu item is not null, we are updating an existing item
+                MenuItem item = menuItem.get();
+                item.price = Double.parseDouble(price.trim());
+                item.availableStock = Integer.parseInt(stock.trim());
+                item.itemName = name;
             }
+
+            // Refresh our menu item snapshot
+            dbSnapshot.refreshInventorySnapshot();
 
             // redraw the grid to reflect the updates
             menuItemsGridPane.getChildren().clear();
             createMenuItemsGrid();
         });
-
-
-
     }
 
     // Use this to update or add employees; if null employee is passed in, add new employee
-    public void updateEmployee(Optional<Employee> employee) {
+    public void addOrUpdateEmployee(Optional<Employee> employee) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
         // Create the layout to add to dialog
@@ -435,30 +426,30 @@ public class ManagerController {
         );
 
         // If in update mode add a remove button and handle appropriately
-        employee.ifPresent(safeEmployee -> {
-            Label removeLabel = new Label("Remove Item: ");
-            Button removeButton = new Button("Remove");
-
-            // Handle button click
-            removeButton.setOnMouseClicked(e -> {
-                employees.removeIf(person -> (
-                        person.name.equals(safeEmployee.name)
-                ));
-
-                // Added for thread safety
-                Platform.runLater(() -> {
-                    // Repopulate the grid
-                    employeeItemsGridPane.getChildren().clear();
-                    createEmployeesGrid();
-                });
-
-                dialog.close();
-            });
-
-            // Add to view hierarcy
-            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-
-        });
+//        employee.ifPresent(safeEmployee -> {
+//            Label removeLabel = new Label("Remove Item: ");
+//            Button removeButton = new Button("Remove");
+//
+//            // Handle button click
+//            removeButton.setOnMouseClicked(e -> {
+//                employees.removeIf(person -> (
+//                        person.name.equals(safeEmployee.name)
+//                ));
+//
+//                // Added for thread safety
+//                Platform.runLater(() -> {
+//                    // Repopulate the grid
+//                    employeeItemsGridPane.getChildren().clear();
+//                    createEmployeesGrid();
+//                });
+//
+//                dialog.close();
+//            });
+//
+//            // Add to view hierarcy
+//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+//
+//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
@@ -485,65 +476,32 @@ public class ManagerController {
             String isManager = outputs[1];
             String url = outputs[2];
 
-        // remove the previous employee if we are updating
-        employee.ifPresent( safeEmployee -> {
-            employees.removeIf(person ->(
-                person.name.equals(safeEmployee.name)
-            ));
-            employees.add(new Employee(
-                    safeEmployee.employeeId,
-                    Boolean.parseBoolean(isManager.trim()),
-                    name
-            ));
-        });
+            // remove the previous employee if we are updating
+            employee.ifPresent(safeEmployee -> {
+                employees.removeIf(person -> (
+                        person.name.equals(safeEmployee.name)
+                ));
+                employees.add(new Employee(
+                        safeEmployee.employeeId,
+                        Boolean.parseBoolean(isManager.trim()),
+                        name
+                ));
+            });
 
-        // If no employee is passed in, we need to create a new one
-        if (employee.isEmpty()) {
-            employees.add(new Employee(
-                    Boolean.parseBoolean(isManager.trim()),
-                    name
-            ));
-        }
+            // If no employee is passed in, we need to create a new one
+            if (employee.isEmpty()) {
+                employees.add(new Employee(
+                        Boolean.parseBoolean(isManager.trim()),
+                        name
+                ));
+            }
 
-        // redraw the grid to reflect the updates
-        employeeItemsGridPane.getChildren().clear();
-        createEmployeesGrid();
+            // redraw the grid to reflect the updates
+            employeeItemsGridPane.getChildren().clear();
+            createEmployeesGrid();
         });
 
     }
-
-    // TODO: Retrieve Inventory Items from Database
-//    public void populateInventory() {
-//        inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
-//        inventoryItems.add(new InventoryItem(9.99, 50, "Silverware"));
-//        inventoryItems.add(new InventoryItem(3.99, 200, "Orange Sauce"));
-//        inventoryItems.add(new InventoryItem(2.99, 150, "Soy Sauce"));
-//        inventoryItems.add(new InventoryItem(1.49, 300, "Prepackaged Noodles"));
-//        inventoryItems.add(new InventoryItem(7.99, 80, "Beef"));
-//        inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
-//    }
-
-    // TODO: Retrieve Employees from Database
-//    public void populateEmployees() {
-//        employees.add(new Employee(true, "Ash"));
-//        employees.add(new Employee(true, "Brock"));
-//        employees.add(new Employee(false, "Pikachu"));
-//        employees.add(new Employee(false, "Charmander"));
-//        employees.add(new Employee(false, "Bulbasaur"));
-//        employees.add(new Employee(false, "Squirtle"));
-//        employees.add(new Employee(false, "Jigglypuff"));
-//        employees.add(new Employee(false, "Meowth"));
-//        employees.add(new Employee(false, "Psyduck"));
-//    }
-
-    // TODO: Retrieve Menu Items from Database
-//    public void populateMenuItems() {
-//        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
-//        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
-//        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
-//        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
-//        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
-//    }
 
 
     public void createInventoryGrid() {
@@ -554,12 +512,11 @@ public class ManagerController {
         inventoryItemsGridPane.setHgap(10);
         inventoryItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (InventoryItem item : inventoryItems) {
+        for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
 
             String itemImg = sampleImg;
             String itemName = item.itemName;
             String itemStock = String.valueOf(item.availableStock);
-
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
@@ -569,11 +526,11 @@ public class ManagerController {
             Button button = new Button();
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
-                            "-fx-background-size: cover;");
+                    "-fx-background-size: cover;");
 
-            // Handle clicks
-            button.setOnMouseClicked(e ->{
-                this.addOrUpdateInventoryItem(Optional.of(item));
+            // Handle clicks on each item (updating the item)
+            button.setOnMouseClicked(e -> {
+                addOrUpdateInventoryItem(Optional.of(item));
             });
 
             // Create labels
@@ -610,7 +567,7 @@ public class ManagerController {
         menuItemsGridPane.setHgap(10); // Horizontal gap between columns
         menuItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (MenuItem menuItem : menuItems) {
+        for (MenuItem menuItem : dbSnapshot.getMenuSnapshot().values()) {
 
             String menuItemName = menuItem.itemName;
             String menuItemStock = String.valueOf(menuItem.availableStock);
@@ -628,7 +585,7 @@ public class ManagerController {
 
             // Handle the button click
             button.setOnMouseClicked(e -> {
-                updateMenuItem(Optional.of(menuItem));
+                addOrUpdateMenuItem(Optional.of(menuItem));
             });
 
             // Create a quantity label
@@ -665,7 +622,7 @@ public class ManagerController {
         employeeItemsGridPane.setHgap(10); // Horizontal gap between columns
         employeeItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (Employee employee : employees) {
+        for (Employee employee : dbSnapshot.getEmployeeSnapshot().values()) {
             String employeeName = employee.name;
             String employeeImage = sampleImg;
             String employeePosition = employee.isManager ? "Manager" : "Cashier";
@@ -682,7 +639,7 @@ public class ManagerController {
 
             // Handle the button click
             button.setOnMouseClicked(e -> {
-                updateEmployee(Optional.of(employee));
+                addOrUpdateEmployee(Optional.of(employee));
             });
 
             // Create name and position labels
