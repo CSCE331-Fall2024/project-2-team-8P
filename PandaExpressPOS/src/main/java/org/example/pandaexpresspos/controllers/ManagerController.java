@@ -9,11 +9,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
+import org.example.pandaexpresspos.database.DBDriverSingleton;
+import org.example.pandaexpresspos.database.DBSnapshotSingleton;
 import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
@@ -23,6 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
 
 public class ManagerController {
+
+    // Database logic
+    private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
+    private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
 
     @FXML
     private GridPane inventoryItemsGridPane;
@@ -38,12 +43,14 @@ public class ManagerController {
     private TabPane itemsTabPane;
 
     // Global Constant for Images
-    String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
+    private final String sampleImg = Objects.requireNonNull(getClass()
+            .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
+            .toExternalForm();
 
     // Enum to check which tab user has selected
     enum Tab {
-        INVENTORYITEMS(0),
-        MENUITEMS(1),
+        INVENTORY_ITEMS(0),
+        MENU_ITEMS(1),
         EMPLOYEES(2);
 
         private final int value;
@@ -69,18 +76,11 @@ public class ManagerController {
         }
     }
 
-
-    // Data structure for inventoryItems, menuItems, employees
-
-    ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
-    ArrayList<MenuItem> menuItems = new ArrayList<>();
-    ArrayList<Employee> employees = new ArrayList<>();
-
+    // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-        populateInventory();
-        populateMenuItems();
-        populateEmployees();
+        dbSnapshot.refreshAllSnapshots();
+
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
@@ -103,10 +103,10 @@ public class ManagerController {
 
 
         switch (selectedTab) {
-            case INVENTORYITEMS:
-                updateInventoryItem(Optional.empty());
+            case INVENTORY_ITEMS:
+                addOrUpdateInventoryItem(Optional.empty());
                 break;
-            case MENUITEMS:
+            case MENU_ITEMS:
                 updateMenuItem(Optional.empty());
                 break;
             case EMPLOYEES:
@@ -119,7 +119,7 @@ public class ManagerController {
     }
 
     // Use this to update or add new inventory items; if null inventory item is passed in, add new item
-    public void updateInventoryItem(Optional<InventoryItem> inventoryItem) {
+    public void addOrUpdateInventoryItem(Optional<InventoryItem> inventoryItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
         // Create the layout to add to dialog
@@ -172,11 +172,13 @@ public class ManagerController {
 
             // Handle button click
             removeButton.setOnMouseClicked(e -> {
-                inventoryItems.removeIf(item -> (
-                        item.itemName.equals(safeItem.itemName)
-                ));
+//                inventoryItems.removeIf(item -> (
+//                        item.itemName.equals(safeItem.itemName)
+//                ));
+                // Backend call here
 
-                // Added for thream safety
+
+                // Added for thread safety
                 Platform.runLater(() -> {
                     // Repopulate the grid
                     inventoryItemsGridPane.getChildren().clear();
@@ -490,7 +492,7 @@ public class ManagerController {
                 person.name.equals(safeEmployee.name)
             ));
             employees.add(new Employee(
-                    safeEmployee.employeeID,
+                    safeEmployee.employeeId,
                     Boolean.parseBoolean(isManager.trim()),
                     name
             ));
@@ -511,38 +513,38 @@ public class ManagerController {
 
     }
 
-    //TODO: Retrieve Inventory Items from Database
-    public void populateInventory() {
-        inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
-        inventoryItems.add(new InventoryItem(9.99, 50, "Silverware"));
-        inventoryItems.add(new InventoryItem(3.99, 200, "Orange Sauce"));
-        inventoryItems.add(new InventoryItem(2.99, 150, "Soy Sauce"));
-        inventoryItems.add(new InventoryItem(1.49, 300, "Prepackaged Noodles"));
-        inventoryItems.add(new InventoryItem(7.99, 80, "Beef"));
-        inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
-    }
+    // TODO: Retrieve Inventory Items from Database
+//    public void populateInventory() {
+//        inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
+//        inventoryItems.add(new InventoryItem(9.99, 50, "Silverware"));
+//        inventoryItems.add(new InventoryItem(3.99, 200, "Orange Sauce"));
+//        inventoryItems.add(new InventoryItem(2.99, 150, "Soy Sauce"));
+//        inventoryItems.add(new InventoryItem(1.49, 300, "Prepackaged Noodles"));
+//        inventoryItems.add(new InventoryItem(7.99, 80, "Beef"));
+//        inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
+//    }
 
-    //TODO: Retrieve Employees from Database
-    public void populateEmployees() {
-        employees.add(new Employee(true, "Ash"));
-        employees.add(new Employee(true, "Brock"));
-        employees.add(new Employee(false, "Pikachu"));
-        employees.add(new Employee(false, "Charmander"));
-        employees.add(new Employee(false, "Bulbasaur"));
-        employees.add(new Employee(false, "Squirtle"));
-        employees.add(new Employee(false, "Jigglypuff"));
-        employees.add(new Employee(false, "Meowth"));
-        employees.add(new Employee(false, "Psyduck"));
-    }
+    // TODO: Retrieve Employees from Database
+//    public void populateEmployees() {
+//        employees.add(new Employee(true, "Ash"));
+//        employees.add(new Employee(true, "Brock"));
+//        employees.add(new Employee(false, "Pikachu"));
+//        employees.add(new Employee(false, "Charmander"));
+//        employees.add(new Employee(false, "Bulbasaur"));
+//        employees.add(new Employee(false, "Squirtle"));
+//        employees.add(new Employee(false, "Jigglypuff"));
+//        employees.add(new Employee(false, "Meowth"));
+//        employees.add(new Employee(false, "Psyduck"));
+//    }
 
-    //TODO: Retrieve Menu Items from Database
-    public void populateMenuItems() {
-        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
-        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
-        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
-        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
-        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
-    }
+    // TODO: Retrieve Menu Items from Database
+//    public void populateMenuItems() {
+//        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
+//        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
+//        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
+//        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
+//        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
+//    }
 
 
     public void createInventoryGrid() {
@@ -572,7 +574,7 @@ public class ManagerController {
 
             // Handle clicks
             button.setOnMouseClicked(e ->{
-                this.updateInventoryItem(Optional.of(item));
+                this.addOrUpdateInventoryItem(Optional.of(item));
             });
 
             // Create labels
@@ -597,10 +599,7 @@ public class ManagerController {
                 x = 0;
                 y++;
             }
-
         }
-
-
     }
 
     public void createMenuItemsGrid() {
@@ -655,10 +654,7 @@ public class ManagerController {
                 x = 0;
                 y++;
             }
-
         }
-
-
     }
 
     public void createEmployeesGrid() {
