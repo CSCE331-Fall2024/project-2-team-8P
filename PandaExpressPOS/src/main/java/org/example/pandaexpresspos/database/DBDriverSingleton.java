@@ -292,8 +292,35 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    public static String LoginValidation(String name){
+        try {
+            List<Boolean> results = executeQuery(String.format(QueryTemplate.ValidUser, name),
+                    rs -> {
+                        try {
+                            return rs.getBoolean("ismanager");
+                        } catch (SQLException e) {
+                            return false;
+                        }
+                    }
+            );
+            if (results.isEmpty()) {
+                return "Error";
+            }
+            else {
+                boolean isManager = results.get(0);
+                if (isManager){
+                    return "Manager";
+                }
+                else{
+                    return "Cashier";
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error";
+        }
 
-
+    }
     // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
