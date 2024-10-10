@@ -1,4 +1,5 @@
 package org.example.pandaexpresspos.controllers;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -163,6 +164,34 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
+
+        // If in update mode add a remove button and handle appropriately
+        inventoryItem.ifPresent(safeItem -> {
+            Label removeLabel = new Label("Remove Item: ");
+            Button removeButton = new Button("Remove");
+
+            // Handle button click
+            removeButton.setOnMouseClicked(e -> {
+                inventoryItems.removeIf(item -> (
+                        item.itemName.equals(safeItem.itemName)
+                ));
+
+                // Added for thream safety
+                Platform.runLater(() -> {
+                    // Repopulate the grid
+                    inventoryItemsGridPane.getChildren().clear();
+                    createInventoryGrid();
+                });
+
+                dialog.close();
+            });
+
+            // Add to view hierarcy
+            inputsContainer.getChildren().addAll(removeLabel, removeButton);
+
+//            dialog.close();
+        });
+
 
         dialog.getDialogPane().setContent(inputsContainer);
 
