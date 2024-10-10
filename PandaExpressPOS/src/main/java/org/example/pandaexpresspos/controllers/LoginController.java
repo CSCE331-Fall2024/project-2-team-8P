@@ -26,6 +26,10 @@ public class LoginController {
     @FXML
     private TextField usernameTextField;
 
+    private FXMLLoader loader;
+    private Scene scene;
+    private Stage stage;
+
     private enum EmployeeType {
         CASHIER,
         MANAGER,
@@ -38,15 +42,22 @@ public class LoginController {
         switch (emp) {
             case CASHIER:
                 // load the fxml for screen switch
-                FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
+                loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
                 // Create a new scene and set it to the stage
-                Scene scene = new Scene(loader.load(), 1200, 800);
-                Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                scene = new Scene(loader.load(), 1200, 800);
+                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
                 stage.setScene(scene);
                 stage.show();
                 break;
             case MANAGER:
                 // TODO: Connect to Manager View
+                // load the fxml for screen switch
+                loader = new FXMLLoader(LoginApplication.class.getResource("fxml/manager-view.fxml"));
+                // Create a new scene and set it to the stage
+                scene = new Scene(loader.load(), 1200, 800);
+                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                stage.setScene(scene);
+                stage.show();
                 break;
             default:
                 // TODO: UI for Error
