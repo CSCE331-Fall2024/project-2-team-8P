@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ce123c;" vgap="10" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.CashierController">
+<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ca2b2d;" vgap="10" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.CashierController">
 
     <!-- Set up equal column and row constraints -->
     <columnConstraints>
@@ -26,7 +26,7 @@
     </rowConstraints>
 
     <!-- Section 1 -->
-    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+    <StackPane GridPane.columnIndex="0" GridPane.rowIndex="0">
         <children>
 
             <AnchorPane layoutX="11.0" layoutY="11.0" prefHeight="400.0" prefWidth="600.0">
@@ -50,7 +50,7 @@
                     <Button fx:id="button0" layoutX="240.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="0" textFill="WHITE" />
                     <Button fx:id="Enter" layoutX="400.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Enter" textFill="WHITE" />
                     <Button fx:id="clearNum" layoutX="80.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear" textFill="WHITE" />
-                    <Button fx:id="Logout" onAction="#logOutUser" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Log Out" textFill="WHITE">
+                    <Button fx:id="Logout" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" onAction="#logOutUser" prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Log Out" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="12.0" />
                         </font></Button>
@@ -66,32 +66,10 @@
 
         </children>
     </StackPane>
-   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
-      <children>
-         <GridPane fx:id="menuItemGridPane" prefHeight="814.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-           <columnConstraints>
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-           </columnConstraints>
-           <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-           </rowConstraints>
-         </GridPane>
-      </children>
-   </AnchorPane>
 
 
     <!-- Section 3 -->
-    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="0" GridPane.rowIndex="1">
+    <StackPane GridPane.columnIndex="0" GridPane.rowIndex="1">
         <AnchorPane prefHeight="400.0" prefWidth="600.0">
             <children>
 
@@ -113,5 +91,27 @@
                 <Button fx:id="placeOrder" layoutX="424.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Place Order" textFill="WHITE" />
             </children></AnchorPane>
     </StackPane>
+   <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowSpan="2">
+      <children>
+         <GridPane fx:id="menuItemGridPane" prefHeight="814.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
+         </GridPane>
+      </children>
+   </AnchorPane>
 
 </GridPane>
