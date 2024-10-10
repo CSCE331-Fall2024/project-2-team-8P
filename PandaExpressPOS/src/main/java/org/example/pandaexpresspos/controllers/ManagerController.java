@@ -1,28 +1,21 @@
 package org.example.pandaexpresspos.controllers;
-
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
-
 import javafx.event.ActionEvent;
+import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
-
+import org.example.pandaexpresspos.models.MenuItem;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -46,10 +39,7 @@ public class ManagerController {
     // Global Constant for Images
     String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
 
-
-    Map<String, String[]> menuGridList = new HashMap<>();
-    Map<String, String[]> employeeGridList = new HashMap<>();
-
+    // Enum to check which tab user has selected
     enum Tab {
         INVENTORYITEMS(0),
         MENUITEMS(1),
@@ -79,23 +69,11 @@ public class ManagerController {
     }
 
 
-    // Arbitrary values for inventory items, menu items, and employees
-//    String[] itemNames = {
-//            "Napkins", "Silverware", "Orange Sauce", "Soy Sauce", "Prepackaged Noodles", "Beef", "Chicken"
-//    };
+    // Data structure for inventoryItems, menuItems, employees
+
     ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
-// Add multiple items to the ArrayList
-
-
-
-
-    String[] menuNames = {
-            "Orange Chicken", "Chow Mein", "Fried Rice", "Beijing Beef", "Super Greens"
-    };
-
-    String[] employees = {
-            "Pikachu", "Ash", "Charizard"
-    };
+    ArrayList<MenuItem> menuItems = new ArrayList<>();
+    ArrayList<Employee> employees = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -289,19 +267,11 @@ public class ManagerController {
 
 
     public void populateMenuItems() {
-        try {
-            String menuItemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
-            String menuItemCost = "2.50";
-            for (String name : menuNames) {
-                // Store the stock amount and image in the map
-                menuGridList.put(name, new String[]{menuItemCost, menuItemImg});
-            }
-        } catch (Exception e) {
-            System.out.println("Image not found");
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
+        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
+        menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
+        menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
+        menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
+        menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
     }
 
     public void createMenuItemsGrid() {
@@ -314,9 +284,9 @@ public class ManagerController {
         menuItemsGridPane.setHgap(10); // Horizontal gap between columns
         menuItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (String name : menuGridList.keySet()) {
-            String menuPrice = menuGridList.get(name)[0];
-            String menuItemImg = menuGridList.get(name)[1];
+        for (MenuItem menuItem : menuItems) {
+            String menuItemStock = String.valueOf(menuItem.availableStock);
+            String menuItemImg = sampleImg;
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
@@ -326,9 +296,9 @@ public class ManagerController {
             button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
                     "-fx-background-size: cover;");
 //            handleInventoryItemClicked(button, name);
-            Label nameLabel = new Label(name);
+            Label nameLabel = new Label(menuItem.itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
-            Label menuPriceLabel = new Label(menuPrice);
+            Label menuStockLabel = new Label("Qty: " + menuItemStock);
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -336,7 +306,7 @@ public class ManagerController {
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel, menuPriceLabel);
+            layout.getChildren().addAll(button, nameLabel, menuStockLabel);
 
 
             menuItemsGridPane.add(layout, x, y);
@@ -354,18 +324,15 @@ public class ManagerController {
     }
 
     public void populateEmployees() {
-        try {
-            String employeeImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
-            String employeePosition = "Cashier";
-            for (String name : employees) {
-                // Store the stock amount and image in the map
-                employeeGridList.put(name, new String[]{employeePosition, employeeImg});
-            }
-        } catch (Exception e) {
-            System.out.println("Image not found");
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        employees.add(new Employee(true, "Ash"));
+        employees.add(new Employee(true, "Brock"));
+        employees.add(new Employee(false, "Pikachu"));
+        employees.add(new Employee(false, "Charmander"));
+        employees.add(new Employee(false, "Bulbasaur"));
+        employees.add(new Employee(false, "Squirtle"));
+        employees.add(new Employee(false, "Jigglypuff"));
+        employees.add(new Employee(false, "Meowth"));
+        employees.add(new Employee(false, "Psyduck"));
     }
 
     public void createEmployeesGrid() {
@@ -374,14 +341,13 @@ public class ManagerController {
         int y = 0;
 
         // Set gaps for GridPane
-//        inventoryItems.setVgap(30); // Vertical gap between rows
         employeeItemsGridPane.setHgap(10); // Horizontal gap between columns
         employeeItemsGridPane.setAlignment(Pos.CENTER);
 
-        for (String name : employeeGridList.keySet()) {
-//            System.out.println(name);
-            String employeeImage = employeeGridList.get(name)[1];
-            String employeePosition = employeeGridList.get(name)[0];
+        for (Employee employee : employees) {
+
+            String employeeImage = sampleImg;
+            String employeePosition = employee.isManager ? "Manager" : "Cashier";
 
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
@@ -389,11 +355,7 @@ public class ManagerController {
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + employeeImage + "');" +
                     "-fx-background-size: cover;");
-
-//            handleInventoryItemClicked(button, name);
-            Label nameLabel = new Label(name);
-            nameLabel.setTextAlignment(TextAlignment.CENTER);
-            Label employeeLabel = new Label(name);
+            Label employeeNameLabel = new Label(employee.name);
             Label employeePositionLabel = new Label(employeePosition);
 
             // Allow the VBox to grow in the GridPane cell
@@ -401,7 +363,7 @@ public class ManagerController {
             GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
-            layout.getChildren().addAll(button, employeeLabel, employeePositionLabel);
+            layout.getChildren().addAll(button, employeeNameLabel, employeePositionLabel);
 
             employeeItemsGridPane.add(layout, x, y);
 
