@@ -15,6 +15,9 @@ import org.example.pandaexpresspos.models.MenuItem;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 public class CashierController {
 
@@ -46,6 +49,7 @@ public class CashierController {
     private StringBuilder currentQuantity = new StringBuilder();
 
     ArrayList<MenuItem> menuItems = new ArrayList<>();
+    ArrayList<String> urls = new ArrayList<>();
 
     // Global sample image
     // Global Constant for Images
@@ -61,7 +65,7 @@ public class CashierController {
         menuItems.add(new MenuItem(10.99, 90, "The Original Orange Chicken"));
         menuItems.add(new MenuItem(12.99, 60, "Black Pepper Sirloin Steak"));
         menuItems.add(new MenuItem(13.99, 50, "Honey Walnut Shrimp"));
-        menuItems.add(new MenuItem(11.99, 70, "Grilled Teriyaki Shrimp"));
+        menuItems.add(new MenuItem(11.99, 70, "Grilled Teriyaki Chicken"));
         menuItems.add(new MenuItem(10.49, 100, "Broccoli Beef"));
         menuItems.add(new MenuItem(9.99, 90, "Kung Pao Chicken"));
         menuItems.add(new MenuItem(10.49, 85, "Honey Sesame Chicken Breast"));
@@ -75,8 +79,9 @@ public class CashierController {
         menuItems.add(new MenuItem(1.99, 300, "Pepsi"));
     }
 
+
     public void createInventoryGrid() {
-        int columns = 5; // max columns per row
+        int columns = 6; // max columns per row
         int x = 0;
         int y = 0;
 
@@ -89,7 +94,6 @@ public class CashierController {
             String itemName = item.itemName;
             String itemStock = String.valueOf(item.availableStock);
 
-
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
@@ -98,17 +102,20 @@ public class CashierController {
             Button button = new Button();
             button.setMinSize(60, 60);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
-                    "-fx-background-size: cover;");
+                    "-fx-background-size: cover;-fx-cursor: hand;");
 
-//            // Handle clicks
-//            button.setOnMouseClicked(e ->{
-//                this.updateInventoryItem(Optional.of(item));
-//            });
+            // Handle clicks
+            button.setOnMouseClicked(e -> {
+                selectItem(itemName, item.price);
+            });
 
-            // Create labels
+            // Create labels with styles
             Label nameLabel = new Label(itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
+
             Label itemStockLabel = new Label("Qty: " + itemStock);
+            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -127,10 +134,7 @@ public class CashierController {
                 x = 0;
                 y++;
             }
-
         }
-
-
     }
 
     @FXML
