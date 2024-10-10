@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ce123c;" vgap="10" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.CashierController">
+<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ce123c;" vgap="10" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.CashierController">
 
     <!-- Set up equal column and row constraints -->
     <columnConstraints>
@@ -58,165 +66,28 @@
 
         </children>
     </StackPane>
-
-    <!-- Section 2 -->
-
-    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="0">
-        <AnchorPane prefHeight="400.0" prefWidth="600.0">
-            <children>
-                <Button fx:id="GrilledTeriyaki" layoutX="237.0" layoutY="139.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="98.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/GrilledTeriyaki.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="BroccoliBeef" layoutX="408.0" layoutY="138.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="93.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/BroccoliBeef.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="KungPao" layoutX="18.0" layoutY="270.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="86.0" fitWidth="105.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/KungPao.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="HoneySesame" layoutX="160.0" layoutY="269.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="85.0" fitWidth="105.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/HoneySesame.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="BeijingBeef" layoutX="449.0" layoutY="270.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="85.0" fitWidth="104.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/BeijingBeef.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="BlackPepperChicken" layoutX="307.0" layoutY="270.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="85.0" fitWidth="104.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/BlackPepperChi.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="HotOnes" layoutX="56.0" layoutY="7.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="87.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/HotOnes.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="OrangeChicken" layoutX="248.0" layoutY="7.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="98.0" fitWidth="105.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/OrangeChicken.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="BlackPepperSteak" layoutX="417.0" layoutY="8.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="85.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/BlackPepper.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="HoneyWalnut" layoutX="51.0" layoutY="138.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="98.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/HoneyWalnut.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <TextField editable="false" layoutX="82.0" layoutY="106.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="267.0" layoutY="106.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="438.0" layoutY="106.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="81.0" layoutY="241.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="267.0" layoutY="241.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="438.0" layoutY="241.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="53.0" layoutY="361.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="181.0" layoutY="361.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="324.0" layoutY="361.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="466.0" layoutY="361.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-            </children>
-        </AnchorPane>
-    </StackPane>
+   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+      <children>
+         <GridPane fx:id="menuItemGridPane" prefHeight="814.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
+         </GridPane>
+      </children>
+   </AnchorPane>
 
 
     <!-- Section 3 -->
@@ -241,202 +112,6 @@
                 <Button fx:id="clear" layoutX="61.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear" textFill="WHITE" />
                 <Button fx:id="placeOrder" layoutX="424.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Place Order" textFill="WHITE" />
             </children></AnchorPane>
-    </StackPane>
-
-    <!-- Section 4 -->
-    <StackPane style="-fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="1">
-        <AnchorPane layoutX="11.0" layoutY="11.0" prefHeight="400.0" prefWidth="600.0">
-            <children>
-                <Button fx:id="WhiteRice" layoutX="314.0" layoutY="55.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="147.0" fitWidth="131.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/WhiteRice.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="ChowMein" layoutX="457.0" layoutY="56.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="144.0" fitWidth="134.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/ChowMein.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="FriedRice" layoutX="313.0" layoutY="211.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="186.0" fitWidth="134.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/FriedRice.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="SuperGreens" layoutX="459.0" layoutY="211.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;">
-                    <graphic>
-                        <ImageView fitHeight="110.0" fitWidth="134.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/SuperGreens.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button layoutX="21.0" layoutY="105.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-                <Button layoutX="79.0" layoutY="105.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-                <Button layoutX="147.0" layoutY="105.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-                <Button layoutX="216.0" layoutY="105.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-                <Button layoutX="15.0" layoutY="265.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-                <Button layoutX="160.0" layoutY="265.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-cursor: hand;" />
-
-
-                <!-- Meal Type
-                <TextField alignment="CENTER" layoutX="6.0" layoutY="7.0" prefHeight="18.0" prefWidth="282.0" style="-fx-background-color: white;" styleClass="font" text="Meal Type">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </TextField>
-                <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="70.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Bowl" textFill="WHITE" />
-                <Button layoutX="103.0" layoutY="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Plate" textFill="WHITE" />
-                <Button layoutX="192.0" layoutY="38.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="90.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Bigger Plate" textFill="WHITE" />
-                -->
-                <TextField alignment="CENTER" layoutX="6.0" layoutY="6.0" prefHeight="26.0" prefWidth="282.0" style="-fx-background-color: white;" styleClass="font" text="Drinks">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField alignment="CENTER" layoutX="305.0" layoutY="6.0" prefHeight="26.0" prefWidth="282.0" style="-fx-background-color: white;" styleClass="font" text="Sides">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField alignment="CENTER" layoutX="13.0" layoutY="197.0" prefHeight="26.0" prefWidth="282.0" style="-fx-background-color: white;" styleClass="font" text="Appetizers">
-                    <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="352.0" layoutY="175.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="496.0" layoutY="175.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="352.0" layoutY="332.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="496.0" layoutY="332.0" prefHeight="14.0" prefWidth="56.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="190.0" layoutY="348.0" prefHeight="26.0" prefWidth="68.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="45.0" layoutY="348.0" prefHeight="26.0" prefWidth="68.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="26.0" layoutY="161.0" prefHeight="26.0" prefWidth="48.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="89.0" layoutY="161.0" prefHeight="26.0" prefWidth="48.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="154.0" layoutY="161.0" prefHeight="26.0" prefWidth="48.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <TextField editable="false" layoutX="235.0" layoutY="161.0" prefHeight="26.0" prefWidth="48.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="QTY:">
-                    <font>
-                        <Font name="System Bold" size="12.0" />
-                    </font>
-                </TextField>
-                <Button fx:id="Water" layoutX="30.0" layoutY="55.0" style="-fx-cursor: hand; -fx-background-color: transparent">
-                    <graphic>
-                        <ImageView fitHeight="128.0" fitWidth="39.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/Water.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="Coke" layoutX="89.0" layoutY="54.0" prefHeight="102.0" prefWidth="48.0" style="-fx-cursor: hand; -fx-background-color: transparent;">
-                    <graphic>
-                        <ImageView fitHeight="93.0" fitWidth="115.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/Coke.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="SweetTea" layoutX="152.0" layoutY="54.0" style="-fx-cursor: hand; -fx-background-color: transparent">
-                    <graphic>
-                        <ImageView fitHeight="93.0" fitWidth="56.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/SweetTea.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="DrPepper" layoutX="224.0" layoutY="54.0" style="-fx-cursor: hand; -fx-background-color: transparent">
-                    <graphic>
-                        <ImageView fitHeight="93.0" fitWidth="75.0" preserveRatio="true" style="-fx-cursor: hand; -fx-background-color: transparent">
-                            <image>
-                                <Image url="@Images/DrPepper.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="ChickenEggRoll" layoutX="22.0" layoutY="235.0" style="-fx-cursor: hand; -fx-background-color: transparent">
-                    <graphic>
-                        <ImageView fitHeight="118.0" fitWidth="129.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/ChickenEgg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-                <Button fx:id="Rangoon" layoutX="160.0" layoutY="236.0" style="-fx-cursor:hand; -fx-background-color: transparent">
-                    <graphic>
-                        <ImageView fitHeight="105.0" fitWidth="131.0" preserveRatio="true">
-                            <image>
-                                <Image url="@Images/Rangoon.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-            </children>
-        </AnchorPane>
     </StackPane>
 
 </GridPane>

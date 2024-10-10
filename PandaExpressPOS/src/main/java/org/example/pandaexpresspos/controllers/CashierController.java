@@ -1,15 +1,20 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.layout.GridPane;
+
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import org.example.pandaexpresspos.models.MenuItem;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 
 public class CashierController {
 
@@ -26,10 +31,12 @@ public class CashierController {
     private TableColumn<Item, Double> priceColumn;
 
     @FXML
-    public Button GrilledTeriyaki, BroccoliBeef, KungPao, OrangeChicken, BlackPepperChicken, BlackPepperSteak, HoneyWalnut, HoneySesame, HotOnes, BeijingBeef, Coke, Water, SweetTea, DrPepper, WhiteRice, FriedRice, SuperGreens, ChowMein, ChickenEggRoll, Rangoon, clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9;
+    public Button clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9;
 
     @FXML
     private TextField taxField, totalField;
+    @FXML
+    private GridPane menuItemGridPane;
 
     private ObservableList<Item> orderItems = FXCollections.observableArrayList();
     private static final double TAX_RATE = 0.0825;
@@ -38,35 +45,106 @@ public class CashierController {
     private double lastSelectedPrice = 0.0;
     private StringBuilder currentQuantity = new StringBuilder();
 
+    ArrayList<MenuItem> menuItems = new ArrayList<>();
+
+    // Global sample image
+    // Global Constant for Images
+    String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/BeijingBeef.png").toExternalForm();
+
+    //TODO: Query database for items
+    public void populateMenuItems() {
+        menuItems.add(new MenuItem(9.99, 100, "Chow Mein"));
+        menuItems.add(new MenuItem(8.99, 120, "Fried Rice"));
+        menuItems.add(new MenuItem(7.99, 130, "White Steamed Rice"));
+        menuItems.add(new MenuItem(8.49, 110, "Super Greens"));
+        menuItems.add(new MenuItem(11.49, 80, "Hot Ones Blazing Bourbon Chicken"));
+        menuItems.add(new MenuItem(10.99, 90, "The Original Orange Chicken"));
+        menuItems.add(new MenuItem(12.99, 60, "Black Pepper Sirloin Steak"));
+        menuItems.add(new MenuItem(13.99, 50, "Honey Walnut Shrimp"));
+        menuItems.add(new MenuItem(11.99, 70, "Grilled Teriyaki Shrimp"));
+        menuItems.add(new MenuItem(10.49, 100, "Broccoli Beef"));
+        menuItems.add(new MenuItem(9.99, 90, "Kung Pao Chicken"));
+        menuItems.add(new MenuItem(10.49, 85, "Honey Sesame Chicken Breast"));
+        menuItems.add(new MenuItem(9.99, 110, "Beijing Beef"));
+        menuItems.add(new MenuItem(8.49, 100, "Black Pepper Chicken"));
+        menuItems.add(new MenuItem(5.49, 200, "Cream Cheese Rangoon"));
+        menuItems.add(new MenuItem(4.99, 150, "Chicken Egg Roll"));
+        menuItems.add(new MenuItem(1.99, 300, "Dr. Pepper"));
+        menuItems.add(new MenuItem(1.49, 350, "Aquafina"));
+        menuItems.add(new MenuItem(2.49, 300, "Sweet Tea"));
+        menuItems.add(new MenuItem(1.99, 300, "Pepsi"));
+    }
+
+    public void createInventoryGrid() {
+        int columns = 5; // max columns per row
+        int x = 0;
+        int y = 0;
+
+        menuItemGridPane.setHgap(10);
+        menuItemGridPane.setAlignment(Pos.CENTER);
+
+        for (MenuItem item : menuItems) {
+
+            String itemImg = sampleImg;
+            String itemName = item.itemName;
+            String itemStock = String.valueOf(item.availableStock);
+
+
+            // Create a vertical box for image and label
+            VBox layout = new VBox(10);
+            layout.setAlignment(Pos.CENTER);
+
+            // Create a button, set background to img
+            Button button = new Button();
+            button.setMinSize(60, 60);
+            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+                    "-fx-background-size: cover;");
+
+//            // Handle clicks
+//            button.setOnMouseClicked(e ->{
+//                this.updateInventoryItem(Optional.of(item));
+//            });
+
+            // Create labels
+            Label nameLabel = new Label(itemName);
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            Label itemStockLabel = new Label("Qty: " + itemStock);
+
+            // Allow the VBox to grow in the GridPane cell
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
+
+            // Add items to vbox
+            layout.getChildren().addAll(button, nameLabel, itemStockLabel);
+
+            // Add vbox to grid
+            menuItemGridPane.add(layout, x, y);
+
+            // Update grid position
+            x++;
+            if (x == columns) {
+                x = 0;
+                y++;
+            }
+
+        }
+
+
+    }
+
     @FXML
     public void initialize() {
+
+        populateMenuItems();
+        createInventoryGrid();
+
         itemColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         orderTable.setItems(orderItems);
 
-        // Product buttons
-        GrilledTeriyaki.setOnAction(event -> selectItem("Grilled Teriyaki", 5.2));
-        BroccoliBeef.setOnAction(event -> selectItem("Broccoli Beef", 5.2));
-        KungPao.setOnAction(event -> selectItem("Kung Pao", 5.2));
-        OrangeChicken.setOnAction(event -> selectItem("Orange Chicken", 5.2));
-        BlackPepperChicken.setOnAction(event -> selectItem("Black Pepper Chicken", 5.2));
-        BlackPepperSteak.setOnAction(event -> selectItem("Black Pepper Steak", 6.7));
-        HoneyWalnut.setOnAction(event -> selectItem("Honey Walnut", 6.7));
-        HoneySesame.setOnAction(event -> selectItem("Honey Sesame", 5.2));
-        HotOnes.setOnAction(event -> selectItem("HotOnes", 5.2));
-        BeijingBeef.setOnAction(event -> selectItem("Beijing Beef", 5.2));
-        Coke.setOnAction(event -> selectItem("Coke", 2.1));
-        Water.setOnAction(event -> selectItem("Water", 2.1));
-        DrPepper.setOnAction(event -> selectItem("Dr Pepper", 2.1));
-        SweetTea.setOnAction(event -> selectItem("Sweet Tea", 2.1));
-        WhiteRice.setOnAction(event -> selectItem("White Rice", 4.4));
-        FriedRice.setOnAction(event -> selectItem("Fried Rice", 4.4));
-        SuperGreens.setOnAction(event -> selectItem("Super Greens", 4.4));
-        ChowMein.setOnAction(event -> selectItem("Chow Mein", 4.4));
-        Rangoon.setOnAction(event -> selectItem("Rangoon", 2.0));
-        ChickenEggRoll.setOnAction(event -> selectItem("Chicken Egg Roll", 2.0));
 
         // Numpad buttons
         Button[] numpadButtons = {button0, button1, button2, button3, button4, button5, button6, button7, button8, button9};
