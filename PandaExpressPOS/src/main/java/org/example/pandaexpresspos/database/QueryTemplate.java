@@ -41,6 +41,10 @@ class QueryTemplate {
             SELECT * FROM employee
             WHERE employeeId = '%s';
             """;
+    public static final String selectEmployeeByName = """
+            SELECT * FROM employee
+            WHERE name = '%s';
+            """;
     public static final String selectAllEmployees = """
             SELECT * FROM employee;
             """;
