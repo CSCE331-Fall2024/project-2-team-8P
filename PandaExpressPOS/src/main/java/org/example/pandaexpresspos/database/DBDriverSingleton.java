@@ -149,6 +149,23 @@ public class DBDriverSingleton {
         }
         return employee;
     }
+    public Employee selectEmployee(String name) {
+        Employee employee = null;
+        try {
+            List<Employee> employees = executeQuery(
+                    String.format(QueryTemplate.selectEmployeeByName, name),
+                    SQLToJavaMapper::employeeMapper
+            );
+            if (employees.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            employee = employees.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employee;
+
+    }
 
     public List<Employee> selectEmployees() {
         List<Employee> employees = null;
