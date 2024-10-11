@@ -149,6 +149,7 @@ public class DBDriverSingleton {
         }
         return employee;
     }
+
     public Employee selectEmployee(String name) {
         Employee employee = null;
         try {
@@ -164,7 +165,6 @@ public class DBDriverSingleton {
             e.printStackTrace();
         }
         return employee;
-
     }
 
     public List<Employee> selectEmployees() {
@@ -309,29 +309,7 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public static String checkLogin(String name){
-        try {
-            List<Boolean> results = executeQuery(String.format(QueryTemplate.validateUser, name),
-                    SQLToJavaMapper::loginMapper
-            );
-            if (results.isEmpty()) {
-                return "Error";
-            }
-            else {
-                boolean isManager = results.get(0);
-                if (isManager){
-                    return "Manager";
-                }
-                else{
-                    return "Cashier";
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Error";
-        }
 
-    }
     // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
