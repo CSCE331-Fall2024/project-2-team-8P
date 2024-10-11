@@ -82,7 +82,6 @@ public class ManagerController {
     @FXML
     public void initialize() {
         dbSnapshot.refreshAllSnapshots();
-
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
