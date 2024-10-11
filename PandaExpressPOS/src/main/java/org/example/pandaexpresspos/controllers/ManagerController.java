@@ -1,8 +1,8 @@
 package org.example.pandaexpresspos.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -31,6 +31,10 @@ public class ManagerController {
     private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
     private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
 
+    private Employee loggedInUser;
+
+    @FXML
+    private VBox rightVerBox;
     @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
@@ -81,11 +85,22 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
+//        if (loggedInUser == null) {
+//            throw new IllegalStateException("You have not logged in");
+//        }
+//        if (!loggedInUser.isManager) {
+//            throw new IllegalStateException("You are not authorized to view this page");
+//        }
+
         dbSnapshot.refreshAllSnapshots();
 
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+    }
+
+    public void setLoggedInUser(Employee user) {
+        loggedInUser = user;
     }
 
     // Handle logout button click
@@ -505,9 +520,10 @@ public class ManagerController {
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
-        int y = 0;
+        int y = 1;
 
         inventoryItemsGridPane.setHgap(10);
+        inventoryItemsGridPane.setVgap(150);
         inventoryItemsGridPane.setAlignment(Pos.CENTER);
 
         for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
@@ -518,7 +534,7 @@ public class ManagerController {
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
-            layout.setAlignment(Pos.CENTER);
+            layout.setAlignment(Pos.BOTTOM_CENTER);
 
             // Create a button, set background to img
             Button button = new Button();
@@ -537,9 +553,9 @@ public class ManagerController {
             Label itemStockLabel = new Label("Qty: " + itemStock);
 
             // Allow the VBox to grow in the GridPane cell
-            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
-            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
-            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
+//            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+//            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+//            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
             layout.getChildren().addAll(button, nameLabel, itemStockLabel);
@@ -557,7 +573,7 @@ public class ManagerController {
     }
 
     public void createMenuItemsGrid() {
-        int columns = 5; // max columns per row
+        int columns = 6; // max columns per row
         int x = 0;
         int y = 0;
 
