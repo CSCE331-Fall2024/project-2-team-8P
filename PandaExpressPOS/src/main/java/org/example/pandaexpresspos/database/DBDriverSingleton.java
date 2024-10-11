@@ -297,7 +297,7 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Select
     private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
-        List<T> results = new ArrayList<>();
+        List<T> results = new ArrayList<>(); //This function is used to execute a query such as selecting
 
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
@@ -305,14 +305,14 @@ public class DBDriverSingleton {
                 DBCredentials.passwd);
              Statement stmt = conn.createStatement()) {
 
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery(query); // Execute the query
 
             if (!rs.isBeforeFirst()) {
                 throw new SQLException("Query returned empty result");
             }
 
             while (rs.next()) {
-                T item = mapper.apply(rs);
+                T item = mapper.apply(rs); // Map the result to a Java object
                 results.add(item);
             }
 
@@ -330,7 +330,7 @@ public class DBDriverSingleton {
     // 2. Update
     // 3. Delete
     private static void executeUpdate(String query) {
-        try (Connection conn = DriverManager.getConnection(
+        try (Connection conn = DriverManager.getConnection( //This function is used to update a query such as inserting
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
                 DBCredentials.passwd);
