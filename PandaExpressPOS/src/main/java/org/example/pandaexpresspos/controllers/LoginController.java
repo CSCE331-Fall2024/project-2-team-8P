@@ -12,10 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import org.example.pandaexpresspos.models.Employee;
-
+import org.example.pandaexpresspos.database.DBDriverSingleton;
 import java.io.IOException;
 
-
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 
 public class LoginController {
@@ -70,14 +71,21 @@ public class LoginController {
 
     EmployeeType getEmployeeType(String username) {
         // TODO: Query Database for name matching
-        try{
-            Employee employee = selectEmployee(username);
+        try {
+            // Create an instance of EmployeeService if selectEmployee is non-static
+            Employee employee = DBDriverSingleton.getInstance().selectEmployee(username);
             if (employee == null) {
                 return EmployeeType.ERROR;
+            }
+
+            if (employee.isManager) {
+                return EmployeeType.MANAGER;
+            } else {
+                return EmployeeType.CASHIER;
+            }
+        } catch (Exception e) {
+            return EmployeeType.ERROR;
         }
-
-
-
     }
 
 
