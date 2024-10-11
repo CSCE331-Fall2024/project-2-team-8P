@@ -1,11 +1,6 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.event.ActionEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
@@ -78,7 +73,9 @@ public class CashierController {
     private TextField cashierTextField;
 
     @FXML
-    private TextField taxField, totalField;
+    private TextField
+//            taxField,
+            totalField;
 
     @FXML
     private GridPane menuItemGridPane;
@@ -87,7 +84,7 @@ public class CashierController {
 
     // constants for global use
     private static final double TAX_RATE = 0.0825;
-    private UUID cashierId;
+
     private LocalDate currentDate = LocalDate.now();
     private Integer month = currentDate.getMonthValue();
     private Integer week = (currentDate.getMonthValue()
@@ -123,13 +120,8 @@ public class CashierController {
         // For now, we're just picking a random employee from the database
         dbSnapshot.refreshAllSnapshots();
 
-        Iterator<Employee> empIt = dbSnapshot.getEmployeeSnapshot().values().iterator();
-        Employee randomEmployee = empIt.next();
-
-        cashierId = randomEmployee.employeeId;
-
         currentOrder = new Order(
-                cashierId,
+                loggedInUser.employeeId,
                 month,
                 week,
                 day,
@@ -286,20 +278,25 @@ public class CashierController {
             MenuItem prevItem = existingItem.getKey();
 
             if (prevItem.itemName.equals(item.itemName)) {
-                currentOrder.menuItems.put(prevItem, quantity);
+                currentOrder.addOrUpdateMenuItem(prevItem, quantity);
+
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
                 orderTable.setItems(orderItems);
+
                 updateTotals();
                 return;
             }
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        currentOrder.menuItems.put(item, quantity);
+        currentOrder.addOrUpdateMenuItem(item, quantity);
+
+        // Refresh what's displayed in the order table
         orderItems.clear();
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
+
         //currentOrder.addMenuItem(new MenuItem(itemName, price), quantity); // Add to current order
         updateTotals();
     }
@@ -308,13 +305,12 @@ public class CashierController {
         BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
 
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) { // Updated to OrderItem
-
             MenuItem prevItem = existingItem.getKey();
             Integer quantity = existingItem.getValue();
 
             if (prevItem.itemName.equals(item.itemName)) {
-
                 currentOrder.menuItems.replace(prevItem, quantity, quantity + 1);
+
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
                 orderTable.setItems(orderItems);
@@ -324,7 +320,7 @@ public class CashierController {
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        currentOrder.menuItems.put(item, 1);
+        currentOrder.addOrUpdateMenuItem(item, 1);
         orderItems.clear();
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
@@ -341,7 +337,7 @@ public class CashierController {
         orderTable.setItems(orderItems);
 
         // Reset tax and total fields to $0.00
-        taxField.setText("Tax: $0.00");
+//        taxField.setText("Tax: $0.00");
         totalField.setText("Total: $0.00");
 
         // Reset the price in the current order
@@ -354,9 +350,12 @@ public class CashierController {
     private void addOrder() {
         dbDriver.insertOrder(currentOrder);
 
+        // Log the current order's ID so we can easily query for it
+        System.out.println("Newly placed order: " + currentOrder.orderId);
+
         // Add current order to the database logic here
         currentOrder = new Order(
-                cashierId,
+                loggedInUser.employeeId,
                 month,
                 week,
                 day,
@@ -387,13 +386,13 @@ public class CashierController {
 
         BigDecimal subtotalBD = BigDecimal.valueOf(subtotal).setScale(2, RoundingMode.HALF_UP);
 
-        double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
-        BigDecimal taxBD = BigDecimal.valueOf(tax).setScale(2, RoundingMode.HALF_UP);
+//        double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
+//        BigDecimal taxBD = BigDecimal.valueOf(tax).setScale(2, RoundingMode.HALF_UP);
+//
+//        double total = subtotalBD.add(taxBD).doubleValue();
+//        BigDecimal totalBD = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
 
-        double total = subtotalBD.add(taxBD).doubleValue();
-        BigDecimal totalBD = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
-
-        taxField.setText("Tax: " + String.format("$%.2f", taxBD.doubleValue()));
-        totalField.setText("Total: " + String.format("$%.2f", totalBD.doubleValue()));
+//        taxField.setText("Tax: " + String.format("$%.2f", taxBD.doubleValue()));
+        totalField.setText("Total: " + String.format("$%.2f", subtotalBD.doubleValue()));
     }
 }

@@ -50,6 +50,23 @@ public class LoginController {
         switch (employeeType) {
             case CASHIER:
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
+
+                // Configure the controller factory to set the logged in user before calling `initialize()`
+                loader.setControllerFactory(controllerClass -> {
+                    if (controllerClass == CashierController.class) {
+                        CashierController controller = new CashierController();
+                        controller.setLoggedInUser(currentUser); // Inject the state here
+                        return controller;
+                    } else {
+                        try {
+                            // Default behavior for other controllers
+                            return controllerClass.getDeclaredConstructor().newInstance();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+
                 root = loader.load();
                 CashierController cashierController = loader.getController();
                 cashierController.setLoggedInUser(currentUser);

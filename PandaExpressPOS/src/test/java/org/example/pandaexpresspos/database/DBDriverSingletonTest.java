@@ -57,8 +57,8 @@ class DBDriverSingletonTest {
                 8,
                 50.0
         );
-        newOrder.addInventoryItem(napkin, 2);
-        newOrder.addMenuItem(drPepper, 1);
+        newOrder.addOrUpdateInventoryItem(napkin, 2);
+        newOrder.addOrUpdateMenuItem(drPepper, 1);
 
         driver.insertOrder(newOrder);
 
