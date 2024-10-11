@@ -84,7 +84,7 @@ public class CashierController {
     }
 
     // Constant sample image
-    //String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/BeijingBeef.png").toExternalForm();
+    //String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/Beijing Beef.png").toExternalForm();
 
     @FXML
     public void initialize() {// Initialize current order
