@@ -298,7 +298,7 @@ public class CashierController {
         totalField.setText("Total: $0.00");
 
         // Reset the price in the current order
-        currentOrder.setPrice(0.0);
+        currentOrder.price = 0.0;
 
         // Update totals to reflect the reset
         updateTotals();
