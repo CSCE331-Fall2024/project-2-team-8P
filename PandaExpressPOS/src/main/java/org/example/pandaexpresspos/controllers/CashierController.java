@@ -1,6 +1,11 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.event.ActionEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
