@@ -93,7 +93,6 @@ public class ManagerController {
 //        }
 
         dbSnapshot.refreshAllSnapshots();
-
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();

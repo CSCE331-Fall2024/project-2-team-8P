@@ -104,7 +104,7 @@
                         <TableColumn fx:id="priceColumn" prefWidth="167.2" text="Price"/>
                     </columns>
                 </TableView>
-                <TextField fx:id="taxField" editable="false" layoutX="225.0" layoutY="313.0" text="TAX:"/>
+<!--                <TextField fx:id="taxField" editable="false" layoutX="225.0" layoutY="313.0" text="TAX:"/>-->
                 <TextField fx:id="totalField" editable="false" layoutX="225.0" layoutY="351.0" text="TOTAL: "/>
 
                 <!-- Place order and add tip buttons-->
