@@ -601,9 +601,32 @@ public class ManagerController {
     public void updateSummary() {
         summary.getChildren().clear();
         summary.setStyle("-fx-background-color: white;");
+        Text summaryText = new Text("Inventory Items\n");
+        summary.getChildren().add(summaryText);
+
         for(InventoryItem item : inventoryItems) {
-            if(item.availableStock < 15) {
-                Text summaryText = new Text(item.itemName + " has low stock, restock immediately");
+            if(item.availableStock < 10) {
+                summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
+                summary.getChildren().add(summaryText);
+            }
+            else if(item.availableStock < 25) {
+                summaryText = new Text(item.itemName + " has low stock, restock soon\n");
+                summary.getChildren().add(summaryText);
+            }
+            else if(item.availableStock > 100) {
+                summaryText = new Text(item.itemName + " has high stock\n");
+                summary.getChildren().add(summaryText);
+            }
+        }
+        summaryText = new Text("\nMenu Items\n");
+        summary.getChildren().add(summaryText);
+        for(MenuItem item : menuItems) {
+            if(item.availableStock > 100) {
+                summaryText = new Text(item.itemName + " is not quite popular/was made in excess\n");
+                summary.getChildren().add(summaryText);
+            }
+            else if(item.availableStock < 10) {
+                summaryText = new Text(item.itemName + " is extremely popular\n");
                 summary.getChildren().add(summaryText);
             }
         }
@@ -635,7 +658,7 @@ public class ManagerController {
 
     //TODO: Retrieve Menu Items from Database
     public void populateMenuItems() {
-        menuItems.add(new MenuItem(6.99, 100, "Orange Chicken"));
+        menuItems.add(new MenuItem(6.99, 1, "Orange Chicken"));
         menuItems.add(new MenuItem(5.49, 120, "Chow Mein"));
         menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
         menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));

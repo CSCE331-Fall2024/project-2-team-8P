@@ -36,23 +36,23 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Order Trends">
-                     <content>
-                        <AnchorPane>
-                           <children>
-                              <!-- Allow the LineChart to grow inside the AnchorPane -->
-                              <LineChart prefHeight="218.0" prefWidth="395.0">
-                                 <xAxis>
-                                    <CategoryAxis side="BOTTOM" />
-                                 </xAxis>
-                                 <yAxis>
-                                    <NumberAxis side="LEFT" />
-                                 </yAxis>
-                              </LineChart>
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </Tab>
+<!--                  <Tab text="Order Trends">-->
+<!--                     <content>-->
+<!--                        <AnchorPane>-->
+<!--                           <children>-->
+<!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
+<!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
+<!--                                 <xAxis>-->
+<!--                                    <CategoryAxis side="BOTTOM" />-->
+<!--                                 </xAxis>-->
+<!--                                 <yAxis>-->
+<!--                                    <NumberAxis side="LEFT" />-->
+<!--                                 </yAxis>-->
+<!--                              </LineChart>-->
+<!--                           </children>-->
+<!--                        </AnchorPane>-->
+<!--                     </content>-->
+<!--                  </Tab>-->
 
                </tabs>
             </TabPane>
