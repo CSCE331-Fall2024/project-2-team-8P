@@ -1,6 +1,11 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.event.ActionEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.fxml.FXML;
 import java.io.IOException;
 import javafx.fxml.FXMLLoader;
@@ -79,7 +84,9 @@ public class CashierController {
     }
 
     // Constant sample image
-    String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/BeijingBeef.png").toExternalForm();
+
+    //String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/Beijing Beef.png").toExternalForm();
+
 
     @FXML
     public void initialize() {// Initialize current order
@@ -123,16 +130,17 @@ public class CashierController {
     }
 
     public void createInventoryGrid() {
-        int columns = 6; // max columns per row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
-        menuItemGridPane.setHgap(10);
+        menuItemGridPane.setHgap(100);
         menuItemGridPane.setAlignment(Pos.CENTER);
+        menuItemGridPane.setStyle("-fx-padding: 10;");
 
         for (MenuItem item : menuItems) {
-            String itemImg = sampleImg;
             String itemName = item.itemName;
+            String itemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/"+itemName+".png").toExternalForm();
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
@@ -141,7 +149,7 @@ public class CashierController {
 
             // Create a button, set background to img
             Button button = new Button();
-            button.setMinSize(60, 60);
+            button.setMinSize(100, 80);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
                     "-fx-background-size: cover;-fx-cursor: hand;");
 

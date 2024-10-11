@@ -49,6 +49,7 @@ public class LoginController {
                 // Create a new scene and set it to the stage
                 scene = new Scene(loader.load(), 1200, 800);
                 stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+                stage.setTitle("Panda Express POS System");
                 stage.setScene(scene);
                 stage.show();
                 break;

@@ -60,4 +60,8 @@ public class Order {
     public void removeMenuItem(MenuItem item) {
         menuItems.remove(item);
     }
+
+    public void setPrice(double price){
+        this.price = price;
+    }
 }
