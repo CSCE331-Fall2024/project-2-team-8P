@@ -1,5 +1,10 @@
 package org.example.pandaexpresspos.controllers;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -10,7 +15,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
@@ -19,6 +26,7 @@ import org.example.pandaexpresspos.database.DBSnapshotSingleton;
 import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
+import org.example.pandaexpresspos.models.Order;
 
 import java.io.IOException;
 import java.util.*;
@@ -47,6 +55,29 @@ public class ManagerController {
     private Button addItemButton;
     @FXML
     private TabPane itemsTabPane;
+    @FXML
+    private TableView<Order> ordersTable;
+    @FXML
+    private TableColumn<Order, UUID> Order;
+    @FXML
+    private TableColumn<Order, UUID> Cashier;
+    @FXML
+    private TableColumn<Order, String> Month;
+    @FXML
+    private TableColumn<Order, String> Day;
+    @FXML
+    private TableColumn<Order, String> Week;
+    @FXML
+    private TableColumn<Order, String> Hour;
+    @FXML
+    private TableColumn<Order, String> Price;
+    @FXML
+    private TextFlow summary;
+
+    private int unpopularMenuItem = 500;
+    private int popularMenuItem = 10;
+    private int lowInventory = 50;
+    private int veryLowInventory = 10;
 
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
@@ -85,6 +116,7 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
+
 //        if (loggedInUser == null) {
 //            throw new IllegalStateException("You have not logged in");
 //        }
@@ -92,8 +124,8 @@ public class ManagerController {
 //            throw new IllegalStateException("You are not authorized to view this page");
 //        }
 
-        dbSnapshot.refreshAllSnapshots();
 
+        dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
@@ -112,6 +144,13 @@ public class ManagerController {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void report(ActionEvent event) throws IOException {
+        updateOrderHistory();
+        updateSummary();
+    }
+
+
 
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
@@ -516,6 +555,67 @@ public class ManagerController {
         });
     }
 
+    public void updateOrderHistory() {
+        ordersTable.getItems().clear();
+
+        createOrdersTable();
+
+        Order.setCellValueFactory(cellData ->
+                new SimpleObjectProperty(cellData.getValue().orderId.toString())
+        );
+        Cashier.setCellValueFactory(cellData ->
+                new SimpleObjectProperty(cellData.getValue().cashierId.toString())
+        );
+
+
+        // Setup other columns similarly
+        Month.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().month.toString())
+        );
+        Week.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().week.toString())
+        );
+        Day.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().day.toString())
+        );
+        Hour.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().hour.toString())
+        );
+        Price.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(cellData.getValue().price))
+        );
+    }
+
+    public void updateSummary() {
+        summary.getChildren().clear();
+        summary.setStyle("-fx-background-color: white;");
+        Text summaryText = new Text("Inventory Items\n");
+        summary.getChildren().add(summaryText);
+
+        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+            if(item.availableStock <= veryLowInventory) {
+                summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
+                summary.getChildren().add(summaryText);
+            }
+            else if(item.availableStock <= lowInventory) {
+                summaryText = new Text(item.itemName + " has low stock, restock soon\n");
+                summary.getChildren().add(summaryText);
+            }
+        }
+        summaryText = new Text("\nMenu Items\n");
+        summary.getChildren().add(summaryText);
+        for(MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
+            if(item.availableStock >= unpopularMenuItem) {
+                summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
+                summary.getChildren().add(summaryText);
+            }
+            else if(item.availableStock <= popularMenuItem) {
+                summaryText = new Text(item.itemName + " is extremely popular\n");
+                summary.getChildren().add(summaryText);
+            }
+        }
+    }
+
 
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
@@ -678,6 +778,13 @@ public class ManagerController {
                 y++;
             }
         }
+    }
+
+    public void createOrdersTable() {
+        ObservableList<Order> orderList = FXCollections.observableArrayList();
+        orderList.addAll(dbSnapshot.getOrderSnapshot().values());
+
+        ordersTable.setItems(orderList);
     }
 
 
