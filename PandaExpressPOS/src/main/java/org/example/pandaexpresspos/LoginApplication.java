@@ -10,10 +10,10 @@ import java.io.IOException;
 public class LoginApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loginViewLoader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
-        Scene loginScene = new Scene(loginViewLoader.load(), 1200, 800);
-        stage.setTitle("Hello!");
-        stage.setScene(loginScene);
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
+        stage.setTitle("Panda Express Point of Sales (POS) System");
+        stage.setScene(scene);
         stage.show();
     }
 
