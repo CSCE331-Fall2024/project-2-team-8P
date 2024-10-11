@@ -47,10 +47,14 @@ public class CashierController {
     private TableColumn<Map.Entry<MenuItem, Integer>, Double> priceColumn; // Updated type to OrderItem
 
     @FXML
-    public Button clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9,Logout;
+    public Button clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, Logout;
+
+    @FXML
+    private TextField cashierTextField;
 
     @FXML
     private TextField taxField, totalField;
+
     @FXML
     private GridPane menuItemGridPane;
 
@@ -62,7 +66,7 @@ public class CashierController {
     private LocalDate currentDate = LocalDate.now();
     private Integer month = currentDate.getMonthValue();
     private Integer week = (currentDate.getMonthValue()
-                           * currentDate.getDayOfMonth())/7;
+            * currentDate.getDayOfMonth()) / 7;
     private Integer day = currentDate.getDayOfMonth();
     private Integer hour = Calendar.HOUR_OF_DAY;
 
@@ -74,10 +78,10 @@ public class CashierController {
     ArrayList<MenuItem> menuItems = new ArrayList<>();
 
     @FXML
-    void logOutUser(ActionEvent event) throws IOException{
+    void logOutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         Scene scene = new Scene(loader.load(), 1200, 800);
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
@@ -90,6 +94,10 @@ public class CashierController {
 
     @FXML
     public void initialize() {// Initialize current order
+//        if (loggedInUser == null) {
+//            throw new IllegalStateException("You have not logged in");
+//        }
+
         currentOrder = new Order(
                 cashierID,
                 month,
@@ -102,7 +110,13 @@ public class CashierController {
         createInventoryGrid();
         initializeButtons();
         initializeTableView();
+    }
 
+    public void setLoggedInUser(Employee user) {
+        loggedInUser = user;
+        if (cashierTextField != null) {
+            cashierTextField.setText("Cashier: " + loggedInUser.name);
+        }
     }
 
     //TODO: Query database for items
@@ -140,7 +154,7 @@ public class CashierController {
 
         for (MenuItem item : menuItems) {
             String itemName = item.itemName;
-            String itemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/"+itemName+".png").toExternalForm();
+            String itemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/" + itemName + ".png").toExternalForm();
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
@@ -187,7 +201,7 @@ public class CashierController {
     }
 
     private void initializeTableView() {
-        nameColumn.setCellValueFactory( cellData->
+        nameColumn.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getKey().itemName)
         );
         quantityColumn.setCellValueFactory(cellData ->
@@ -275,7 +289,7 @@ public class CashierController {
 
             if (prevItem.itemName.equals(item.itemName)) {
 
-                currentOrder.menuItems.replace(prevItem, quantity, quantity+1);
+                currentOrder.menuItems.replace(prevItem, quantity, quantity + 1);
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
                 orderTable.setItems(orderItems);
