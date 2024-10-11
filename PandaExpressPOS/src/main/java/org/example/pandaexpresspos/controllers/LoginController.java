@@ -52,7 +52,6 @@ public class LoginController {
                 stage.show();
                 break;
             case MANAGER:
-                // TODO: Connect to Manager View
                 // load the fxml for screen switch
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/manager-view.fxml"));
                 // Create a new scene and set it to the stage
