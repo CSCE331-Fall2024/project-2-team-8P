@@ -14,7 +14,8 @@ import org.example.pandaexpresspos.LoginApplication;
 
 import java.io.IOException;
 
-import static org.example.pandaexpresspos.database.DBDriverSingleton.LoginValidation;
+import static org.example.pandaexpresspos.database.DBDriverSingleton.checkLogin;
+
 
 
 public class LoginController {
@@ -69,16 +70,12 @@ public class LoginController {
 
     EmployeeType getEmployeeType(String username) {
         // TODO: Query Database for name matching
-        username=LoginValidation(username);
-        if (username.equals("Cashier")){
-            return EmployeeType.CASHIER;
-        }
-        else if (username.equals("Manager")){
-            return EmployeeType.MANAGER;
-        }
-        else{
-            return EmployeeType.ERROR;
-        }
+        username = checkLogin(username);
+        return switch (username) {
+            case "Cashier" -> EmployeeType.CASHIER;
+            case "Manager" -> EmployeeType.MANAGER;
+            default -> EmployeeType.ERROR;
+        };
     }
 
 }

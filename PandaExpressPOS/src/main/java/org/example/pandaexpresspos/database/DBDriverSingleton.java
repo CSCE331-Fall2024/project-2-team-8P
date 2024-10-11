@@ -292,16 +292,10 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public static String LoginValidation(String name){
+    public static String checkLogin(String name){
         try {
-            List<Boolean> results = executeQuery(String.format(QueryTemplate.ValidUser, name),
-                    rs -> {
-                        try {
-                            return rs.getBoolean("ismanager");
-                        } catch (SQLException e) {
-                            return false;
-                        }
-                    }
+            List<Boolean> results = executeQuery(String.format(QueryTemplate.validateUser, name),
+                    SQLToJavaMapper::loginMapper
             );
             if (results.isEmpty()) {
                 return "Error";

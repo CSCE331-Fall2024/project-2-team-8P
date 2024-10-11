@@ -60,4 +60,13 @@ class SQLToJavaMapper {
             throw new RuntimeException("Error mapping ResultSet to MenuItem", e);
         }
     }
+    public static boolean loginMapper(ResultSet rs){
+        try{
+            return rs.getBoolean("ismanager");
+
+        }
+        catch (SQLException e) {
+            return false;
+        }
+    }
 }
