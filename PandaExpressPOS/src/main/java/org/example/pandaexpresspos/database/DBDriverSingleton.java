@@ -144,6 +144,7 @@ public class DBDriverSingleton {
         }
         return employee;
     }
+
     public Employee selectEmployee(String name) {
         Employee employee = null;
         try {
@@ -159,7 +160,6 @@ public class DBDriverSingleton {
             e.printStackTrace();
         }
         return employee;
-
     }
 
     public List<Employee> selectEmployees() {
