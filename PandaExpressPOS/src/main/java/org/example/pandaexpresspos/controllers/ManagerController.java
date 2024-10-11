@@ -479,7 +479,6 @@ public class ManagerController {
             String name = outputs[0];
             String isManager = outputs[1];
             String url = outputs[2];
-
             // If no inventory item is passed in, we need to add a new one
             if (employee.isEmpty()) {
                 dbDriver.insertEmployee(new Employee(
@@ -491,7 +490,6 @@ public class ManagerController {
                 Employee emp = employee.get();
                 emp.isManager = Boolean.parseBoolean(isManager.trim());
                 emp.name = name;
-
                 dbDriver.updateEmployee(emp);
             }
 
