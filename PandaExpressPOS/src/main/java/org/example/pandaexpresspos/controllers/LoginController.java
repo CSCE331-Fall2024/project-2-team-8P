@@ -11,11 +11,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
+import org.example.pandaexpresspos.database.DBDriverSingleton;
+import org.example.pandaexpresspos.models.Employee;
 
 import java.io.IOException;
 
 
 public class LoginController {
+
+    private final DBDriverSingleton dbDriverSingleton = DBDriverSingleton.getInstance();
+
+    private Employee currentUser;
 
     @FXML
     private AnchorPane loginAnchorPane;
@@ -37,41 +43,51 @@ public class LoginController {
     }
 
     @FXML
-    void loginUser(ActionEvent event) throws IOException {
-        EmployeeType emp = getEmployeeType(usernameTextField.getText());
-        switch (emp) {
+    public void loginUser(ActionEvent event) throws IOException {
+        EmployeeType employeeType = getEmployeeType(usernameTextField.getText());
+        Parent root = null;
+
+        switch (employeeType) {
             case CASHIER:
-                // load the fxml for screen switch
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
-                // Create a new scene and set it to the stage
-                scene = new Scene(loader.load(), 1200, 800);
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                stage.setTitle("Panda Express POS System");
-                stage.setScene(scene);
-                stage.show();
+                root = loader.load();
+                CashierController cashierController = loader.getController();
+                cashierController.setLoggedInUser(currentUser);
                 break;
             case MANAGER:
-                // load the fxml for screen switch
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/manager-view.fxml"));
-                // Create a new scene and set it to the stage
-                scene = new Scene(loader.load(), 1200, 800);
-                stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-                stage.setScene(scene);
-                stage.show();
+                root = loader.load();
+                ManagerController managerController = loader.getController();
+                managerController.setLoggedInUser(currentUser);
                 break;
             default:
-                // TODO: UI for Error
-                System.out.println("An error has occured");
+                // TODO: display UI for Error
+                System.out.println("Employee does not exist, exiting...");
+                System.exit(1);
         }
+
+        // Create a new scene and set it to the stage
+        scene = new Scene(root, 1200, 800);
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
     }
 
-    EmployeeType getEmployeeType(String username) {
-        // TODO: Query Database for name matching
-        return switch (username.toLowerCase()) {
-            case "cashier" -> EmployeeType.CASHIER;
-            case "manager" -> EmployeeType.MANAGER;
-            default -> EmployeeType.ERROR;
-        };
+    private void setCurrentUser(String username) {
+        currentUser = dbDriverSingleton.selectEmployee(username);
+    }
+
+    private EmployeeType getEmployeeType(String username) {
+        setCurrentUser(username);
+        if (currentUser == null) {
+            return EmployeeType.ERROR;
+        }
+
+        if (currentUser.isManager) {
+            return EmployeeType.MANAGER;
+        } else {
+            return EmployeeType.CASHIER;
+        }
     }
 
 }

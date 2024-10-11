@@ -38,6 +38,8 @@ public class CashierController {
 
     private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
     private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
+    
+    private Employee loggedInUser;
 
     // New Order instance
     private Order currentOrder; // Added to manage the current order
@@ -73,7 +75,11 @@ public class CashierController {
             Logout;
 
     @FXML
+    private TextField cashierTextField;
+
+    @FXML
     private TextField taxField, totalField;
+
     @FXML
     private GridPane menuItemGridPane;
 
@@ -136,6 +142,13 @@ public class CashierController {
         initializeTableView();
     }
 
+    public void setLoggedInUser(Employee user) {
+        loggedInUser = user;
+        if (cashierTextField != null) {
+            cashierTextField.setText("Cashier: " + loggedInUser.name);
+        }
+    }
+
     public void createMenuItemGrid() {
         int columns = 5; // max columns per row
         int x = 0;
@@ -147,7 +160,6 @@ public class CashierController {
 
         for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
             String itemName = item.itemName;
-
             String itemImg;
             try {
                 itemImg = getClass()
@@ -156,7 +168,7 @@ public class CashierController {
             } catch (Exception e) {
                 itemImg = sampleImg;
             }
-
+          
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
