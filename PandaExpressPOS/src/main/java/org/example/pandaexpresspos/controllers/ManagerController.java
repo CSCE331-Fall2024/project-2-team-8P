@@ -289,8 +289,16 @@ public class ManagerController {
                 item.cost = Double.parseDouble(cost.trim());
                 item.availableStock = Integer.parseInt(stock.trim());
                 item.itemName = name;
+                if(item.cost < 0 || item.availableStock < 0) {
+                    showAlert("Invalid Input", "Error, please input a positive number");
+                }
+                else if(item.itemName.isEmpty()) {
+                    showAlert("Invalid Input", "Error, item name is empty");
+                }
+                else {
+                    dbDriver.updateInventoryItem(item);
+                }
 
-                dbDriver.updateInventoryItem(item);
             }
 
             // Refresh our snapshot
