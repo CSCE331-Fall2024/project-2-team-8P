@@ -69,6 +69,11 @@ public class ManagerController {
     @FXML
     private TextFlow summary;
 
+    private int unpopularMenuItem = 500;
+    private int popularMenuItem = 10;
+    private int lowInventory = 50;
+    private int veryLowInventory = 10;
+
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
                     .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
@@ -571,11 +576,11 @@ public class ManagerController {
         summary.getChildren().add(summaryText);
 
         for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
-            if(item.availableStock <= 10) {
+            if(item.availableStock <= veryLowInventory) {
                 summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
                 summary.getChildren().add(summaryText);
             }
-            else if(item.availableStock <= 50) {
+            else if(item.availableStock <= lowInventory) {
                 summaryText = new Text(item.itemName + " has low stock, restock soon\n");
                 summary.getChildren().add(summaryText);
             }
@@ -583,11 +588,11 @@ public class ManagerController {
         summaryText = new Text("\nMenu Items\n");
         summary.getChildren().add(summaryText);
         for(MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
-            if(item.availableStock > 500) {
-                summaryText = new Text(item.itemName + " is not quite popular/was made in excess\n");
+            if(item.availableStock >= unpopularMenuItem) {
+                summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
                 summary.getChildren().add(summaryText);
             }
-            else if(item.availableStock < 10) {
+            else if(item.availableStock <= popularMenuItem) {
                 summaryText = new Text(item.itemName + " is extremely popular\n");
                 summary.getChildren().add(summaryText);
             }
