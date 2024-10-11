@@ -1,5 +1,9 @@
 package org.example.pandaexpresspos.controllers;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -9,15 +13,20 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
+import org.example.pandaexpresspos.models.Order;
+
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
@@ -37,7 +46,23 @@ public class ManagerController {
     @FXML
     private TabPane itemsTabPane;
     @FXML
-    private Button reportButton;
+    private TableView<Order> ordersTable;
+    @FXML
+    private TableColumn<Order, UUID> Order;
+    @FXML
+    private TableColumn<Order, UUID> Cashier;
+    @FXML
+    private TableColumn<Order, String> Month;
+    @FXML
+    private TableColumn<Order, String> Day;
+    @FXML
+    private TableColumn<Order, String> Week;
+    @FXML
+    private TableColumn<Order, String> Hour;
+    @FXML
+    private TableColumn<Order, String> Price;
+    @FXML
+    private TextFlow summary;
 
     public ManagerController() {
     }
@@ -45,14 +70,7 @@ public class ManagerController {
     // Global Constant for Images
     String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png").toExternalForm();
 
-    public void report(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(ManagerController.class.getResource("fxml/manager-report.fxml"));
-        // Create a new scene and set it to the stage
-        Scene scene = new Scene(loader.load(), 1200, 800);
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
-    }
+
 
 
 
@@ -91,6 +109,7 @@ public class ManagerController {
     ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
     ArrayList<MenuItem> menuItems = new ArrayList<>();
     ArrayList<Employee> employees = new ArrayList<>();
+    ArrayList<Order> orders = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -110,6 +129,11 @@ public class ManagerController {
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void report(ActionEvent event) throws IOException {
+        updateOrderHistory();
+        updateSummary();
     }
 
 
@@ -546,6 +570,51 @@ public class ManagerController {
 
     }
 
+    public void updateOrderHistory() {
+        ordersTable.getItems().clear();
+        populateOrders();
+        System.out.println("size:" + orders.size());
+
+
+        createOrdersTable();
+
+        Order.setCellValueFactory(cellData ->
+                new SimpleObjectProperty(cellData.getValue().orderId.toString())
+        );
+        Cashier.setCellValueFactory(cellData ->
+                new SimpleObjectProperty(cellData.getValue().cashierId.toString())
+        );
+
+
+        // Setup other columns similarly
+        Month.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().month.toString())
+        );
+        Week.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().week.toString())
+        );
+        Day.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().day.toString())
+        );
+        Hour.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().hour.toString())
+        );
+        Price.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(cellData.getValue().price))
+        );
+    }
+
+    public void updateSummary() {
+        summary.getChildren().clear();
+        summary.setStyle("-fx-background-color: white;");
+        for(InventoryItem item : inventoryItems) {
+            if(item.availableStock < 15) {
+                Text summaryText = new Text(item.itemName + " has low stock, restock immediately");
+                summary.getChildren().add(summaryText);
+            }
+        }
+    }
+
     //TODO: Retrieve Inventory Items from Database
     public void populateInventory() {
         inventoryItems.add(new InventoryItem(5.99, 100, "Napkins"));
@@ -553,7 +622,7 @@ public class ManagerController {
         inventoryItems.add(new InventoryItem(3.99, 200, "Orange Sauce"));
         inventoryItems.add(new InventoryItem(2.99, 150, "Soy Sauce"));
         inventoryItems.add(new InventoryItem(1.49, 300, "Prepackaged Noodles"));
-        inventoryItems.add(new InventoryItem(7.99, 80, "Beef"));
+        inventoryItems.add(new InventoryItem(7.99, 8, "Beef"));
         inventoryItems.add(new InventoryItem(6.99, 120, "Chicken"));
     }
 
@@ -577,6 +646,14 @@ public class ManagerController {
         menuItems.add(new MenuItem(4.99, 150, "Fried Rice"));
         menuItems.add(new MenuItem(7.99, 80, "Beijing Beef"));
         menuItems.add(new MenuItem(5.99, 90, "Super Greens"));
+    }
+
+    public void populateOrders() {
+        orders.add(new Order(UUID.randomUUID(), 1, 2, 3, 4, 5.00));
+        orders.add(new Order(UUID.randomUUID(), 2, 2, 3, 4, 5.00));
+        orders.add(new Order(UUID.randomUUID(), 3, 2, 3, 4, 5.00));
+        orders.add(new Order(UUID.randomUUID(), 4, 2, 3, 4, 5.00));
+        orders.add(new Order(UUID.randomUUID(), 5, 2, 3, 4, 5.00));
     }
 
 
@@ -749,6 +826,18 @@ public class ManagerController {
         }
     }
 
+
+    public void createOrdersTable() {
+        for (Order order : orders) {
+            System.out.println(order.month);
+        }
+        ObservableList<Order> orderList = FXCollections.observableList(orders);
+
+
+        System.out.println("2");
+        ordersTable.setItems(orderList);
+        System.out.println("3");
+    }
 
     // Helper method to display error alert
     private void showAlert(String title, String message) {
