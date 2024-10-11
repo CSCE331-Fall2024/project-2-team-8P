@@ -149,6 +149,23 @@ public class DBDriverSingleton {
         }
         return employee;
     }
+    public Employee selectEmployee(String name) {
+        Employee employee = null;
+        try {
+            List<Employee> employees = executeQuery(
+                    String.format(QueryTemplate.selectEmployeeByName, name),
+                    SQLToJavaMapper::employeeMapper
+            );
+            if (employees.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            employee = employees.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employee;
+
+    }
 
     public List<Employee> selectEmployees() {
         List<Employee> employees = null;
@@ -291,35 +308,6 @@ public class DBDriverSingleton {
 
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-    public static String LoginValidation(String name){
-        try {
-            List<Boolean> results = executeQuery(String.format(QueryTemplate.ValidUser, name),
-                    rs -> {
-                        try {
-                            return rs.getBoolean("ismanager");
-                        } catch (SQLException e) {
-                            return false;
-                        }
-                    }
-            );
-            if (results.isEmpty()) {
-                return "Error";
-            }
-            else {
-                boolean isManager = results.get(0);
-                if (isManager){
-                    return "Manager";
-                }
-                else{
-                    return "Cashier";
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Error";
-        }
-
     }
     // Private helpers:
 

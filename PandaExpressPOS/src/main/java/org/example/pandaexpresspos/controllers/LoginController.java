@@ -11,10 +11,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
+import org.example.pandaexpresspos.models.Employee;
 
 import java.io.IOException;
 
-import static org.example.pandaexpresspos.database.DBDriverSingleton.LoginValidation;
+
 
 
 public class LoginController {
@@ -68,16 +69,15 @@ public class LoginController {
 
     EmployeeType getEmployeeType(String username) {
         // TODO: Query Database for name matching
-        username=LoginValidation(username);
-        if (username.equals("Cashier")){
-            return EmployeeType.CASHIER;
+        try{
+            Employee employee = selectEmployee(username);
+            if (employee == null) {
+                return EmployeeType.ERROR;
         }
-        else if (username.equals("Manager")){
-            return EmployeeType.MANAGER;
-        }
-        else{
-            return EmployeeType.ERROR;
-        }
+
+
+
     }
+
 
 }
