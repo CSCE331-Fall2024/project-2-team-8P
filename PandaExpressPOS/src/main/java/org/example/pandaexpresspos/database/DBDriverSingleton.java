@@ -124,11 +124,6 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteOrder(UUID orderId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
     // Employee
     public Employee selectEmployee(UUID employeeId) {
         // 1. Accepts employeeId
@@ -196,11 +191,6 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteEmployee(UUID employeeId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
     // Inventory
     public InventoryItem selectInventoryItem(UUID inventoryItemId) {
         InventoryItem item = null;
@@ -250,11 +240,6 @@ public class DBDriverSingleton {
                 updatedInventoryItem.inventoryItemId
         ));
     }
-
-    public void deleteInventoryItem(UUID inventoryItemId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 
     // Menu items
     public MenuItem selectMenuItem(UUID menuItemId) {
@@ -306,9 +291,6 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteMenuItem(UUID menuItemId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back

@@ -2,10 +2,6 @@ package org.example.pandaexpresspos.database;
 
 class QueryTemplate {
     //Login Validation
-    public static final String ValidUser = """
-       SELECT ismanager FROM employee
-       WHERE name = '%s'
-       """;
 
     // Orders
     public static final String selectOrder = """
