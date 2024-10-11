@@ -143,9 +143,9 @@ class DBDriverSingletonTest {
     @Test
     void insertInventoryItem() {
         InventoryItem newItem = new InventoryItem(
-                69.69,
-                690,
-                "Codeine"
+                70.00,
+                210,
+                "Water"
         );
         driver.insertInventoryItem(newItem);
 
@@ -191,9 +191,9 @@ class DBDriverSingletonTest {
     @Test
     void insertMenuItem() {
         MenuItem newItem = new MenuItem(
-                420.69,
-                420,
-                "Lean"
+                500.00,
+                400,
+                "Fish Soup"
         );
         driver.insertMenuItem(newItem);
 
