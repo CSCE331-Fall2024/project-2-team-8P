@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -18,7 +19,9 @@ import java.io.IOException;
 
 public class LoginController {
 
-    private DBDriverSingleton dbDriverSingleton = DBDriverSingleton.getInstance();
+    private final DBDriverSingleton dbDriverSingleton = DBDriverSingleton.getInstance();
+
+    private Employee currentUser;
 
     @FXML
     private AnchorPane loginAnchorPane;
@@ -40,16 +43,22 @@ public class LoginController {
     }
 
     @FXML
-    void loginUser(ActionEvent event) throws IOException {
+    public void loginUser(ActionEvent event) throws IOException {
         EmployeeType employeeType = getEmployeeType(usernameTextField.getText());
+        Parent root = null;
 
         switch (employeeType) {
             case CASHIER:
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
-
+                root = loader.load();
+                CashierController cashierController = loader.getController();
+                cashierController.setLoggedInUser(currentUser);
                 break;
             case MANAGER:
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/manager-view.fxml"));
+                root = loader.load();
+                ManagerController managerController = loader.getController();
+                managerController.setLoggedInUser(currentUser);
                 break;
             default:
                 // TODO: display UI for Error
@@ -57,21 +66,24 @@ public class LoginController {
                 System.exit(1);
         }
 
-
         // Create a new scene and set it to the stage
-        scene = new Scene(loader.load(), 1200, 800);
+        scene = new Scene(root, 1200, 800);
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
     }
 
-    EmployeeType getEmployeeType(String username) {
-        Employee currentEmployee = dbDriverSingleton.selectEmployee(username);
-        if (currentEmployee == null) {
+    private void setCurrentUser(String username) {
+        currentUser = dbDriverSingleton.selectEmployee(username);
+    }
+
+    private EmployeeType getEmployeeType(String username) {
+        setCurrentUser(username);
+        if (currentUser == null) {
             return EmployeeType.ERROR;
         }
 
-        if (currentEmployee.isManager) {
+        if (currentUser.isManager) {
             return EmployeeType.MANAGER;
         } else {
             return EmployeeType.CASHIER;

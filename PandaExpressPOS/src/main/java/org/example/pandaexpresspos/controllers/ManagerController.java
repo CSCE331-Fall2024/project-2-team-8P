@@ -1,6 +1,5 @@
 package org.example.pandaexpresspos.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -30,6 +29,8 @@ public class ManagerController {
     // Database logic
     private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
     private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
+
+    private Employee loggedInUser;
 
     @FXML
     private GridPane inventoryItemsGridPane;
@@ -81,11 +82,22 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
+//        if (loggedInUser == null) {
+//            throw new IllegalStateException("You have not logged in");
+//        }
+//        if (!loggedInUser.isManager) {
+//            throw new IllegalStateException("You are not authorized to view this page");
+//        }
+
         dbSnapshot.refreshAllSnapshots();
 
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+    }
+
+    public void setLoggedInUser(Employee user) {
+        loggedInUser = user;
     }
 
     // Handle logout button click
