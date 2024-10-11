@@ -235,6 +235,8 @@ public class ManagerController {
                 item.cost = Double.parseDouble(cost.trim());
                 item.availableStock = Integer.parseInt(stock.trim());
                 item.itemName = name;
+
+                dbDriver.updateInventoryItem(item);
             }
 
             // Refresh our snapshot
@@ -348,7 +350,7 @@ public class ManagerController {
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
-                dbDriver.insertInventoryItem(new InventoryItem(
+                dbDriver.insertMenuItem(new MenuItem(
                         Double.parseDouble(price.trim()),
                         Integer.parseInt(stock.trim()),
                         name)
@@ -359,10 +361,12 @@ public class ManagerController {
                 item.price = Double.parseDouble(price.trim());
                 item.availableStock = Integer.parseInt(stock.trim());
                 item.itemName = name;
+
+                dbDriver.updateMenuItem(item);
             }
 
             // Refresh our menu item snapshot
-            dbSnapshot.refreshInventorySnapshot();
+            dbSnapshot.refreshMenuSnapshot();
 
             // redraw the grid to reflect the updates
             menuItemsGridPane.getChildren().clear();
@@ -476,31 +480,27 @@ public class ManagerController {
             String isManager = outputs[1];
             String url = outputs[2];
 
-            // remove the previous employee if we are updating
-            employee.ifPresent(safeEmployee -> {
-                employees.removeIf(person -> (
-                        person.name.equals(safeEmployee.name)
-                ));
-                employees.add(new Employee(
-                        safeEmployee.employeeId,
-                        Boolean.parseBoolean(isManager.trim()),
-                        name
-                ));
-            });
-
-            // If no employee is passed in, we need to create a new one
+            // If no inventory item is passed in, we need to add a new one
             if (employee.isEmpty()) {
-                employees.add(new Employee(
+                dbDriver.insertEmployee(new Employee(
                         Boolean.parseBoolean(isManager.trim()),
                         name
                 ));
+            } else {
+                // If the inventoryItem is not null, we are updating an existing item
+                Employee emp = employee.get();
+                emp.isManager = Boolean.parseBoolean(isManager.trim());
+                emp.name = name;
+
+                dbDriver.updateEmployee(emp);
             }
+
+            dbSnapshot.refreshEmployeeSnapshot();
 
             // redraw the grid to reflect the updates
             employeeItemsGridPane.getChildren().clear();
             createEmployeesGrid();
         });
-
     }
 
 
