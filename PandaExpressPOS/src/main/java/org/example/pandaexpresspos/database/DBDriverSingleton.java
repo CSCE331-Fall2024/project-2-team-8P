@@ -124,11 +124,6 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteOrder(UUID orderId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
     // Employee
     public Employee selectEmployee(UUID employeeId) {
         // 1. Accepts employeeId
@@ -196,11 +191,6 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteEmployee(UUID employeeId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
     // Inventory
     public InventoryItem selectInventoryItem(UUID inventoryItemId) {
         InventoryItem item = null;
@@ -250,11 +240,6 @@ public class DBDriverSingleton {
                 updatedInventoryItem.inventoryItemId
         ));
     }
-
-    public void deleteInventoryItem(UUID inventoryItemId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 
     // Menu items
     public MenuItem selectMenuItem(UUID menuItemId) {
@@ -306,16 +291,12 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteMenuItem(UUID menuItemId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException { //This function is used to execute a query such as selecting
         List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
@@ -348,7 +329,7 @@ public class DBDriverSingleton {
     // 1. Insert
     // 2. Update
     // 3. Delete
-    private static void executeUpdate(String query) {
+    private static void executeUpdate(String query) { //This function is used to update a query such as inserting
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
