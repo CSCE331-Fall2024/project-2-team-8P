@@ -113,8 +113,14 @@ class QueryTemplate {
             SET price = %f, availableStock = %d, itemName = '%s'
             WHERE menuItemId = '%s';
             """;
-    public static final String selectOrderByTime = """
-            SELECT * FROM "order"
-            WHERE month = %d AND week = %d AND day = %d AND hour = %d;
+    public static final String selectOrderByTimeAndMenuItem = """
+            SELECT o.orderid, o.cashierid, o.month, o.week, o.day, o.hour, o.price, otm.menuitemid
+            FROM orders o
+            JOIN orderToMenuItem otm ON o.orderid = otm.orderid
+             WHERE otm.menuitemid = '571c95d6-9f0d-489e-8860-4088677b684d'
+             AND o.month = 9
+             AND o.week = 1
+             AND o.day = 1
+             AND o.hour = 3;
             """;
 }
