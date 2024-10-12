@@ -113,4 +113,8 @@ class QueryTemplate {
             SET price = %f, availableStock = %d, itemName = '%s'
             WHERE menuItemId = '%s';
             """;
+    public static final String selectOrderByTime = """
+            SELECT * FROM "order"
+            WHERE month = %d AND week = %d AND day = %d AND hour = %d;
+            """;
 }

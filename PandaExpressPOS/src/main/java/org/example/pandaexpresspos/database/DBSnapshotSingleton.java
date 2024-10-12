@@ -23,6 +23,7 @@ public class DBSnapshotSingleton {
     // Key: orderId (there's no other way to uniquely ID an order)
     private final Map<UUID, Order> orderSnapshot = new HashMap<>();
 
+
     private DBSnapshotSingleton() {
     }
 

@@ -166,6 +166,7 @@
                </HBox.margin>
             </Button>
             <Button fx:id="reportButton" mnemonicParsing="false" onAction="#report" text="Generate Report" />
+            <Button fx:id="GenerateSales" mnemonicParsing="false" onAction="#ReportSales" text="Generate Sales"/>
          </HBox>
       </VBox>
    </HBox>
