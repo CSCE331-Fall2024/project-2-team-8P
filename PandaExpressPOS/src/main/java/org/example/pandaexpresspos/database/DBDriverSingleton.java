@@ -296,8 +296,8 @@ public class DBDriverSingleton {
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
-        List<T> results = new ArrayList<>(); //This function is used to execute a query such as selecting
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException { //This function is used to execute a query such as selecting
+        List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
@@ -305,14 +305,14 @@ public class DBDriverSingleton {
                 DBCredentials.passwd);
              Statement stmt = conn.createStatement()) {
 
-            ResultSet rs = stmt.executeQuery(query); // Execute the query
+            ResultSet rs = stmt.executeQuery(query);
 
             if (!rs.isBeforeFirst()) {
                 throw new SQLException("Query returned empty result");
             }
 
             while (rs.next()) {
-                T item = mapper.apply(rs); // Map the result to a Java object
+                T item = mapper.apply(rs);
                 results.add(item);
             }
 
@@ -329,8 +329,8 @@ public class DBDriverSingleton {
     // 1. Insert
     // 2. Update
     // 3. Delete
-    private static void executeUpdate(String query) {
-        try (Connection conn = DriverManager.getConnection( //This function is used to update a query such as inserting
+    private static void executeUpdate(String query) { //This function is used to update a query such as inserting
+        try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
                 DBCredentials.passwd);
