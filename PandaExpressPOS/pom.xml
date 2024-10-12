@@ -82,9 +82,13 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <systemProperties>
+                                <javafx.verbose>false</javafx.verbose> <!-- This is where the JVM option goes -->
+                            </systemProperties>
                         </configuration>
                     </execution>
                 </executions>
+
             </plugin>
         </plugins>
     </build>
