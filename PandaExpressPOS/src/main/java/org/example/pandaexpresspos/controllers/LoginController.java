@@ -63,7 +63,7 @@ public class LoginController {
                 break;
             default:
                 // TODO: display UI for Error
-                System.out.println("Employee does not exist.");
+                return;
 
         }
 
