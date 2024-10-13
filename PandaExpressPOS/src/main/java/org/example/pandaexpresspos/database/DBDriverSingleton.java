@@ -76,40 +76,19 @@ public class DBDriverSingleton {
                 newOrder.price
         ));
 
-        // Handle inventory item connections:
-        for (InventoryItem item : newOrder.inventoryItems.keySet()) {
-            Integer quantity = newOrder.inventoryItems.get(item);
-
-            // Insert entry into table "orderToInventoryItem"
-            executeUpdate(String.format(QueryTemplate.insertOrderToInventoryItem,
-                    newOrder.orderId,
-                    item.inventoryItemId,
-                    quantity
-            ));
-
-            // Update quantity of item in inventory table
-            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
-                    quantity,
-                    item.inventoryItemId
-            ));
-        }
-
         // Handle menu item connections:
         for (MenuItem item : newOrder.menuItems.keySet()) {
-            Integer quantity = newOrder.menuItems.get(item);
+            Integer menuItemQty = newOrder.menuItems.get(item);
 
             // Insert entry into table "orderToMenuItem"
             executeUpdate(String.format(QueryTemplate.insertOrderToMenuItem,
                     newOrder.orderId,
                     item.menuItemId,
-                    quantity
+                    menuItemQty
             ));
 
-            // Update quantity of item in menu item table
-            executeUpdate(String.format(QueryTemplate.decreaseMenuItemQty,
-                    quantity,
-                    item.menuItemId
-            ));
+            // Update quantities of associated inventory items
+
         }
     }
 
