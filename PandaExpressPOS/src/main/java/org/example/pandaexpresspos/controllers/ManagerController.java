@@ -620,11 +620,10 @@ public class ManagerController {
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
-        int y = 1;
+        int y = 0;
 
         inventoryItemsGridPane.setHgap(10);
-        inventoryItemsGridPane.setVgap(150);
-        inventoryItemsGridPane.setAlignment(Pos.CENTER);
+        inventoryItemsGridPane.setVgap(10);
 
         for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
 
@@ -633,14 +632,14 @@ public class ManagerController {
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
-            VBox layout = new VBox(10);
-            layout.setAlignment(Pos.BOTTOM_CENTER);
-
+            VBox layout = new VBox(5);
+            layout.setPadding(new Insets(10));
+            layout.setStyle("-fx-border-color: gray;");
             // Create a button, set background to img
-            Button button = new Button();
+            Button button = new Button("Trying");
             button.setMinSize(60, 60);
-            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
-                    "-fx-background-size: cover;");
+//            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+//                    "-fx-background-size: cover;");
 
             // Handle clicks on each item (updating the item)
             button.setOnMouseClicked(e -> {
@@ -665,7 +664,7 @@ public class ManagerController {
 
             // Update grid position
             x++;
-            if (x == columns) {
+            if (x == columns){
                 x = 0;
                 y++;
             }
@@ -673,7 +672,7 @@ public class ManagerController {
     }
 
     public void createMenuItemsGrid() {
-        int columns = 6; // max columns per row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
