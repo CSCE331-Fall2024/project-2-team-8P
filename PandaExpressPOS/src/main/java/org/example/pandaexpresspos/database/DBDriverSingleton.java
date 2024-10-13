@@ -4,10 +4,8 @@ import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 public class DBDriverSingleton {
@@ -60,8 +58,44 @@ public class DBDriverSingleton {
         return orders;
     }
 
-    public Map<Integer, Double> selectOrders(Integer startDate, Integer endDate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    // The indices in the returned list correspond to hours of the day - 1
+    // e.g., index 0 corresponds to hour 1
+    public List<Double> selectXReport() {
+        List<Double> xReport = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Workday starts at 10am and ends at 10pm
+            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
+
+            xReport = executeQuery(
+                    String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
+                    SQLToJavaMapper::orderSumMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return xReport;
+    }
+
+    // The indices in the returned list correspond to hours of the day - 1
+    // e.g., index 0 corresponds to hour 1
+    public List<Double> selectZReport() {
+        List<Double> zReport = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+            final int totalWorkingHoursPerDay = 12;
+
+            zReport = executeQuery(
+                    String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, totalWorkingHoursPerDay),
+                    SQLToJavaMapper::orderSumMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return zReport;
     }
 
     public void insertOrder(Order newOrder) {

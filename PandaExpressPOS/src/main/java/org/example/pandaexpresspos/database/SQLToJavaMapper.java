@@ -60,4 +60,13 @@ class SQLToJavaMapper {
             throw new RuntimeException("Error mapping ResultSet to MenuItem", e);
         }
     }
+
+    public static Double orderSumMapper(ResultSet rs) {
+        try {
+            double orderSum = rs.getDouble("sum");
+            return Math.round(orderSum * 100.0) / 100.0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error mapping ResultSet to Double", e);
+        }
+    }
 }
