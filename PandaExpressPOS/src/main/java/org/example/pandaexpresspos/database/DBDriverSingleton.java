@@ -344,7 +344,6 @@ public class DBDriverSingleton {
                     }
                 });
             }
-            System.out.println(Sales);
 
         } catch (SQLException e) {
             e.printStackTrace();

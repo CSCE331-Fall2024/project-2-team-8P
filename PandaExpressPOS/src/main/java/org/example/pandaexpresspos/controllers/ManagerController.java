@@ -21,7 +21,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -85,9 +84,9 @@ public class ManagerController {
     @FXML
     private NumberAxis yAxis;
     @FXML
-    private DatePicker startDate;
+    private DatePicker startDatePicker;
     @FXML
-    private DatePicker endDate;
+    private DatePicker endDatePicker;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -216,6 +215,7 @@ public class ManagerController {
                 break;
             case SALES_REPORT:
                 // TODO: add Sales Report
+                displaySalesReport();
                 break;
             default:
                 break;
@@ -881,12 +881,10 @@ public class ManagerController {
     Map<String, Integer> testMap = new HashMap<>();
 
     private void populateSalesReport() {
-        System.out.println(startDate.getValue());
-        System.out.println(endDate.getValue());
-        int startDateMonth = startDate.getValue().getMonthValue();
-        int startDateDay = startDate.getValue().getDayOfMonth();
-        int endDateMonth = endDate.getValue().getMonthValue();
-        int endDateDay = endDate.getValue().getDayOfMonth();
+        int startDateMonth = startDatePicker.getValue().getMonthValue();
+        int startDateDay = startDatePicker.getValue().getDayOfMonth();
+        int endDateMonth = endDatePicker.getValue().getMonthValue();
+        int endDateDay = endDatePicker.getValue().getDayOfMonth();
 
         testMap = dbDriver.ReportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
 
@@ -906,7 +904,6 @@ public class ManagerController {
             newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
         salesChart.getData().add(newSeries);
-        System.out.println("Worked");
     }
 
 
