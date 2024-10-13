@@ -21,6 +21,7 @@ import org.example.pandaexpresspos.LoginApplication;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
 import org.example.pandaexpresspos.database.DBSnapshotSingleton;
 import org.example.pandaexpresspos.models.Employee;
+import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order; // Import Order class
 
@@ -110,24 +111,15 @@ public class CashierController {
     // Constant sample image
 
     private final String sampleImg = getClass()
-            .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png")
+            .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png")
             .toExternalForm();
 
 
     @FXML
     public void initialize() {
-        // TODO: save information from the user who logged in and associate that user with each order
-        // For now, we're just picking a random employee from the database
         dbSnapshot.refreshAllSnapshots();
 
-        currentOrder = new Order(
-                loggedInUser.employeeId,
-                month,
-                week,
-                day,
-                hour,
-                0.0
-        );
+        resetCurrentOrder();
 
         createMenuItemGrid();
         initializeButtons();
@@ -155,13 +147,13 @@ public class CashierController {
             String itemImg;
             try {
                 itemImg = getClass()
-                        .getResource("/org/example/pandaexpresspos/fxml/Images/" + itemName + ".png")
+                        .getResource("/org/example/pandaexpresspos/fxml/images/" + itemName + ".png")
                         .toExternalForm();
             } catch (Exception e) {
                 itemImg = sampleImg;
             }
           
-            String itemStock = String.valueOf(item.availableStock);
+//            String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
@@ -183,8 +175,8 @@ public class CashierController {
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
 
-            Label itemStockLabel = new Label("Qty: " + itemStock);
-            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
+//            Label itemStockLabel = new Label("Qty: " + itemStock);
+//            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -192,7 +184,7 @@ public class CashierController {
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel, itemStockLabel);
+            layout.getChildren().addAll(button, nameLabel);
 
             // Add vbox to grid
             menuItemGridPane.add(layout, x, y);
@@ -353,7 +345,18 @@ public class CashierController {
         // Log the current order's ID so we can easily query for it
         System.out.println("Newly placed order: " + currentOrder.orderId);
 
-        // Add current order to the database logic here
+        dbSnapshot.refreshMenuSnapshot();
+
+        resetCurrentOrder();
+        orderItems.clear();
+        updateTotals();
+
+        // Reset the list of menu items
+        menuItemGridPane.getChildren().clear();
+        createMenuItemGrid();
+    }
+
+    private void resetCurrentOrder() {
         currentOrder = new Order(
                 loggedInUser.employeeId,
                 month,
@@ -361,16 +364,18 @@ public class CashierController {
                 day,
                 hour,
                 0.0
-        ); // Reset current order
+        );
 
-        dbSnapshot.refreshMenuSnapshot();
-
-        orderItems.clear();
-        updateTotals();
-
-        // Reset the list of menu items
-        menuItemGridPane.getChildren().clear();
-        createMenuItemGrid();
+        // Let's add the "base" inventory items to every order
+        Map<String, InventoryItem> inventorySnapshot = dbSnapshot.getInventorySnapshot();
+        InventoryItem[] baseItems = {
+                inventorySnapshot.get("Napkin"),
+                inventorySnapshot.get("Utensil"),
+                inventorySnapshot.get("Fortune Cookie"),
+        };
+        for (InventoryItem item : baseItems) {
+            currentOrder.addOrUpdateInventoryItem(item, 1);
+        }
     }
 
     private void updateTotals() {

@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,6 +59,22 @@ class SQLToJavaMapper {
             );
         } catch (SQLException e) {
             throw new RuntimeException("Error mapping ResultSet to MenuItem", e);
+        }
+    }
+
+    public static InventoryItemWithQty inventoryItemWithQtyMapper(ResultSet rs) {
+        try {
+            return new InventoryItemWithQty(
+                    new InventoryItem(
+                            UUID.fromString(rs.getString("inventoryItemId")),
+                            rs.getDouble("cost"),
+                            rs.getInt("availableStock"),
+                            rs.getString("itemName")
+                    ),
+                    rs.getInt("quantity")
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Error mapping ResultSet to InventoryItemWithQty", e);
         }
     }
 }

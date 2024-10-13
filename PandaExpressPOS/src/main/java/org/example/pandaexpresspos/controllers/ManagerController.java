@@ -1,13 +1,11 @@
 package org.example.pandaexpresspos.controllers;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -81,7 +79,7 @@ public class ManagerController {
 
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
-                    .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
+                    .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png"))
             .toExternalForm();
 
     // Enum to check which tab user has selected
@@ -116,15 +114,6 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-
-//        if (loggedInUser == null) {
-//            throw new IllegalStateException("You have not logged in");
-//        }
-//        if (!loggedInUser.isManager) {
-//            throw new IllegalStateException("You are not authorized to view this page");
-//        }
-
-
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
@@ -220,34 +209,6 @@ public class ManagerController {
                 imageUrl
         );
 
-        // If in update mode add a remove button and handle appropriately
-//        inventoryItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-////                inventoryItems.removeIf(item -> (
-////                        item.itemName.equals(safeItem.itemName)
-////                ));
-//                // Backend call here
-//
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    inventoryItemsGridPane.getChildren().clear();
-//                    createInventoryGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -316,8 +277,8 @@ public class ManagerController {
         Label menuItemPriceLabel = new Label("Menu Item Cost: ");
         TextField menuItemPrice = new TextField();
 
-        Label availableStockLabel = new Label("Available Stock: ");
-        TextField availableStock = new TextField();
+//        Label availableStockLabel = new Label("Available Stock: ");
+//        TextField availableStock = new TextField();
 
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
@@ -328,7 +289,7 @@ public class ManagerController {
         menuItem.ifPresent(safeItem -> {
             menuItemName.setText(safeItem.itemName);
             menuItemPrice.setText(String.valueOf(safeItem.price));
-            availableStock.setText(String.valueOf(safeItem.availableStock));
+//            availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");
         });
@@ -343,8 +304,8 @@ public class ManagerController {
                 menuItemName,
                 menuItemPriceLabel,
                 menuItemPrice,
-                availableStockLabel,
-                availableStock,
+//                availableStockLabel,
+//                availableStock,
                 imageUrlLabel,
                 imageUrl
         );
@@ -387,7 +348,7 @@ public class ManagerController {
                 return new ButtonType(
                         menuItemName.getText() + "," +
                                 menuItemPrice.getText() + ", " +
-                                availableStock.getText() + ", " +
+//                                availableStock.getText() + ", " +
                                 imageUrl.getText()
                 );
             }
@@ -399,21 +360,21 @@ public class ManagerController {
             String[] outputs = outputFields.getText().split(",");
             String name = outputs[0];
             String price = outputs[1];
-            String stock = outputs[2];
-            String imgUrl = outputs[3];
+//            String stock = outputs[2];
+            String imgUrl = outputs[2];
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
                 dbDriver.insertMenuItem(new MenuItem(
                         Double.parseDouble(price.trim()),
-                        Integer.parseInt(stock.trim()),
+                        0,
                         name)
                 );
             } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
                 item.price = Double.parseDouble(price.trim());
-                item.availableStock = Integer.parseInt(stock.trim());
+                item.availableStock = 0;
                 item.itemName = name;
 
                 dbDriver.updateMenuItem(item);
@@ -705,7 +666,7 @@ public class ManagerController {
             // Create a quantity label
             Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
-            Label menuStockLabel = new Label("Qty: " + menuItemStock);
+//            Label menuStockLabel = new Label("Qty: " + menuItemStock);
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -713,7 +674,7 @@ public class ManagerController {
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel, menuStockLabel);
+            layout.getChildren().addAll(button, nameLabel);
 
             // Add Vbox to grid
             menuItemsGridPane.add(layout, x, y);

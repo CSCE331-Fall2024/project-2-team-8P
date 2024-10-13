@@ -95,7 +95,7 @@ class QueryTemplate {
             SELECT * FROM menuItem;
             """;
     public static final String selectMenuItemInventoryItems = """
-            SELECT i.itemName, mi.quantity
+            SELECT i.inventoryItemId, i.cost, i.availableStock, i.itemName, mi.quantity
             FROM menuItem m
             JOIN menuItemToInventoryItem mi
             ON m.menuItemId = mi.menuItemId

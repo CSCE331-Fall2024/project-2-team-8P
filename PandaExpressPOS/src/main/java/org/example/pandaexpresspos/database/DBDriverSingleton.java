@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -65,6 +66,14 @@ public class DBDriverSingleton {
     }
 
     public void insertOrder(Order newOrder) {
+        // Update quantities of base inventory items (napkin, utensils, fortune cookie):
+        for (InventoryItem item : newOrder.inventoryItems.keySet()) {
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                    newOrder.inventoryItems.get(item),
+                    item.inventoryItemId
+            ));
+        }
+
         // Insert the order entry
         executeUpdate(String.format(QueryTemplate.insertOrder,
                 newOrder.orderId,
@@ -88,7 +97,13 @@ public class DBDriverSingleton {
             ));
 
             // Update quantities of associated inventory items
-
+            List<InventoryItemWithQty> associatedInventory = selectMenuItemInventoryItems(item);
+            for (InventoryItemWithQty itemWithQty : associatedInventory) {
+                executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                        itemWithQty.quantity,
+                        itemWithQty.inventoryItem.inventoryItemId
+                ));
+            }
         }
     }
 
@@ -252,6 +267,19 @@ public class DBDriverSingleton {
         return items;
     }
 
+    public List<InventoryItemWithQty> selectMenuItemInventoryItems(MenuItem menuItem) {
+        List<InventoryItemWithQty> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItem.itemName),
+                    SQLToJavaMapper::inventoryItemWithQtyMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public void insertMenuItem(MenuItem newMenuItem) {
         executeUpdate(String.format(QueryTemplate.insertMenuItem,
                 newMenuItem.menuItemId,
@@ -275,7 +303,7 @@ public class DBDriverSingleton {
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException { //This function is used to execute a query such as selecting
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
         List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
@@ -308,7 +336,7 @@ public class DBDriverSingleton {
     // 1. Insert
     // 2. Update
     // 3. Delete
-    private static void executeUpdate(String query) { //This function is used to update a query such as inserting
+    private static void executeUpdate(String query) {
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
