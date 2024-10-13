@@ -1,13 +1,11 @@
 package org.example.pandaexpresspos.controllers;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -19,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -56,6 +55,8 @@ public class ManagerController {
     @FXML
     private TabPane itemsTabPane;
     @FXML
+    private TabPane managerReportTabPane;
+    @FXML
     private TableView<Order> ordersTable;
     @FXML
     private TableColumn<Order, UUID> Order;
@@ -84,8 +85,8 @@ public class ManagerController {
                     .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
             .toExternalForm();
 
-    // Enum to check which tab user has selected
-    enum Tab {
+    // Enum to check which item tab user has selected
+    enum ItemTab {
         INVENTORY_ITEMS(0),
         MENU_ITEMS(1),
         EMPLOYEES(2);
@@ -93,7 +94,7 @@ public class ManagerController {
         private final int value;
 
         // Constructor
-        Tab(int value) {
+        ItemTab(int value) {
             this.value = value;
         }
 
@@ -103,8 +104,41 @@ public class ManagerController {
         }
 
         // Static method to convert an integer to an enum value
-        public static Tab fromValue(int value) {
-            for (Tab tab : Tab.values()) {
+        public static ItemTab fromValue(int value) {
+            for (ItemTab tab : ItemTab.values()) {
+                if (tab.getValue() == value) {
+                    return tab;
+                }
+            }
+            throw new IllegalArgumentException("No tab found with value: " + value);
+        }
+    }
+
+    // Enum to check which report tab user has selected
+    enum ReportTab {
+
+        ORDER_HISTORY(0),
+        SUMMARY(1),
+        USAGE(2),
+        X_REPORT(3),
+        Z_REPORT(4),
+        SALES_REPORT(5);
+
+        private final int value;
+
+        // Constructor
+        ReportTab(int value) {
+            this.value = value;
+        }
+
+        // Method to get the value
+        public int getValue() {
+            return value;
+        }
+
+        // Static method to convert an integer to an enum value
+        public static ReportTab fromValue(int value) {
+            for (ReportTab tab : ReportTab.values()) {
                 if (tab.getValue() == value) {
                     return tab;
                 }
@@ -145,9 +179,36 @@ public class ManagerController {
         stage.show();
     }
 
-    public void report(ActionEvent event) throws IOException {
-        updateOrderHistory();
-        updateSummary();
+    // Handle generating reports
+    public void generateReport(ActionEvent event) throws IOException {
+        // Check which report tabl is selected
+        ReportTab selectedTab = ReportTab.fromValue(managerReportTabPane.getSelectionModel().getSelectedIndex());
+
+        switch (selectedTab) {
+            case ORDER_HISTORY:
+                updateOrderHistory();
+                break;
+            case SUMMARY:
+                updateSummary();
+                break;
+            case USAGE:
+                // TODO: add usage report
+                break;
+            case X_REPORT:
+                // TODO: add X_Report
+                break;
+            case Z_REPORT:
+                // TODO: add Z_Report
+                break;
+            case SALES_REPORT:
+                // TODO: add Sales Report
+                break;
+            default:
+                break;
+        }
+
+
+
     }
 
 
@@ -155,8 +216,7 @@ public class ManagerController {
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
         // check if inventory items, menuitems, or employees is selected
-        Tab selectedTab = Tab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
-
+        ItemTab selectedTab = ItemTab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
 
         switch (selectedTab) {
             case INVENTORY_ITEMS:
@@ -620,11 +680,10 @@ public class ManagerController {
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
-        int y = 1;
+        int y = 0;
 
         inventoryItemsGridPane.setHgap(10);
-        inventoryItemsGridPane.setVgap(150);
-        inventoryItemsGridPane.setAlignment(Pos.CENTER);
+        inventoryItemsGridPane.setVgap(50);
 
         for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
 
@@ -638,7 +697,7 @@ public class ManagerController {
 
             // Create a button, set background to img
             Button button = new Button();
-            button.setMinSize(60, 60);
+            button.setMinSize(80, 80);
             button.setStyle("-fx-background-image: url('" + itemImg + "');" +
                     "-fx-background-size: cover;");
 
@@ -650,12 +709,15 @@ public class ManagerController {
             // Create labels
             Label nameLabel = new Label(itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label itemStockLabel = new Label("Qty: " + itemStock);
+            itemStockLabel.setTextAlignment(TextAlignment.CENTER);
+            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
-//            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
-//            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
-//            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
             layout.getChildren().addAll(button, nameLabel, itemStockLabel);
@@ -665,7 +727,7 @@ public class ManagerController {
 
             // Update grid position
             x++;
-            if (x == columns) {
+            if (x == columns){
                 x = 0;
                 y++;
             }
@@ -673,12 +735,13 @@ public class ManagerController {
     }
 
     public void createMenuItemsGrid() {
-        int columns = 6; // max columns per row
+        int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
         // Set gaps for GridPane
         menuItemsGridPane.setHgap(10); // Horizontal gap between columns
+        menuItemsGridPane.setVgap(50);
         menuItemsGridPane.setAlignment(Pos.CENTER);
 
         for (MenuItem menuItem : dbSnapshot.getMenuSnapshot().values()) {
@@ -693,7 +756,7 @@ public class ManagerController {
 
             // Create a button; set background
             Button button = new Button();
-            button.setMinSize(60, 60);
+            button.setMinSize(80, 80);
             button.setStyle("-fx-background-image: url('" + menuItemImg + "');" +
                     "-fx-background-size: cover;");
 
@@ -705,7 +768,10 @@ public class ManagerController {
             // Create a quantity label
             Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label menuStockLabel = new Label("Qty: " + menuItemStock);
+            menuStockLabel.setTextAlignment(TextAlignment.CENTER);
+            menuStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -734,6 +800,7 @@ public class ManagerController {
 
         // Set gaps for GridPane
         employeeItemsGridPane.setHgap(10); // Horizontal gap between columns
+        employeeItemsGridPane.setVgap(50);
         employeeItemsGridPane.setAlignment(Pos.CENTER);
 
         for (Employee employee : dbSnapshot.getEmployeeSnapshot().values()) {
@@ -747,7 +814,7 @@ public class ManagerController {
 
             // Create a button; set background
             Button button = new Button();
-            button.setMinSize(60, 60);
+            button.setMinSize(80, 80);
             button.setStyle("-fx-background-image: url('" + employeeImage + "');" +
                     "-fx-background-size: cover;");
 
@@ -758,7 +825,11 @@ public class ManagerController {
 
             // Create name and position labels
             Label employeeNameLabel = new Label(employeeName);
+            employeeNameLabel.setTextAlignment(TextAlignment.CENTER);
+            employeeNameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label employeePositionLabel = new Label(employeePosition);
+            employeePositionLabel.setTextAlignment(TextAlignment.CENTER);
+            employeePositionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
