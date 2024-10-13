@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -649,7 +650,10 @@ public class ManagerController {
             // Create labels
             Label nameLabel = new Label(itemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label itemStockLabel = new Label("Qty: " + itemStock);
+            itemStockLabel.setTextAlignment(TextAlignment.CENTER);
+            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -704,7 +708,10 @@ public class ManagerController {
             // Create a quantity label
             Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label menuStockLabel = new Label("Qty: " + menuItemStock);
+            menuStockLabel.setTextAlignment(TextAlignment.CENTER);
+            menuStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -757,7 +764,11 @@ public class ManagerController {
 
             // Create name and position labels
             Label employeeNameLabel = new Label(employeeName);
+            employeeNameLabel.setTextAlignment(TextAlignment.CENTER);
+            employeeNameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
             Label employeePositionLabel = new Label(employeePosition);
+            employeePositionLabel.setTextAlignment(TextAlignment.CENTER);
+            employeePositionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
