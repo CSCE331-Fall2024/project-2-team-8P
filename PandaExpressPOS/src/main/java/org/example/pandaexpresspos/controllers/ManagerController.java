@@ -788,6 +788,14 @@ public class ManagerController {
     }
 
 
+    /*
+    Sales Report
+    Frontend: start/end date
+    dictionary menuItem : sales
+    Backend: menu item sales
+     */
+
+
     // Helper method to display error alert
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
