@@ -4,6 +4,7 @@ import org.example.pandaexpresspos.models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -221,6 +222,10 @@ class DBDriverSingletonTest {
         beijingBeef.availableStock = originalQty;
         driver.updateMenuItem(beijingBeef);
     }
+    @Test
+    void SalesReport(){
+        HashMap <String, Integer> salesReport = driver.ReportSales(1,2,1,2);
+    }
 
     // Helpers
     private <T> void printItems(List<T> items) {
@@ -296,6 +301,7 @@ class DBDriverSingletonTest {
                 employee.name
         );
     }
+
 
     private void printSeparator() {
         out.println("-".repeat(100));

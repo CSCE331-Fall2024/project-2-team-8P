@@ -113,14 +113,17 @@ class QueryTemplate {
             SET price = %f, availableStock = %d, itemName = '%s'
             WHERE menuItemId = '%s';
             """;
-    public static final String selectOrderByTimeAndMenuItem = """
+    public static final String salesOfMenuItem = """
+            SELECT COUNT(*)
+            FROM (
             SELECT o.orderid, o.cashierid, o.month, o.week, o.day, o.hour, o.price, otm.menuitemid
             FROM "order" o
             JOIN orderToMenuItem otm ON o.orderid = otm.orderid
             WHERE otm.menuitemid = '%s'
             AND o.month BETWEEN %d AND %d
-            AND o.week BETWEEN %d AND %d
             AND o.day BETWEEN %d AND %d
-            AND o.hour BETWEEN %d AND %d;
+            )
+            AS subquery;
             """;
+
 }

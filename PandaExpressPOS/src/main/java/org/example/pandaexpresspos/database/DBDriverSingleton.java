@@ -4,10 +4,7 @@ import org.example.pandaexpresspos.models.*;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public class DBDriverSingleton {
@@ -310,8 +307,31 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    public HashMap<String,Integer> ReportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+        HashMap Sales = new HashMap<String, Integer>();
+        try{
+            List<MenuItem> menuItem = selectMenuItems();
+            for (MenuItem item : menuItem) {
+                executeQuery(String.format(QueryTemplate.salesOfMenuItem, item.menuItemId, startMonth, endMonth, startDay, endDay), rs -> {
+                    try {
+                        int count = rs.getInt(1);
+                        Sales.put(item.itemName, count);
+                        return Sales;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return Sales;
+                    }
+                });
+            }
+            System.out.println(Sales);
 
-    // Private helpers:
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return Sales;
+    }
+        // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
