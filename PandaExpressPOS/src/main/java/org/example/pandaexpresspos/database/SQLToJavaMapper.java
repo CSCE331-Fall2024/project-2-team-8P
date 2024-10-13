@@ -60,4 +60,5 @@ class SQLToJavaMapper {
             throw new RuntimeException("Error mapping ResultSet to MenuItem", e);
         }
     }
+
 }

@@ -18,6 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 
+<?import javafx.scene.chart.BarChart?>
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
    <HBox layoutX="183.0" layoutY="150.0" prefHeight="400.0" prefWidth="600.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <padding>
@@ -37,23 +38,21 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-<!--                  <Tab text="Order Trends">-->
-<!--                     <content>-->
-<!--                        <AnchorPane>-->
-<!--                           <children>-->
-<!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
-<!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
-<!--                                 <xAxis>-->
-<!--                                    <CategoryAxis side="BOTTOM" />-->
-<!--                                 </xAxis>-->
-<!--                                 <yAxis>-->
-<!--                                    <NumberAxis side="LEFT" />-->
-<!--                                 </yAxis>-->
-<!--                              </LineChart>-->
-<!--                           </children>-->
-<!--                        </AnchorPane>-->
-<!--                     </content>-->
-<!--                  </Tab>-->
+                    <Tab text="Sales">
+
+                            <AnchorPane>
+                             <children>
+                                <BarChart fx:id="salesChart" prefHeight="200.0" prefWidth="200.0">
+                                     <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                     </xAxis>
+                                     <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                     </yAxis>
+                                </BarChart>
+                             </children>
+                            </AnchorPane>
+                    </Tab>
 
                </tabs>
             </TabPane>
