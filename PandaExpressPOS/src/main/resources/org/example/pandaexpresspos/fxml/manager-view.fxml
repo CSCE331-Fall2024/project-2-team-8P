@@ -42,7 +42,7 @@
 
                             <AnchorPane>
                              <children>
-                                <BarChart fx:id="salesChart" prefHeight="200.0" prefWidth="200.0">
+                                <BarChart prefHeight="218.0" prefWidth="395.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                      <xAxis>
                                         <CategoryAxis side="BOTTOM" />
                                      </xAxis>
@@ -165,7 +165,6 @@
                </HBox.margin>
             </Button>
             <Button fx:id="reportButton" mnemonicParsing="false" onAction="#report" text="Generate Report" />
-            <Button fx:id="GenerateSales" mnemonicParsing="false" onAction="#ReportSales" text="Generate Sales"/>
          </HBox>
       </VBox>
    </HBox>
