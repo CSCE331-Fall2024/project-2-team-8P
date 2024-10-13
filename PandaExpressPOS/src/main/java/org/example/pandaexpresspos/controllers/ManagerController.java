@@ -11,6 +11,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -77,6 +79,8 @@ public class ManagerController {
     private TableColumn<Order, String> Price;
     @FXML
     private TextFlow summary;
+    @FXML
+    private BarChart<String, Integer> salesChart;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -851,6 +855,13 @@ public class ManagerController {
         System.out.println(testMap.get("a"));
         System.out.println(testMap.get("b"));
         System.out.println(testMap.get("c"));
+        XYChart.Series newSeries = new XYChart.Series();
+        newSeries.setName("Sales by Menu Item");
+        for(Map.Entry<String, Integer> entry : testMap.entrySet()) {
+            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        salesChart.getData().add(newSeries);
+        System.out.println("Worked");
     }
 
 
