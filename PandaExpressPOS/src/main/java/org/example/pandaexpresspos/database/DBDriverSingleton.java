@@ -66,9 +66,8 @@ public class DBDriverSingleton {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentDay = LocalDate.now().getDayOfMonth();
 
-            // Slight hack: mod current hour by 12 so we're within the 1-12 hour range
-            int currentHour = LocalDateTime.now().getHour() % 12;
-            if (currentHour == 0) currentHour = 1;
+            // Workday starts at 10am and ends at 10pm
+            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
 
             xReport = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
@@ -88,6 +87,7 @@ public class DBDriverSingleton {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentDay = LocalDate.now().getDayOfMonth();
             final int totalWorkingHoursPerDay = 12;
+
             zReport = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, totalWorkingHoursPerDay),
                     SQLToJavaMapper::orderSumMapper
