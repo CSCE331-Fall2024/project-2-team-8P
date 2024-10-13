@@ -12,11 +12,11 @@ class QueryTemplate {
             ORDER BY month DESC, day DESC, hour DESC
             LIMIT %d;
             """;
-    public static final String selectOrderSumsByWeekRange = """
-            SELECT week, SUM(price) FROM "order"
-            WHERE week between %d and %d
-            GROUP BY week
-            ORDER BY week DESC;
+    public static final String selectOrderSumsByHour = """
+            SELECT hour, SUM(price) FROM "order"
+            WHERE month = %d AND day = %d AND hour <= %d
+            GROUP BY hour
+            ORDER BY hour DESC;
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)

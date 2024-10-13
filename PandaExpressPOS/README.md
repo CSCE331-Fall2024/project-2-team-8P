@@ -17,4 +17,4 @@ This JavaFX project was created using Oracle OpenJDK 21.0.2 and Maven 3.9.9
 - **resources/fxml:** layout files
 - **resources/css:** CSS styles for the fxml files
 
-[UML Diagram](https://lucid.app/lucidchart/edc7b3e7-1ac3-4c09-a9b1-df7ae15d715a/edit?beaconFlowId=69964FEB7EDD1641&invitationId=inv_389b87d7-a0f5-4018-9b37-7d2548e449de&page=0_0)
+[UML Diagram](https://lucid.app/lucidchart/edc7b3e7-1ac3-4c09-a9b1-df7ae15d715a/edit?beaconFlowId=69964FEB7EDD1641&invitationId=inv_389b87d7-a0f5-4018-9b37-7d2548e449de&page=0_0)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

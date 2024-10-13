@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -13,18 +14,16 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ca2b2d;" vgap="10"
-          xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="org.example.pandaexpresspos.controllers.CashierController">
+<GridPane alignment="CENTER" gridLinesVisible="false" hgap="10" style="-fx-background-color: #ca2b2d;" vgap="10" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.CashierController">
 
     <!-- Set up equal column and row constraints -->
     <columnConstraints>
-        <ColumnConstraints percentWidth="50"/>
-        <ColumnConstraints percentWidth="50"/>
+        <ColumnConstraints percentWidth="50" />
+        <ColumnConstraints percentWidth="50" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints percentHeight="50"/>
-        <RowConstraints percentHeight="50"/>
+        <RowConstraints percentHeight="50" />
+        <RowConstraints percentHeight="50" />
     </rowConstraints>
 
     <!-- Section 1 -->
@@ -36,52 +35,34 @@
 
                     <!-- Banner -->
 
-                    <ImageView fitHeight="75.0" fitWidth="413.0" layoutX="175.0" layoutY="20.0" pickOnBounds="true"
-                               preserveRatio="true">
+                    <ImageView fitHeight="75.0" fitWidth="413.0" layoutX="175.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@Images/POS.png"/>
+                            <Image url="@Images/POS.png" />
                         </image>
                     </ImageView>
                     <!-- Numpad -->
-                    <Button fx:id="button7" layoutX="80.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="7" textFill="WHITE"/>
-                    <Button fx:id="button8" layoutX="240.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="8" textFill="WHITE"/>
-                    <Button fx:id="button9" layoutX="400.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="9" textFill="WHITE"/>
-                    <Button fx:id="button6" layoutX="400.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="6" textFill="WHITE"/>
-                    <Button fx:id="button5" layoutX="240.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="5" textFill="WHITE"/>
-                    <Button fx:id="button4" layoutX="80.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="4" textFill="WHITE"/>
-                    <Button fx:id="button2" layoutX="240.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="2" textFill="WHITE"/>
-                    <Button fx:id="button3" layoutX="400.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="3" textFill="WHITE"/>
-                    <Button fx:id="button0" layoutX="240.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="0" textFill="WHITE"/>
-                    <Button fx:id="Enter" layoutX="400.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="Enter" textFill="WHITE"/>
-                    <Button fx:id="clearNum" layoutX="80.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0"
-                            prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear"
-                            textFill="WHITE"/>
-                    <Button fx:id="Logout" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" onAction="#logOutUser"
-                            prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;"
-                            text="Log Out" textFill="WHITE">
+                    <Button fx:id="button7" layoutX="80.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="7" textFill="WHITE" />
+                    <Button fx:id="button8" layoutX="240.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="8" textFill="WHITE" />
+                    <Button fx:id="button9" layoutX="400.0" layoutY="245.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="9" textFill="WHITE" />
+                    <Button fx:id="button6" layoutX="400.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="6" textFill="WHITE" />
+                    <Button fx:id="button5" layoutX="240.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="5" textFill="WHITE" />
+                    <Button fx:id="button4" layoutX="80.0" layoutY="178.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="4" textFill="WHITE" />
+                    <Button fx:id="button2" layoutX="240.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="2" textFill="WHITE" />
+                    <Button fx:id="button3" layoutX="400.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="3" textFill="WHITE" />
+                    <Button fx:id="button0" layoutX="240.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="0" textFill="WHITE" />
+                    <Button fx:id="Enter" layoutX="400.0" layoutY="308.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Enter" textFill="WHITE" />
+                    <Button fx:id="clearNum" layoutX="80.0" layoutY="308.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear" textFill="WHITE" />
+                    <Button fx:id="Logout" layoutX="452.0" layoutY="13.0" mnemonicParsing="false" onAction="#logOutUser" prefHeight="34.0" prefWidth="131.0" style="-fx-background-color: black;-fx-cursor: hand;" text="Log Out" textFill="WHITE">
                         <font>
-                            <Font name="System Bold" size="12.0"/>
+                            <Font name="System Bold" size="12.0" />
                         </font>
                     </Button>
-                    <TextField fx:id="cashierTextField" editable="false" layoutX="5.0" layoutY="13.0" prefHeight="34.0"
-                               prefWidth="150.0"
-                               style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="Cashier:">
+                    <TextField fx:id="cashierTextField" editable="false" layoutX="5.0" layoutY="13.0" prefHeight="34.0" prefWidth="150.0" style="-fx-text-fill: WHITE; -fx-background-color: Black;" text="Cashier:">
                         <font>
-                            <Font name="System Bold" size="12.0"/>
+                            <Font name="System Bold" size="12.0" />
                         </font>
                     </TextField>
-                    <Button fx:id="button1" layoutX="80.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0"
-                            style="-fx-background-color: black; -fx-cursor: hand;" text="1" textFill="WHITE"/>
+                    <Button fx:id="button1" layoutX="80.0" layoutY="114.0" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="1" textFill="WHITE" />
 
                 </children>
             </AnchorPane>
@@ -99,47 +80,34 @@
 
                 <TableView fx:id="orderTable" layoutX="60.0" layoutY="7.0" prefHeight="298.0" prefWidth="480.0">
                     <columns>
-                        <TableColumn fx:id="nameColumn" prefWidth="155.6" text="Items"/>
-                        <TableColumn fx:id="quantityColumn" minWidth="0.0" prefWidth="156.0" text="Quantity"/>
-                        <TableColumn fx:id="priceColumn" prefWidth="167.2" text="Price"/>
+                        <TableColumn fx:id="nameColumn" prefWidth="155.6" text="Items" />
+                        <TableColumn fx:id="quantityColumn" minWidth="0.0" prefWidth="156.0" text="Quantity" />
+                        <TableColumn fx:id="priceColumn" prefWidth="167.2" text="Price" />
                     </columns>
                 </TableView>
 <!--                <TextField fx:id="taxField" editable="false" layoutX="225.0" layoutY="313.0" text="TAX:"/>-->
-                <TextField fx:id="totalField" editable="false" layoutX="225.0" layoutY="351.0" text="TOTAL: "/>
+                <TextField fx:id="totalField" editable="false" layoutX="225.0" layoutY="351.0" text="TOTAL: " />
 
                 <!-- Place order and add tip buttons-->
 
-                <Button fx:id="clear" layoutX="61.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0"
-                        prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear"
-                        textFill="WHITE"/>
-                <Button fx:id="placeOrder" layoutX="424.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0"
-                        prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Place Order"
-                        textFill="WHITE"/>
+                <Button fx:id="clear" layoutX="61.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Clear" textFill="WHITE" />
+                <Button fx:id="placeOrder" layoutX="424.0" layoutY="326.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="115.0" style="-fx-background-color: black; -fx-cursor: hand;" text="Place Order" textFill="WHITE" />
             </children>
         </AnchorPane>
     </StackPane>
-    <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;" GridPane.columnIndex="1"
-                GridPane.rowSpan="2">
+    <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-background-color: transparent;" GridPane.columnIndex="1" GridPane.rowSpan="2">
         <children>
-            <GridPane fx:id="menuItemGridPane" prefHeight="814.0" prefWidth="601.0" AnchorPane.bottomAnchor="0.0"
-                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                </rowConstraints>
-            </GridPane>
+         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="810.0" prefWidth="595.0" style="-fx-background-color: transparent; -fx-background: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <GridPane fx:id="menuItemGridPane" prefHeight="814.0" prefWidth="601.0" style="-fx-background-color: #ca2b2d;">
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      </columnConstraints>
+                  </GridPane>
+         </ScrollPane>
         </children>
     </AnchorPane>
 
