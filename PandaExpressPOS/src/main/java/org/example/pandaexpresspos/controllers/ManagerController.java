@@ -632,14 +632,14 @@ public class ManagerController {
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
-            VBox layout = new VBox(5);
-            layout.setPadding(new Insets(10));
-            layout.setStyle("-fx-border-color: gray;");
+            VBox layout = new VBox(10);
+            layout.setAlignment(Pos.BOTTOM_CENTER);
+
             // Create a button, set background to img
-            Button button = new Button("Trying");
+            Button button = new Button();
             button.setMinSize(60, 60);
-//            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
-//                    "-fx-background-size: cover;");
+            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+                    "-fx-background-size: cover;");
 
             // Handle clicks on each item (updating the item)
             button.setOnMouseClicked(e -> {
@@ -652,9 +652,9 @@ public class ManagerController {
             Label itemStockLabel = new Label("Qty: " + itemStock);
 
             // Allow the VBox to grow in the GridPane cell
-//            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
-//            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
-//            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
+            layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
+            GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
+            GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
             layout.getChildren().addAll(button, nameLabel, itemStockLabel);
