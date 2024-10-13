@@ -845,20 +845,12 @@ public class ManagerController {
     Map<String, Integer> testMap = new HashMap<>();
 
     private void populate() {
-        testMap.put("a", 1);
-        testMap.put("b", 2);
-        testMap.put("c", 3);
-        testMap.put("d", 4);
-        testMap.put("e", 5);
-        testMap.put("f", 6);
+        testMap = dbDriver.ReportSales(1, 2, 1, 2);
 
     }
 
     public void populateGraph() {
         populate();
-        System.out.println(testMap.get("a"));
-        System.out.println(testMap.get("b"));
-        System.out.println(testMap.get("c"));
         XYChart.Series newSeries = new XYChart.Series();
         newSeries.setName("Sales by Menu Item");
         for(Map.Entry<String, Integer> entry : testMap.entrySet()) {

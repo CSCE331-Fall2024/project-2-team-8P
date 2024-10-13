@@ -40,7 +40,7 @@
                   </Tab>
                     <Tab text="Sales">
 
-                            <AnchorPane>
+                            <AnchorPane style="-fx-background-color: white;">
                              <children>
                                 <BarChart fx:id="salesChart" prefHeight="218.0" prefWidth="395.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                      <xAxis>
