@@ -58,6 +58,7 @@ public class ManagerController {
     private Button GenerateSales;
     @FXML
     private TabPane itemsTabPane;
+    @FXML TabPane managerReportTabPane;
     @FXML
     private TableView<Order> ordersTable;
     @FXML
@@ -116,6 +117,34 @@ public class ManagerController {
         }
     }
 
+    enum reportTab {
+        SUMMARY(0),
+        SALES_REPORT(1);
+//        EMPLOYEES(2);
+
+        private final int value;
+
+        // Constructor
+        reportTab(int value) {
+            this.value = value;
+        }
+
+        // Method to get the value
+        public int getValue() {
+            return value;
+        }
+
+        // Static method to convert an integer to an enum value
+        public static reportTab fromValue(int value) {
+            for (reportTab reportTab : reportTab.values()) {
+                if (reportTab.getValue() == value) {
+                    return reportTab;
+                }
+            }
+            throw new IllegalArgumentException("No reportTab found with value: " + value);
+        }
+    }
+
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
@@ -149,8 +178,22 @@ public class ManagerController {
     }
 
     public void report(ActionEvent event) throws IOException {
-        updateOrderHistory();
-        updateSummary();
+
+        reportTab selectedReportTab = reportTab.fromValue(managerReportTabPane.getSelectionModel().getSelectedIndex());
+
+
+        switch (selectedReportTab) {
+            case SUMMARY:
+                updateOrderHistory();
+                updateSummary();
+                break;
+            case SALES_REPORT:
+                populateGraph();
+                break;
+            default:
+                throw new RuntimeException();
+
+        }
     }
 
 
@@ -794,6 +837,21 @@ public class ManagerController {
     dictionary menuItem : sales
     Backend: menu item sales
      */
+
+    Map<String, Integer> testMap = new HashMap<>();
+
+    private void populate() {
+        testMap.put("a", 1);
+        testMap.put("b", 2);
+        testMap.put("c", 3);
+    }
+
+    public void populateGraph() {
+        populate();
+        System.out.println(testMap.get("a"));
+        System.out.println(testMap.get("b"));
+        System.out.println(testMap.get("c"));
+    }
 
 
     // Helper method to display error alert
