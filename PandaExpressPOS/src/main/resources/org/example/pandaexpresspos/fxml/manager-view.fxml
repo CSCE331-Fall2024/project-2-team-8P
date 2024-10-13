@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
@@ -56,22 +57,34 @@
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Usage Chart">
                      <content>
-                        <AnchorPane />
+                        <AnchorPane>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="X-Report">
                      <content>
-                        <AnchorPane />
+                        <AnchorPane>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Z-Report">
                      <content>
-                        <AnchorPane />
+                        <AnchorPane>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                      </content>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Sales Report">
                      <content>
-                        <AnchorPane />
+                        <AnchorPane>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                      </content>
                   </Tab>
       <!--                  <Tab text="Order Trends">-->
