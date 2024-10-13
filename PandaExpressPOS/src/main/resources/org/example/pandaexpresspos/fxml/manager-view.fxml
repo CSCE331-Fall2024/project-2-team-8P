@@ -19,59 +19,88 @@
       <padding>
          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
       </padding>
-      <!-- Make the TabPane grow and fill the available vertical space -->
-      <TabPane fx:id="managerReportTabPane" style="-fx-background-color: transparent; -fx-border-color: transparent;" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
-         <tabs>
-            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Order History">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: transparent;">
-                     <children>
-            
-                              <!-- Allow the TableView to grow and fill the available space -->
-                        <TableView fx:id="ordersTable" prefHeight="359.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <columns>
-                              <TableColumn fx:id="Order" prefWidth="75.0" text="Order" />
-                              <TableColumn fx:id="Cashier" prefWidth="75.0" text="Cashier" />
-                              <TableColumn fx:id="Month" prefWidth="75.0" text="Month" />
-                              <TableColumn fx:id="Week" prefWidth="75.0" text="Week" />
-                              <TableColumn fx:id="Day" prefWidth="75.0" text="Day" />
-                              <TableColumn fx:id="Hour" prefWidth="75.0" text="Hour" />
-                              <TableColumn fx:id="Price" prefWidth="75.0" text="Price" />
-                           </columns>
-                        </TableView>
-                     </children>
-                  </AnchorPane>
-              </content>
-            </Tab>
-            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Summary">
-               <content>
-                  <AnchorPane>
-                     <children>
-                        <TextFlow fx:id="summary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-               </content>
-            </Tab>
-<!--                  <Tab text="Order Trends">-->
-<!--                     <content>-->
-<!--                        <AnchorPane>-->
-<!--                           <children>-->
-<!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
-<!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
-<!--                                 <xAxis>-->
-<!--                                    <CategoryAxis side="BOTTOM" />-->
-<!--                                 </xAxis>-->
-<!--                                 <yAxis>-->
-<!--                                    <NumberAxis side="LEFT" />-->
-<!--                                 </yAxis>-->
-<!--                              </LineChart>-->
-<!--                           </children>-->
-<!--                        </AnchorPane>-->
-<!--                     </content>-->
-<!--                  </Tab>-->
-
-         </tabs>
-      </TabPane>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+         <children>
+            <!-- Make the TabPane grow and fill the available vertical space -->
+            <TabPane fx:id="managerReportTabPane" prefHeight="800.0" prefWidth="290.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+               <tabs>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Order History">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: transparent;">
+                           <children>
+                  
+                                    <!-- Allow the TableView to grow and fill the available space -->
+                              <TableView fx:id="ordersTable" prefHeight="359.0" prefWidth="340.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <columns>
+                                    <TableColumn fx:id="Order" prefWidth="75.0" text="Order" />
+                                    <TableColumn fx:id="Cashier" prefWidth="75.0" text="Cashier" />
+                                    <TableColumn fx:id="Month" prefWidth="75.0" text="Month" />
+                                    <TableColumn fx:id="Week" prefWidth="75.0" text="Week" />
+                                    <TableColumn fx:id="Day" prefWidth="75.0" text="Day" />
+                                    <TableColumn fx:id="Hour" prefWidth="75.0" text="Hour" />
+                                    <TableColumn fx:id="Price" prefWidth="75.0" text="Price" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </Tab>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Summary">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <TextFlow fx:id="summary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Usage Chart">
+                     <content>
+                        <AnchorPane />
+                     </content>
+                  </Tab>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="X-Report">
+                     <content>
+                        <AnchorPane />
+                     </content>
+                  </Tab>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Z-Report">
+                     <content>
+                        <AnchorPane />
+                     </content>
+                  </Tab>
+                  <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Sales Report">
+                     <content>
+                        <AnchorPane />
+                     </content>
+                  </Tab>
+      <!--                  <Tab text="Order Trends">-->
+      <!--                     <content>-->
+      <!--                        <AnchorPane>-->
+      <!--                           <children>-->
+      <!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
+      <!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
+      <!--                                 <xAxis>-->
+      <!--                                    <CategoryAxis side="BOTTOM" />-->
+      <!--                                 </xAxis>-->
+      <!--                                 <yAxis>-->
+      <!--                                    <NumberAxis side="LEFT" />-->
+      <!--                                 </yAxis>-->
+      <!--                              </LineChart>-->
+      <!--                           </children>-->
+      <!--                        </AnchorPane>-->
+      <!--                     </content>-->
+      <!--                  </Tab>-->
+      
+               </tabs>
+            </TabPane>
+            <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Button fx:id="reportButton" minHeight="30.0" mnemonicParsing="false" onAction="#generateReport" style="-fx-background-color: black; -fx-cursor: hand;" text="Generate Report" textFill="WHITE" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
 
       <VBox fx:id="rightVerBox" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
          <TabPane fx:id="itemsTabPane" prefHeight="800.0" prefWidth="200.0" style="-fx-background-color: transparent;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -148,7 +177,6 @@
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="reportButton" minHeight="30.0" mnemonicParsing="false" onAction="#report" style="-fx-background-color: black; -fx-cursor: hand;" text="Generate Report" textFill="WHITE" />
          </HBox>
       </VBox>
    </HBox>
