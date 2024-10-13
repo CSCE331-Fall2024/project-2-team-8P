@@ -146,7 +146,8 @@ public class CashierController {
         int x = 0;
         int y = 0;
 
-        menuItemGridPane.setHgap(100);
+        menuItemGridPane.setHgap(10);
+        menuItemGridPane.setVgap(50);
         menuItemGridPane.setAlignment(Pos.CENTER);
         menuItemGridPane.setStyle("-fx-padding: 10;");
 
