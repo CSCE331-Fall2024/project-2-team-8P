@@ -9,8 +9,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -43,34 +41,25 @@
                             <AnchorPane style="-fx-background-color: white;">
                              <children>
                                 <BarChart fx:id="salesChart" prefHeight="218.0" prefWidth="395.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                     <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
-                                     </xAxis>
-                                     <yAxis>
-                                        <NumberAxis side="LEFT" />
-                                     </yAxis>
+                                   <xAxis>
+                                      <CategoryAxis label="Menu Items" fx:id="xAxis" />
+                                   </xAxis>
+                                   <yAxis>
+                                      <NumberAxis fx:id="yAxis" label="Sales" />
+                                   </yAxis>
                                 </BarChart>
-                           <DatePicker fx:id="startDate" layoutY="186.0" />
-                           <DatePicker fx:id="endDate" layoutX="224.0" layoutY="186.0" />
                              </children>
                             </AnchorPane>
                     </Tab>
 
                </tabs>
             </TabPane>
-
-            <!-- Allow the TableView to grow and fill the available space -->
-            <TableView fx:id="ordersTable" prefHeight="154.0" prefWidth="378.0" VBox.vgrow="ALWAYS">
-               <columns>
-                  <TableColumn fx:id="Order" prefWidth="75.0" text="Order" />
-                  <TableColumn fx:id="Cashier" prefWidth="75.0" text="Cashier" />
-                  <TableColumn fx:id="Month" prefWidth="75.0" text="Month" />
-                  <TableColumn fx:id="Week" prefWidth="75.0" text="Week" />
-                  <TableColumn fx:id="Day" prefWidth="75.0" text="Day" />
-                  <TableColumn fx:id="Hour" prefWidth="75.0" text="Hour" />
-                  <TableColumn fx:id="Price" prefWidth="75.0" text="Price" />
-               </columns>
-            </TableView>
+            <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+               <children>
+                  <DatePicker fx:id="startDate" promptText="Enter Start Date" />
+                  <DatePicker fx:id="endDate" promptText="Enter End Date" />
+               </children>
+            </VBox>
          </children>
       </VBox>
 

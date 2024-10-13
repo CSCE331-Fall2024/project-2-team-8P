@@ -12,6 +12,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -80,7 +82,15 @@ public class ManagerController {
     @FXML
     private TextFlow summary;
     @FXML
-    private BarChart<String, Integer> salesChart;
+    private BarChart<String, Number> salesChart;
+    @FXML
+    private CategoryAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
+    @FXML
+    private DatePicker startDate;
+    @FXML
+    private DatePicker endDate;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -188,7 +198,7 @@ public class ManagerController {
 
         switch (selectedReportTab) {
             case SUMMARY:
-                updateOrderHistory();
+//                updateOrderHistory();
                 updateSummary();
                 break;
             case SALES_REPORT:
@@ -845,13 +855,26 @@ public class ManagerController {
     Map<String, Integer> testMap = new HashMap<>();
 
     private void populateSalesReport() {
-        testMap = dbDriver.ReportSales(1, 2, 1, 2);
+        System.out.println(startDate.getValue());
+        System.out.println(endDate.getValue());
+        int startDateMonth = startDate.getValue().getMonthValue();
+        int startDateDay = startDate.getValue().getDayOfMonth();
+        int endDateMonth = endDate.getValue().getMonthValue();
+        int endDateDay = endDate.getValue().getDayOfMonth();
+
+        testMap = dbDriver.ReportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
 
     }
 
     public void displaySalesReport() {
         populateSalesReport();
         XYChart.Series newSeries = new XYChart.Series();
+        salesChart.getData().clear();
+        xAxis.setLabel("Menu Items");
+        yAxis.setLabel("Sales");
+        salesChart.setTitle("Sales Report");
+
+
         newSeries.setName("Sales by Menu Item");
         for(Map.Entry<String, Integer> entry : testMap.entrySet()) {
             newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
