@@ -9,6 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -17,7 +19,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -40,18 +41,13 @@ public class ManagerController {
 
     private Employee loggedInUser;
 
-    @FXML
-    private VBox rightVerBox;
+
     @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
     private GridPane menuItemsGridPane;
     @FXML
     private GridPane employeeItemsGridPane;
-    @FXML
-    private Button logoutButton;
-    @FXML
-    private Button addItemButton;
     @FXML
     private TabPane itemsTabPane;
     @FXML
@@ -74,6 +70,8 @@ public class ManagerController {
     private TableColumn<Order, String> Price;
     @FXML
     private TextFlow summary;
+    @FXML
+    private BarChart<String, Double> xReportBarChart;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -186,16 +184,16 @@ public class ManagerController {
 
         switch (selectedTab) {
             case ORDER_HISTORY:
-                updateOrderHistory();
+                fetchOrderHistory();
                 break;
             case SUMMARY:
-                updateSummary();
+                fetchSummary();
                 break;
             case USAGE:
                 // TODO: add usage report
                 break;
             case X_REPORT:
-                // TODO: add X_Report
+                fetchXReport();
                 break;
             case Z_REPORT:
                 // TODO: add Z_Report
@@ -615,7 +613,7 @@ public class ManagerController {
         });
     }
 
-    public void updateOrderHistory() {
+    public void fetchOrderHistory() {
         ordersTable.getItems().clear();
 
         createOrdersTable();
@@ -646,7 +644,7 @@ public class ManagerController {
         );
     }
 
-    public void updateSummary() {
+    public void fetchSummary() {
         summary.getChildren().clear();
         summary.setStyle("-fx-background-color: white;");
         Text summaryText = new Text("Inventory Items\n");
@@ -674,6 +672,29 @@ public class ManagerController {
                 summary.getChildren().add(summaryText);
             }
         }
+    }
+
+    public void fetchXReport() {
+        // Get sales per hour data from DBDriverSingleton
+        List<Double> salesPerHour = DBDriverSingleton.getInstance().selectXReport();
+        // Create series to hold data
+        XYChart.Series<String, Double> sales = new XYChart.Series<>();
+        // X-label
+        String[] hours = {
+                "10 AM", "11 AM", "12 PM",
+                "1PM", "2PM", "3PM",
+                "4PM", "5PM", "6PM",
+                "7PM", "8PM", "9PM"
+        };
+
+        // Add data to series
+        for (int i = 0; i < salesPerHour.size(); i++) {
+            sales.getData().add(new XYChart.Data<>(hours[i], salesPerHour.get(i)));
+        }
+
+        // Add series to bar chart
+        xReportBarChart.getData().add(sales);
+
     }
 
 
