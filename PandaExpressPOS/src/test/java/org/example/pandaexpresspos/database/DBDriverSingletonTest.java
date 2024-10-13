@@ -36,6 +36,18 @@ class DBDriverSingletonTest {
     }
 
     @Test
+    void selectXReport() {
+        List<Double> xReport = driver.selectXReport();
+        printOrderSumsByHour(xReport);
+    }
+
+    @Test
+    void selectZReport() {
+        List<Double> zReport = driver.selectZReport();
+        printOrderSumsByHour(zReport);
+    }
+
+    @Test
     void insertOrder() {
         InventoryItem napkin = driver.selectInventoryItem(
                 UUID.fromString("20fb88db-d71d-405c-ba98-1919c1e7d74e")
@@ -235,6 +247,12 @@ class DBDriverSingletonTest {
             printSeparator();
         }
         out.println("Items selected: " + items.size());
+    }
+
+    private void printOrderSumsByHour(List<Double> orderSums) {
+        for (int i = 0; i < orderSums.size(); i++) {
+            out.println("Hour " + (i + 1) + " order total: " + orderSums.get(i));
+        }
     }
 
     private void printOrder(Order order) {
