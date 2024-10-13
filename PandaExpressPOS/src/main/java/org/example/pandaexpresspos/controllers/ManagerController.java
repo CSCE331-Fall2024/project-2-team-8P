@@ -192,7 +192,7 @@ public class ManagerController {
                 updateSummary();
                 break;
             case SALES_REPORT:
-                populateGraph();
+                displaySalesReport();
                 break;
             default:
                 throw new RuntimeException();
@@ -844,13 +844,13 @@ public class ManagerController {
 
     Map<String, Integer> testMap = new HashMap<>();
 
-    private void populate() {
+    private void populateSalesReport() {
         testMap = dbDriver.ReportSales(1, 2, 1, 2);
 
     }
 
-    public void populateGraph() {
-        populate();
+    public void displaySalesReport() {
+        populateSalesReport();
         XYChart.Series newSeries = new XYChart.Series();
         newSeries.setName("Sales by Menu Item");
         for(Map.Entry<String, Integer> entry : testMap.entrySet()) {
