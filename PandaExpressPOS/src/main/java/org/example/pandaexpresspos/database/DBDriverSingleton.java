@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -96,6 +97,33 @@ public class DBDriverSingleton {
             e.printStackTrace();
         }
         return zReport;
+    }
+
+    public Map<String, Integer> selectSalesReport(
+            Integer startMonth,
+            Integer endMonth,
+            Integer startDay,
+            Integer endDay
+    ) {
+        // Let's use `TreeMap` here so the items are ordered alphabetically in the UI
+        Map<String, Integer> sales = new TreeMap<>();
+        try {
+            List<MenuItemWithQty> itemsWithQty = executeQuery(
+                    String.format(QueryTemplate.selectMenuItemSalesByTimePeriod,
+                            startMonth,
+                            endMonth,
+                            startDay,
+                            endDay
+                    ),
+                    SQLToJavaMapper::menuItemWithQtyMapper
+            );
+            for (MenuItemWithQty item : itemsWithQty) {
+                sales.put(item.menuItem.itemName, item.quantity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sales;
     }
 
     public void insertOrder(Order newOrder) {
@@ -325,79 +353,8 @@ public class DBDriverSingleton {
         ));
     }
 
-    public void deleteMenuItem(UUID menuItemId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    public HashMap<String,Number> reportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
-        //This function will return a hashmap of the sales of each menu item in the given time frame
-        //Heads up this function call is a little slow because of the for loop iterating through all the menu items
-        HashMap<String, Number> sales = new HashMap<String, Number>();
-        try{
-            List<MenuItem> menuItem = selectMenuItems();
-            for (MenuItem item : menuItem) {
-                executeQuery(String.format(QueryTemplate.salesOfMenuItem, item.menuItemId, startMonth, endMonth, startDay, endDay), rs -> {
-                    try {
-                        int count = rs.getInt(1);
-                        sales.put(item.itemName, count);
-                        return sales;
-                    } catch (SQLException e) {
-                        return sales;
-                    }
-                });
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sales;
-    }
+    // Private helpers:
 
-    public HashMap<String, Integer> productUsageReport(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
-        //This function will return a hashmap of the usage of each inventory item in the given time frame
-        //Heads up this function call is a little slow because of the for loop iterating through all the inventory items along with multiplying with another hash map
-
-        HashMap<String, Integer> product = new HashMap<String, Integer>();
-        HashMap<String, Number> sales = reportSales(startMonth, endMonth, startDay, endDay);
-        try{
-            List<InventoryItem> inventoryItem = selectInventoryItems();
-            for (InventoryItem item : inventoryItem) {
-                    executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
-                        return product;
-                    });
-            }
-            return product;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-        // Private helpers:
-     public HashMap<String,String> inventoryToMenu() {
-         //This function will return a hashmap of the inventory item to menu item
-         //This function is used in the productUsageReport function
-         HashMap<String, String> inventoryToMenu = new HashMap<String, String>();
-         try {
-             List<MenuItem> menuItem = selectMenuItems();
-             for (MenuItem item : menuItem) {
-                 executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
-                     try {
-                         String inventoryItemName = rs.getString("inventoryitem_name");
-                         String menuItemName = rs.getString("menuitem_name");
-                         inventoryToMenu.put(inventoryItemName, menuItemName);
-                         return inventoryToMenu;
-                     } catch (SQLException e) {
-                         return inventoryToMenu;
-                     }
-                 });
-             }
-             return inventoryToMenu;
-
-         } catch (SQLException e) {
-             e.printStackTrace();
-             return null;
-         }
-     }
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
@@ -433,7 +390,6 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Insert
     // 2. Update
-    // 3. Delete
     private static void executeUpdate(String query) { //This function is used to update a query such as inserting
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
