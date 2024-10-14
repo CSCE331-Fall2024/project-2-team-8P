@@ -215,8 +215,6 @@ public class ManagerController {
             default:
                 break;
         }
-
-
     }
 
     // Handle adding items; special case of update item

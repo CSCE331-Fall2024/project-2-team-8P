@@ -126,6 +126,23 @@ public class DBDriverSingleton {
         return sales;
     }
 
+    public Map<String, Integer> productUsageReport(
+            Integer startMonth,
+            Integer endMonth,
+            Integer startDay,
+            Integer endDay
+    ) {
+        Map<String, Integer> product = new HashMap<>();
+        Map<String, Integer> sales = selectSalesReport(startMonth, endMonth, startDay, endDay);
+        Map<String, String> inventoryToMenu = inventoryToMenu();
+        for (Map.Entry<String, String> entry : inventoryToMenu.entrySet()) {
+            String inventoryItem = entry.getKey();
+            String menuItem = entry.getValue();
+            product.put(inventoryItem, sales.getOrDefault(menuItem, 0));
+        }
+        return product;
+    }
+
     public void insertOrder(Order newOrder) {
         // Insert the order entry
         executeUpdate(String.format(QueryTemplate.insertOrder,
@@ -173,17 +190,6 @@ public class DBDriverSingleton {
                     item.menuItemId
             ));
         }
-    }
-
-    public void updateOrder(Order updatedOrder) {
-        executeUpdate(String.format(QueryTemplate.updateOrder,
-                updatedOrder.month,
-                updatedOrder.week,
-                updatedOrder.day,
-                updatedOrder.hour,
-                updatedOrder.price,
-                updatedOrder.orderId
-        ));
     }
 
     // Employee
@@ -358,7 +364,7 @@ public class DBDriverSingleton {
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException { //This function is used to execute a query such as selecting
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
         List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
@@ -390,7 +396,7 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Insert
     // 2. Update
-    private static void executeUpdate(String query) { //This function is used to update a query such as inserting
+    private static void executeUpdate(String query) {
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,
