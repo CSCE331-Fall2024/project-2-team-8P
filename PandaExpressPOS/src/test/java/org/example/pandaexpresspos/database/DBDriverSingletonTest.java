@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.System.err;
@@ -126,7 +127,7 @@ class DBDriverSingletonTest {
         out.println("Employee before updating:");
         printEmployee(employee);
         String originalName = employee.name;
-        
+
         // Update the employee
         employee.name = "RYAN KHA";
         driver.updateEmployee(employee);
@@ -174,7 +175,7 @@ class DBDriverSingletonTest {
         out.println("Inventory item before updating:");
         printInventoryItem(fortuneCookie);
         Integer originalQty = fortuneCookie.availableStock;
-        
+
         // Update the inventory item
         fortuneCookie.availableStock = 4200;
         driver.updateInventoryItem(fortuneCookie);
@@ -234,16 +235,16 @@ class DBDriverSingletonTest {
         beijingBeef.availableStock = originalQty;
         driver.updateMenuItem(beijingBeef);
     }
-    @Test
-    void SalesReport(){
-        HashMap <String, Integer> salesReport = driver.reportSales(1,2,1,2);
-        System.out.println(salesReport);
-    }
 
     @Test
-    void inventorytomenu(){
-        HashMap <String, String> inventoryReport = driver.inventoryToMenu();
-        System.out.println(inventoryReport);
+    void SalesReport() {
+        Map<String, Integer> salesReport = driver.selectSalesReport(
+                1,
+                2,
+                1,
+                2
+        );
+        printMap(salesReport);
     }
     @Test
     void productusage(){
@@ -264,6 +265,12 @@ class DBDriverSingletonTest {
             printSeparator();
         }
         out.println("Items selected: " + items.size());
+    }
+
+    private <K, V> void printMap(Map<K, V> map) {
+        for (K key : map.keySet()) {
+            out.println(key + ": " + map.get(key));
+        }
     }
 
     private void printOrderSumsByHour(List<Double> orderSums) {
@@ -331,7 +338,6 @@ class DBDriverSingletonTest {
                 employee.name
         );
     }
-
 
     private void printSeparator() {
         out.println("-".repeat(100));

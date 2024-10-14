@@ -31,6 +31,7 @@ import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
@@ -163,19 +164,14 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-
-//        if (loggedInUser == null) {
-//            throw new IllegalStateException("You have not logged in");
-//        }
-//        if (!loggedInUser.isManager) {
-//            throw new IllegalStateException("You are not authorized to view this page");
-//        }
+        // Initialize date pickers to have the previous week as the default time period
 
 
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+        createSalesReportChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -214,18 +210,14 @@ public class ManagerController {
                 // TODO: add Z_Report
                 break;
             case SALES_REPORT:
-                // TODO: add Sales Report
-                displaySalesReport();
+                updateSalesReport();
                 break;
             default:
                 break;
         }
 
 
-
     }
-
-
 
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
@@ -244,7 +236,6 @@ public class ManagerController {
                 break;
             default:
                 throw new RuntimeException();
-
         }
     }
 
@@ -293,34 +284,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
-        // If in update mode add a remove button and handle appropriately
-//        inventoryItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-////                inventoryItems.removeIf(item -> (
-////                        item.itemName.equals(safeItem.itemName)
-////                ));
-//                // Backend call here
-//
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    inventoryItemsGridPane.getChildren().clear();
-//                    createInventoryGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
@@ -422,32 +385,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
-        // If in update mode add a remove button and handle appropriately
-//        menuItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-////            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                menuItems.removeIf(item -> (
-//                        item.itemName.equals(safeItem.itemName)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    menuItemsGridPane.getChildren().clear();
-//                    createMenuItemsGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
@@ -557,32 +494,6 @@ public class ManagerController {
                 imageUrl
         );
 
-        // If in update mode add a remove button and handle appropriately
-//        employee.ifPresent(safeEmployee -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                employees.removeIf(person -> (
-//                        person.name.equals(safeEmployee.name)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    employeeItemsGridPane.getChildren().clear();
-//                    createEmployeesGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -641,7 +552,6 @@ public class ManagerController {
                 new SimpleObjectProperty(cellData.getValue().cashierId.toString())
         );
 
-
         // Setup other columns similarly
         Month.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().month.toString())
@@ -688,6 +598,18 @@ public class ManagerController {
         }
     }
 
+    public void updateSalesReport() {
+        Map<String, Integer> salesReportData = getSalesReportData();
+        XYChart.Series newSeries = new XYChart.Series();
+        salesChart.getData().clear();
+
+        salesChart.setLegendVisible(false);
+
+        for (Map.Entry<String, Integer> entry : salesReportData.entrySet()) {
+            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        salesChart.getData().add(newSeries);
+    }
 
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
@@ -870,6 +792,13 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
+    public void createSalesReportChart() {
+        startDatePicker.setValue(LocalDate.now().minusWeeks(1));
+        endDatePicker.setValue(LocalDate.now());
+        xAxis.setLabel("Menu Items");
+        yAxis.setLabel("Sales");
+        salesChart.setTitle("Sales by Menu Item");
+    }
 
     /*
     Sales Report
@@ -877,35 +806,14 @@ public class ManagerController {
     dictionary menuItem : sales
     Backend: menu item sales
      */
-
-    Map<String, Integer> testMap = new HashMap<>();
-
-    private void populateSalesReport() {
+    private Map<String, Integer> getSalesReportData() {
         int startDateMonth = startDatePicker.getValue().getMonthValue();
         int startDateDay = startDatePicker.getValue().getDayOfMonth();
         int endDateMonth = endDatePicker.getValue().getMonthValue();
         int endDateDay = endDatePicker.getValue().getDayOfMonth();
 
-        testMap = dbDriver.reportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
-
+        return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
-
-    public void displaySalesReport() {
-        populateSalesReport();
-        XYChart.Series newSeries = new XYChart.Series();
-        salesChart.getData().clear();
-        xAxis.setLabel("Menu Items");
-        yAxis.setLabel("Sales");
-        salesChart.setTitle("Sales Report");
-
-
-        newSeries.setName("Sales by Menu Item");
-        for(Map.Entry<String, Integer> entry : testMap.entrySet()) {
-            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-        }
-        salesChart.getData().add(newSeries);
-    }
-
 
     // Helper method to display error alert
     private void showAlert(String title, String message) {
