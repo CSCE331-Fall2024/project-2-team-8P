@@ -307,29 +307,61 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public HashMap<String,Integer> ReportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
-        HashMap Sales = new HashMap<String, Integer>();
+    public HashMap<String,Integer> reportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+        //This function will return a hashmap of the sales of each menu item in the given time frame
+        //Heads up this function call is a little slow because of the for loop iterating through all the menu items
+        HashMap<String, Integer> sales = new HashMap<String, Integer>();
         try{
             List<MenuItem> menuItem = selectMenuItems();
             for (MenuItem item : menuItem) {
                 executeQuery(String.format(QueryTemplate.salesOfMenuItem, item.menuItemId, startMonth, endMonth, startDay, endDay), rs -> {
                     try {
                         int count = rs.getInt(1);
-                        Sales.put(item.itemName, count);
-                        return Sales;
+                        sales.put(item.itemName, count);
+                        return sales;
                     } catch (SQLException e) {
-                        e.printStackTrace();
-                        return Sales;
+                        return sales;
                     }
                 });
             }
-            System.out.println(Sales);
+            System.out.println(sales);
 
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return Sales;
+        return sales;
+    }
+
+    public HashMap<String, Integer> productUsageReport(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+        //This function will return a hashmap of the usage of each inventory item in the given time frame
+        //Heads up this function call is a little slow because of the for loop iterating through all the inventory items along with multiplying with another hash map
+
+        HashMap<String, Integer> product = new HashMap<String, Integer>();
+        HashMap<String, String> inventoryMenuMap = new HashMap<>();
+        HashMap<String, Integer> sales = reportSales(startMonth, endMonth, startDay, endDay);
+        try{
+            List<InventoryItem> inventoryItem = selectInventoryItems();
+            for (InventoryItem item : inventoryItem) {
+                executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
+                    try {
+                        String inventory = rs.getString("inventoryitemid");
+                        String menu = rs.getString("menuitemid");
+                        inventoryMenuMap.put(inventory, menu);
+                        return inventoryMenuMap;
+                    } catch (SQLException e) {
+                        return inventoryMenuMap;
+
+                    }
+                });
+            }
+            System.out.println(inventoryMenuMap);
+            return product;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
         // Private helpers:
 
