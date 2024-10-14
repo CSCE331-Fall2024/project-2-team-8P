@@ -138,5 +138,4 @@ class QueryTemplate {
             JOIN
             inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
             """;
-
 }
