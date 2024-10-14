@@ -125,5 +125,17 @@ class QueryTemplate {
             )
             AS subquery;
             """;
-
+    public static final String associateInventoryItemToMenuItem = """
+            SELECT
+            mi.menuitemid,
+            mi.itemname AS menuitem_name,
+            ii.inventoryitemid,
+            ii.itemname AS inventoryitem_name
+            FROM
+            menuitem mi
+            JOIN
+            menuitemtoinventoryitem itm ON mi.menuitemid = itm.menuitemid
+            JOIN
+            inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
+            """;
 }

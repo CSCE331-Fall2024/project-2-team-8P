@@ -328,31 +328,76 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public HashMap<String,Integer> ReportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
-        HashMap Sales = new HashMap<String, Integer>();
+    public HashMap<String,Integer> reportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+        //This function will return a hashmap of the sales of each menu item in the given time frame
+        //Heads up this function call is a little slow because of the for loop iterating through all the menu items
+        HashMap<String, Integer> sales = new HashMap<String, Integer>();
         try{
             List<MenuItem> menuItem = selectMenuItems();
             for (MenuItem item : menuItem) {
                 executeQuery(String.format(QueryTemplate.salesOfMenuItem, item.menuItemId, startMonth, endMonth, startDay, endDay), rs -> {
                     try {
                         int count = rs.getInt(1);
-                        Sales.put(item.itemName, count);
-                        return Sales;
+                        sales.put(item.itemName, count);
+                        return sales;
                     } catch (SQLException e) {
-                        e.printStackTrace();
-                        return Sales;
+                        return sales;
                     }
                 });
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sales;
+    }
+
+    public HashMap<String, Integer> productUsageReport(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+        //This function will return a hashmap of the usage of each inventory item in the given time frame
+        //Heads up this function call is a little slow because of the for loop iterating through all the inventory items along with multiplying with another hash map
+
+        HashMap<String, Integer> product = new HashMap<String, Integer>();
+        HashMap<String, Integer> sales = reportSales(startMonth, endMonth, startDay, endDay);
+        try{
+            List<InventoryItem> inventoryItem = selectInventoryItems();
+            for (InventoryItem item : inventoryItem) {
+                    executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
+                        return product;
+                    });
+            }
+            return product;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
-        return Sales;
     }
         // Private helpers:
+     public HashMap<String,String> inventoryToMenu() {
+         //This function will return a hashmap of the inventory item to menu item
+         //This function is used in the productUsageReport function
+         HashMap<String, String> inventoryToMenu = new HashMap<String, String>();
+         try {
+             List<MenuItem> menuItem = selectMenuItems();
+             for (MenuItem item : menuItem) {
+                 executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
+                     try {
+                         String inventoryItemName = rs.getString("inventoryitem_name");
+                         String menuItemName = rs.getString("menuitem_name");
+                         inventoryToMenu.put(inventoryItemName, menuItemName);
+                         return inventoryToMenu;
+                     } catch (SQLException e) {
+                         return inventoryToMenu;
+                     }
+                 });
+             }
+             return inventoryToMenu;
 
+         } catch (SQLException e) {
+             e.printStackTrace();
+             return null;
+         }
+     }
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
