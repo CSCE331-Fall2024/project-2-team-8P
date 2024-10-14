@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -368,7 +369,10 @@ public class ManagerController {
         Dialog<ButtonType> dialog = new Dialog<>();
 
         // Create the layout to add to dialog
-        VBox inputsContainer = new VBox();
+        VBox inputsContainer = new VBox(10);
+
+        HBox menuContainer = new HBox(20);
+        VBox selectInventoryItems = new VBox(10);
 
         Label menuItemNameLabel = new Label("Menu Item Name: ");
         TextField menuItemName = new TextField();
@@ -381,6 +385,7 @@ public class ManagerController {
 
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
+
 
         AtomicReference<String> dialogLabelName = new AtomicReference<>("Add");
 
@@ -398,6 +403,8 @@ public class ManagerController {
         dialog.setHeaderText(dialogLabelName + " Menu Item");
 
         // Add to dialog box
+
+
         inputsContainer.getChildren().addAll(
                 menuItemNameLabel,
                 menuItemName,
@@ -408,6 +415,16 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
+
+        Label inventoryLabel = new Label("Inventory:");
+        ListView<String> inventoryList = new ListView<>();
+
+        CheckBox test = new CheckBox("Test");
+//        inventoryList.getItems().add(test);
+
+        selectInventoryItems.getChildren().addAll(inventoryLabel, test);
+        menuContainer.getChildren().addAll(inputsContainer, selectInventoryItems);
+        dialog.getDialogPane().setContent(menuContainer);
 
         // If in update mode add a remove button and handle appropriately
 //        menuItem.ifPresent(safeItem -> {
@@ -435,7 +452,6 @@ public class ManagerController {
 //
 //        });
 
-        dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
