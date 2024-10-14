@@ -417,12 +417,12 @@ public class ManagerController {
         );
 
         Label inventoryLabel = new Label("Inventory:");
-        ListView<String> inventoryList = new ListView<>();
 
-        CheckBox test = new CheckBox("Test");
-//        inventoryList.getItems().add(test);
+        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+            selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
+        }
 
-        selectInventoryItems.getChildren().addAll(inventoryLabel, test);
+
         menuContainer.getChildren().addAll(inputsContainer, selectInventoryItems);
         dialog.getDialogPane().setContent(menuContainer);
 
