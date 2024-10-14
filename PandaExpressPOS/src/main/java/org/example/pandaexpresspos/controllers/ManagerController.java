@@ -80,10 +80,6 @@ public class ManagerController {
     @FXML
     private BarChart<String, Number> salesChart;
     @FXML
-    private CategoryAxis xAxis;
-    @FXML
-    private NumberAxis yAxis;
-    @FXML
     private DatePicker startDatePicker;
     @FXML
     private DatePicker endDatePicker;
@@ -178,9 +174,6 @@ public class ManagerController {
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
-        xAxis.setLabel("Menu Items");
-        yAxis.setLabel("Sales");
-        salesChart.setTitle("Sales by Menu Item");
     }
 
     public void setLoggedInUser(Employee user) {

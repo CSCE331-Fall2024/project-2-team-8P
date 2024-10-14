@@ -89,7 +89,7 @@
                         <children>
                            <VBox prefHeight="319.2" prefWidth="288.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                               <children>
-                                 <BarChart fx:id="salesChart" animated="false" prefHeight="800.0" prefWidth="395.0" VBox.vgrow="ALWAYS">
+                                 <BarChart fx:id="salesChart" animated="false" legendVisible="false" prefHeight="800.0" prefWidth="395.0" title="Sales by Menu Item" VBox.vgrow="ALWAYS">
                                     <xAxis>
                                        <CategoryAxis label="Menu Items" fx:id="xAxis" />
                                     </xAxis>
