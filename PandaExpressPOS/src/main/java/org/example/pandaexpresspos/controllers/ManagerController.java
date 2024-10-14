@@ -88,6 +88,8 @@ public class ManagerController {
     @FXML
     private DatePicker endDatePicker;
 
+
+
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
     private int lowInventory = 50;
@@ -176,6 +178,9 @@ public class ManagerController {
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+        xAxis.setLabel("Menu Items");
+        yAxis.setLabel("Sales");
+        salesChart.setTitle("Sales by Menu Item");
     }
 
     public void setLoggedInUser(Employee user) {
@@ -894,12 +899,9 @@ public class ManagerController {
         populateSalesReport();
         XYChart.Series newSeries = new XYChart.Series();
         salesChart.getData().clear();
-        xAxis.setLabel("Menu Items");
-        yAxis.setLabel("Sales");
-        salesChart.setTitle("Sales Report");
 
+        salesChart.setLegendVisible(false);
 
-        newSeries.setName("Sales by Menu Item");
         for(Map.Entry<String, Number> entry : testMap.entrySet()) {
             newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
