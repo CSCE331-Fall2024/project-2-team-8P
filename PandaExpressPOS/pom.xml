@@ -88,7 +88,25 @@
                         </configuration>
                     </execution>
                 </executions>
-
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version> <!-- Use the latest version available -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal> <!-- Generate javadoc.jar -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Additional configuration, if needed -->
+                    <encoding>UTF-8</encoding> <!-- Set encoding for Javadocs -->
+                    <locale>en</locale> <!-- Set locale for Javadocs -->
+                    <source>11</source> <!-- Set Java version if needed -->
+                    <doclint>none</doclint> <!-- Disable doclint if your Javadocs have warnings -->
+                </configuration>
             </plugin>
         </plugins>
     </build>
