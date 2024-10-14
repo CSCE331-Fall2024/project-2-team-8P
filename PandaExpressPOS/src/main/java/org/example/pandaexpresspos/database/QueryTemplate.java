@@ -113,17 +113,16 @@ class QueryTemplate {
             SET price = %f, availableStock = %d, itemName = '%s'
             WHERE menuItemId = '%s';
             """;
-    public static final String salesOfMenuItem = """
-            SELECT COUNT(*)
-            FROM (
-            SELECT o.orderid, o.cashierid, o.month, o.week, o.day, o.hour, o.price, otm.menuitemid
+    public static final String selectMenuItemSalesByTimePeriod = """
+            SELECT m.menuItemId, m.price, m.availableStock, m.itemName, count(*)
             FROM "order" o
-            JOIN orderToMenuItem otm ON o.orderid = otm.orderid
-            WHERE otm.menuitemid = '%s'
-            AND o.month BETWEEN %d AND %d
+            JOIN orderToMenuItem otm
+            ON o.orderId = otm.orderId
+            JOIN menuItem m
+            ON otm.menuItemId = m.menuItemId
+            WHERE o.month BETWEEN %d AND %d
             AND o.day BETWEEN %d AND %d
-            )
-            AS subquery;
+            GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
             """;
     public static final String associateInventoryItemToMenuItem = """
             SELECT

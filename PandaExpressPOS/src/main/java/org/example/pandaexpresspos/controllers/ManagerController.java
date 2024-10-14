@@ -882,27 +882,24 @@ public class ManagerController {
     dictionary menuItem : sales
     Backend: menu item sales
      */
-
-    Map<String, Number> testMap = new HashMap<>();
-
-    private void populateSalesReport() {
+    private Map<String, Integer> getSalesReportData() {
+        // TODO: auto-populate values
         int startDateMonth = startDatePicker.getValue().getMonthValue();
         int startDateDay = startDatePicker.getValue().getDayOfMonth();
         int endDateMonth = endDatePicker.getValue().getMonthValue();
         int endDateDay = endDatePicker.getValue().getDayOfMonth();
 
-        testMap = dbDriver.reportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
-
+        return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
 
     public void displaySalesReport() {
-        populateSalesReport();
+        Map<String, Integer> salesReportData = getSalesReportData();
         XYChart.Series newSeries = new XYChart.Series();
         salesChart.getData().clear();
 
         salesChart.setLegendVisible(false);
 
-        for(Map.Entry<String, Number> entry : testMap.entrySet()) {
+        for(Map.Entry<String, Integer> entry : salesReportData.entrySet()) {
             newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
         salesChart.getData().add(newSeries);
