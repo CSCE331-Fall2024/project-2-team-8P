@@ -370,9 +370,10 @@ public class ManagerController {
 
         // Create the layout to add to dialog
         VBox inputsContainer = new VBox(10);
-
         HBox menuContainer = new HBox(20);
         VBox selectInventoryItems = new VBox(10);
+        ScrollPane inventoryItemsScroll = new ScrollPane(selectInventoryItems);
+        inventoryItemsScroll.maxHeightProperty().bind(menuContainer.heightProperty());
 
         Label menuItemNameLabel = new Label("Menu Item Name: ");
         TextField menuItemName = new TextField();
@@ -416,14 +417,13 @@ public class ManagerController {
                 imageUrl
         );
 
-        Label inventoryLabel = new Label("Inventory:");
 
         for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
             selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
         }
 
 
-        menuContainer.getChildren().addAll(inputsContainer, selectInventoryItems);
+        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
         dialog.getDialogPane().setContent(menuContainer);
 
         // If in update mode add a remove button and handle appropriately
