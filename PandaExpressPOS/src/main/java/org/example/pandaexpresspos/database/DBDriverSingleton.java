@@ -126,27 +126,6 @@ public class DBDriverSingleton {
         return sales;
     }
 
-    public HashMap<String, Integer> selectProductUsageReport(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
-        //This function will return a hashmap of the usage of each inventory item in the given time frame
-        //Heads up this function call is a little slow because of the for loop iterating through all the inventory items along with multiplying with another hash map
-
-        HashMap<String, Integer> product = new HashMap<String, Integer>();
-        Map<String, Integer> sales = selectSalesReport(startMonth, endMonth, startDay, endDay);
-        try {
-            List<InventoryItem> inventoryItem = selectInventoryItems();
-            for (InventoryItem item : inventoryItem) {
-                executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
-                    return product;
-                });
-            }
-            return product;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public void insertOrder(Order newOrder) {
         // Insert the order entry
         executeUpdate(String.format(QueryTemplate.insertOrder,
@@ -375,31 +354,6 @@ public class DBDriverSingleton {
     }
 
     // Private helpers:
-    public HashMap<String, String> inventoryToMenu() {
-        //This function will return a hashmap of the inventory item to menu item
-        //This function is used in the productUsageReport function
-        HashMap<String, String> inventoryToMenu = new HashMap<String, String>();
-        try {
-            List<MenuItem> menuItem = selectMenuItems();
-            for (MenuItem item : menuItem) {
-                executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
-                    try {
-                        String inventoryItemName = rs.getString("inventoryitem_name");
-                        String menuItemName = rs.getString("menuitem_name");
-                        inventoryToMenu.put(inventoryItemName, menuItemName);
-                        return inventoryToMenu;
-                    } catch (SQLException e) {
-                        return inventoryToMenu;
-                    }
-                });
-            }
-            return inventoryToMenu;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
