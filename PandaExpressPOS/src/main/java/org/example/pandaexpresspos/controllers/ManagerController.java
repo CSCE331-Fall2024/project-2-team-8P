@@ -886,7 +886,7 @@ public class ManagerController {
         int endDateMonth = endDatePicker.getValue().getMonthValue();
         int endDateDay = endDatePicker.getValue().getDayOfMonth();
 
-        testMap = dbDriver.ReportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
+        testMap = dbDriver.reportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
 
     }
 

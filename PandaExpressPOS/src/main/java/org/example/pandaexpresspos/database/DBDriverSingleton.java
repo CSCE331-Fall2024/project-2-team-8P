@@ -358,19 +358,14 @@ public class DBDriverSingleton {
 
         HashMap<String, Integer> product = new HashMap<String, Integer>();
         HashMap<String, Integer> sales = reportSales(startMonth, endMonth, startDay, endDay);
-        try{
-            List<InventoryItem> inventoryItem = selectInventoryItems();
-            for (InventoryItem item : inventoryItem) {
-                    executeQuery(String.format(QueryTemplate.associateInventoryItemToMenuItem), rs -> {
-                        return product;
-                    });
-            }
-            return product;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        HashMap<String, String> inventoryToMenu = inventoryToMenu();
+        for (Map.Entry<String, String> entry : inventoryToMenu.entrySet()) {
+            String inventoryItem = entry.getKey();
+            String menuItem = entry.getValue();
+            product.put(inventoryItem, sales.getOrDefault(menuItem, 0));
         }
+        return product;
+
     }
         // Private helpers:
      public HashMap<String,String> inventoryToMenu() {

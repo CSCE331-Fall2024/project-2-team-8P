@@ -239,14 +239,16 @@ class DBDriverSingletonTest {
         HashMap <String, Integer> salesReport = driver.reportSales(1,2,1,2);
         System.out.println(salesReport);
     }
-    @Test
-    void productUsageReport(){
-        HashMap <String, Integer> productUsageReport = driver.productUsageReport(1,2,1,2);
-    }
+
     @Test
     void inventorytomenu(){
         HashMap <String, String> inventoryReport = driver.inventoryToMenu();
         System.out.println(inventoryReport);
+    }
+    @Test
+    void productusage(){
+        HashMap <String, Integer> productUsageReport = driver.productUsageReport(1,2,1,2);
+        System.out.println(productUsageReport);
     }
 
     // Helpers
