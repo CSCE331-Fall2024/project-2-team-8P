@@ -236,7 +236,7 @@ class DBDriverSingletonTest {
     }
     @Test
     void SalesReport(){
-        HashMap <String, Integer> salesReport = driver.reportSales(1,2,1,2);
+        HashMap <String, Number> salesReport = driver.reportSales(1,2,1,2);
         System.out.println(salesReport);
     }
     @Test

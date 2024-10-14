@@ -878,7 +878,7 @@ public class ManagerController {
     Backend: menu item sales
      */
 
-    Map<String, Integer> testMap = new HashMap<>();
+    Map<String, Number> testMap = new HashMap<>();
 
     private void populateSalesReport() {
         int startDateMonth = startDatePicker.getValue().getMonthValue();
@@ -886,7 +886,7 @@ public class ManagerController {
         int endDateMonth = endDatePicker.getValue().getMonthValue();
         int endDateDay = endDatePicker.getValue().getDayOfMonth();
 
-        testMap = dbDriver.ReportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
+        testMap = dbDriver.reportSales(startDateMonth, endDateMonth, startDateDay, endDateDay);
 
     }
 
@@ -900,7 +900,7 @@ public class ManagerController {
 
 
         newSeries.setName("Sales by Menu Item");
-        for(Map.Entry<String, Integer> entry : testMap.entrySet()) {
+        for(Map.Entry<String, Number> entry : testMap.entrySet()) {
             newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
         salesChart.getData().add(newSeries);

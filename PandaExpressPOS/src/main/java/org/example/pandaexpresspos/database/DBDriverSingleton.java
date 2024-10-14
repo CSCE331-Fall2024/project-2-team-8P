@@ -328,10 +328,10 @@ public class DBDriverSingleton {
     public void deleteMenuItem(UUID menuItemId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public HashMap<String,Integer> reportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
+    public HashMap<String,Number> reportSales(Integer startMonth, Integer endMonth, Integer startDay, Integer endDay) {
         //This function will return a hashmap of the sales of each menu item in the given time frame
         //Heads up this function call is a little slow because of the for loop iterating through all the menu items
-        HashMap<String, Integer> sales = new HashMap<String, Integer>();
+        HashMap<String, Number> sales = new HashMap<String, Number>();
         try{
             List<MenuItem> menuItem = selectMenuItems();
             for (MenuItem item : menuItem) {
@@ -357,7 +357,7 @@ public class DBDriverSingleton {
         //Heads up this function call is a little slow because of the for loop iterating through all the inventory items along with multiplying with another hash map
 
         HashMap<String, Integer> product = new HashMap<String, Integer>();
-        HashMap<String, Integer> sales = reportSales(startMonth, endMonth, startDay, endDay);
+        HashMap<String, Number> sales = reportSales(startMonth, endMonth, startDay, endDay);
         try{
             List<InventoryItem> inventoryItem = selectInventoryItems();
             for (InventoryItem item : inventoryItem) {
