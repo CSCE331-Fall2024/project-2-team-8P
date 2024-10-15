@@ -420,6 +420,10 @@ public class ManagerController {
             inventoryItemnameToID.put(item.itemName, item.inventoryItemId.toString());
         }
 
+        menuContainer.getChildren().addAll(inputsContainer, selectInventoryItems);
+        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
+        dialog.getDialogPane().setContent(menuContainer);
+
         // If in update mode add a remove button and handle appropriately
 //        menuItem.ifPresent(safeItem -> {
 //            Label removeLabel = new Label("Remove Item: ");
