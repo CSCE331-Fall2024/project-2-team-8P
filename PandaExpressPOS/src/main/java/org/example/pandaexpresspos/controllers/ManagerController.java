@@ -72,6 +72,8 @@ public class ManagerController {
     private TextFlow summary;
     @FXML
     private BarChart<String, Double> xReportBarChart;
+    @FXML
+    private BarChart<String, Double> zReportBarChart;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -193,10 +195,10 @@ public class ManagerController {
                 // TODO: add usage report
                 break;
             case X_REPORT:
-                fetchXReport();
+                fetchXOrZReport(false);
                 break;
             case Z_REPORT:
-                // TODO: add Z_Report
+                fetchXOrZReport(true);
                 break;
             case SALES_REPORT:
                 // TODO: add Sales Report
@@ -674,9 +676,19 @@ public class ManagerController {
         }
     }
 
-    public void fetchXReport() {
+    public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
-        List<Double> salesPerHour = DBDriverSingleton.getInstance().selectXReport();
+        List<Double> hourlySales;
+        BarChart<String, Double> chart;
+
+        if (wholeDay) {
+           hourlySales = DBDriverSingleton.getInstance().selectZReport();
+           chart = zReportBarChart;
+        } else {
+            hourlySales = DBDriverSingleton.getInstance().selectXReport();
+            chart = xReportBarChart;
+        }
+
         // Create series to hold data
         XYChart.Series<String, Double> sales = new XYChart.Series<>();
         // X-label
@@ -688,12 +700,12 @@ public class ManagerController {
         };
 
         // Add data to series
-        for (int i = 0; i < salesPerHour.size(); i++) {
-            sales.getData().add(new XYChart.Data<>(hours[i], salesPerHour.get(i)));
+        for (int i = 0; i < hourlySales.size(); i++) {
+            sales.getData().add(new XYChart.Data<>(hours[i], hourlySales.get(i)));
         }
 
         // Add series to bar chart
-        xReportBarChart.getData().add(sales);
+        chart.getData().add(sales);
 
     }
 

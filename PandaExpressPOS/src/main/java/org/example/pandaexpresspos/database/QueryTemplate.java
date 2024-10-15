@@ -16,7 +16,7 @@ class QueryTemplate {
             SELECT hour, SUM(price) FROM "order"
             WHERE month = %d AND day = %d AND hour <= %d
             GROUP BY hour
-            ORDER BY hour DESC;
+            ORDER BY hour ASC;
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
