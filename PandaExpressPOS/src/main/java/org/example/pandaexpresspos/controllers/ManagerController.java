@@ -81,6 +81,8 @@ public class ManagerController {
     @FXML
     private BarChart<String, Number> salesChart;
     @FXML
+    private BarChart<String, Number> productUsageChart;
+    @FXML
     private DatePicker startDatePickerSalesReport;
     @FXML
     private DatePicker endDatePickerSalesReport;
@@ -172,6 +174,7 @@ public class ManagerController {
         createMenuItemsGrid();
         createEmployeesGrid();
         createSalesReportChart();
+        createProductUsageChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -201,6 +204,7 @@ public class ManagerController {
                 updateSummary();
                 break;
             case USAGE:
+                updateProductUsage();
                 // TODO: add usage report
                 break;
             case X_REPORT:
@@ -609,6 +613,19 @@ public class ManagerController {
         salesChart.getData().add(newSeries);
     }
 
+    public void updateProductUsage() {
+        Map<String, Integer> productUsageData = getProductUsageData();
+        XYChart.Series newSeries = new XYChart.Series();
+        productUsageChart.getData().clear();
+
+        productUsageChart.setLegendVisible(false);
+
+        for (Map.Entry<String, Integer> entry : productUsageData.entrySet()) {
+            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        productUsageChart.getData().add(newSeries);
+    }
+
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
@@ -795,6 +812,11 @@ public class ManagerController {
         endDatePickerSalesReport.setValue(LocalDate.now());
     }
 
+    public void createProductUsageChart() {
+        startDatePickerProductUsage.setValue(LocalDate.now().minusWeeks(1));
+        endDatePickerProductUsage.setValue(LocalDate.now());
+    }
+
     /*
     Sales Report
     Frontend: start/end date
@@ -808,6 +830,15 @@ public class ManagerController {
         int endDateDay = endDatePickerSalesReport.getValue().getDayOfMonth();
 
         return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
+    }
+
+    private Map<String, Integer> getProductUsageData() {
+        int startDateMonth = startDatePickerProductUsage.getValue().getMonthValue();
+        int startDateDay = startDatePickerProductUsage.getValue().getDayOfMonth();
+        int endDateMonth = endDatePickerProductUsage.getValue().getMonthValue();
+        int endDateDay = endDatePickerProductUsage.getValue().getDayOfMonth();
+
+        return dbDriver.selectProductUsage(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
 
     // Helper method to display error alert
