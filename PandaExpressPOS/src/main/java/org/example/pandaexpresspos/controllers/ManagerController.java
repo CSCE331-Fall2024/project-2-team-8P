@@ -387,7 +387,6 @@ public class ManagerController {
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
 
-
         AtomicReference<String> dialogLabelName = new AtomicReference<>("Add");
 
         // If non-empty menu item, populate text fields with item properties
@@ -396,7 +395,7 @@ public class ManagerController {
             menuItemPrice.setText(String.valueOf(safeItem.price));
             availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
-            dialogLabelName.set("Update");
+            dialogLabelName.set("Update");  // Set dialog label to update
         });
 
         // Set the header and dialog to either Update or Add Menu Item
@@ -404,8 +403,6 @@ public class ManagerController {
         dialog.setHeaderText(dialogLabelName + " Menu Item");
 
         // Add to dialog box
-
-
         inputsContainer.getChildren().addAll(
                 menuItemNameLabel,
                 menuItemName,
@@ -416,15 +413,12 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
+        Map<String,String> inventoryItemnameToID = new HashMap<>();
 
         for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
             selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
+            inventoryItemnameToID.put(item.itemName, item.inventoryItemId.toString());
         }
-
-
-        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
-        dialog.getDialogPane().setContent(menuContainer);
 
         // If in update mode add a remove button and handle appropriately
 //        menuItem.ifPresent(safeItem -> {
@@ -480,12 +474,22 @@ public class ManagerController {
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
+                UUID menuitemid;
                 dbDriver.insertMenuItem(new MenuItem(
+                        menuitemid= UUID.fromString(UUID.randomUUID().toString()),
                         Double.parseDouble(price.trim()),
                         Integer.parseInt(stock.trim()),
                         name)
                 );
-            } else {
+                for (Node node : selectInventoryItems.getChildren()) {
+                    if (node instanceof CheckBox checkBox) {
+                        if (checkBox.isSelected()) {
+                            String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                            dbDriver.insertMenuItemToInventoryItem(String.valueOf(menuitemid), inventoryItemId);
+                        }
+                    }
+                }
+                } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
                 item.price = Double.parseDouble(price.trim());

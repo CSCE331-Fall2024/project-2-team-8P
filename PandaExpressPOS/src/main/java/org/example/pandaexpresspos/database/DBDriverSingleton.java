@@ -352,6 +352,12 @@ public class DBDriverSingleton {
                 updatedMenuItem.menuItemId
         ));
     }
+    public void insertMenuItemToInventoryItem(String menuItemId, String inventoryItemId) {
+        executeUpdate(String.format(QueryTemplate.insertMenuItemToInventoryItem,
+                menuItemId,
+                inventoryItemId
+        ));
+    }
 
     // Private helpers:
 

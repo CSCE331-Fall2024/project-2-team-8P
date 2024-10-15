@@ -137,4 +137,8 @@ class QueryTemplate {
             JOIN
             inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
             """;
+    public static final String insertMenuItemToInventoryItem = """
+            INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId)
+            VALUES ('%s', '%s');
+            """;
 }
