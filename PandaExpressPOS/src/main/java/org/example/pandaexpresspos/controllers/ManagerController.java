@@ -81,13 +81,13 @@ public class ManagerController {
     @FXML
     private BarChart<String, Number> salesChart;
     @FXML
-    private CategoryAxis xAxis;
+    private DatePicker startDatePickerSalesReport;
     @FXML
-    private NumberAxis yAxis;
+    private DatePicker endDatePickerSalesReport;
     @FXML
-    private DatePicker startDatePicker;
+    private DatePicker startDatePickerProductUsage;
     @FXML
-    private DatePicker endDatePicker;
+    private DatePicker endDatePickerProductUsage;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -791,11 +791,8 @@ public class ManagerController {
     }
 
     public void createSalesReportChart() {
-        startDatePicker.setValue(LocalDate.now().minusWeeks(1));
-        endDatePicker.setValue(LocalDate.now());
-        xAxis.setLabel("Menu Items");
-        yAxis.setLabel("Sales");
-        salesChart.setTitle("Sales by Menu Item");
+        startDatePickerSalesReport.setValue(LocalDate.now().minusWeeks(1));
+        endDatePickerSalesReport.setValue(LocalDate.now());
     }
 
     /*
@@ -805,10 +802,10 @@ public class ManagerController {
     Backend: menu item sales
      */
     private Map<String, Integer> getSalesReportData() {
-        int startDateMonth = startDatePicker.getValue().getMonthValue();
-        int startDateDay = startDatePicker.getValue().getDayOfMonth();
-        int endDateMonth = endDatePicker.getValue().getMonthValue();
-        int endDateDay = endDatePicker.getValue().getDayOfMonth();
+        int startDateMonth = startDatePickerSalesReport.getValue().getMonthValue();
+        int startDateDay = startDatePickerSalesReport.getValue().getDayOfMonth();
+        int endDateMonth = endDatePickerSalesReport.getValue().getMonthValue();
+        int endDateDay = endDatePickerSalesReport.getValue().getDayOfMonth();
 
         return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
