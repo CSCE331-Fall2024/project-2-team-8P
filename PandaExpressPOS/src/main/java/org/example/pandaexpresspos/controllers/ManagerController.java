@@ -10,8 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -21,7 +19,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -30,7 +27,6 @@ import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -45,8 +41,6 @@ public class ManagerController {
 
     private Employee loggedInUser;
 
-    @FXML
-    private VBox rightVerBox;
     @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
@@ -162,14 +156,11 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-        // Initialize date pickers to have the previous week as the default time period
-
-
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
-        createSalesReportChart();
+        initSalesReportChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -208,7 +199,7 @@ public class ManagerController {
                 fetchXOrZReport(true);
                 break;
             case SALES_REPORT:
-                updateSalesReport();
+                fetchSalesReport();
                 break;
             default:
                 break;
@@ -596,7 +587,7 @@ public class ManagerController {
         }
     }
 
-    public void updateSalesReport() {
+    public void fetchSalesReport() {
         Map<String, Integer> salesReportData = getSalesReportData();
         XYChart.Series newSeries = new XYChart.Series();
         salesChart.getData().clear();
@@ -823,7 +814,8 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
-    public void createSalesReportChart() {
+    public void initSalesReportChart() {
+        // Initialize date pickers to have the previous week as the default time period
         startDatePicker.setValue(LocalDate.now().minusWeeks(1));
         endDatePicker.setValue(LocalDate.now());
     }
