@@ -164,7 +164,7 @@ public class DBDriverSingleton {
             List<InventoryItemWithQty> associatedInventory = selectMenuItemInventoryItems(item);
             for (InventoryItemWithQty itemWithQty : associatedInventory) {
                 executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
-                        itemWithQty.quantity,
+                        itemWithQty.quantity * menuItemQty,
                         itemWithQty.inventoryItem.inventoryItemId
                 ));
             }
@@ -377,10 +377,6 @@ public class DBDriverSingleton {
              Statement stmt = conn.createStatement()) {
 
             ResultSet rs = stmt.executeQuery(query);
-
-            if (!rs.isBeforeFirst()) {
-                throw new SQLException("Query returned empty result");
-            }
 
             while (rs.next()) {
                 T item = mapper.apply(rs);
