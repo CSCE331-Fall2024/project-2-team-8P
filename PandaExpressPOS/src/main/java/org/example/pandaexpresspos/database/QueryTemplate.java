@@ -119,14 +119,10 @@ class QueryTemplate {
             """;
     public static final String selectInventoryUseByTimePeriod = """
             SELECT
-                m.menuItemId,
-                m.price AS menuItemPrice,
-                m.availableStock AS menuItemStock,
-                m.itemName AS menuItemName,
                 i.inventoryItemId,
-                i.cost AS inventoryItemCost,
-                i.availableStock AS inventoryItemStock,
-                i.itemName AS inventoryItemName,
+                i.cost,
+                i.availableStock,
+                i.itemName,
                 count(*) AS itemsUsed
             FROM "order" o
             JOIN orderToMenuItem otm ON o.orderId = otm.orderId
@@ -136,10 +132,6 @@ class QueryTemplate {
             WHERE o.month BETWEEN %d AND %d
             AND o.day BETWEEN %d AND %d
             GROUP BY
-                m.menuItemId,
-                m.price,
-                m.availableStock,
-                m.itemName,
                 i.inventoryItemId,
                 i.cost,
                 i.availableStock,

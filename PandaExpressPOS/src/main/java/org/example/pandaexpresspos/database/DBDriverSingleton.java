@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
@@ -126,21 +127,30 @@ public class DBDriverSingleton {
         return sales;
     }
 
-    public Map<String, Integer> productUsageReport(
+    public Map<String, Integer> selectProductUsage(
             Integer startMonth,
             Integer endMonth,
             Integer startDay,
             Integer endDay
     ) {
-        Map<String, Integer> product = new HashMap<>();
-        Map<String, Integer> sales = selectSalesReport(startMonth, endMonth, startDay, endDay);
-        Map<String, String> inventoryToMenu = inventoryToMenu();
-        for (Map.Entry<String, String> entry : inventoryToMenu.entrySet()) {
-            String inventoryItem = entry.getKey();
-            String menuItem = entry.getValue();
-            product.put(inventoryItem, sales.getOrDefault(menuItem, 0));
+        Map<String, Integer> productUsage = new TreeMap<>();
+        try {
+            List<InventoryItemWithQty> menuItemToInventoryItems = executeQuery(
+                    String.format(QueryTemplate.selectInventoryUseByTimePeriod,
+                            startMonth,
+                            endMonth,
+                            startDay,
+                            endDay
+                    ),
+                    SQLToJavaMapper::inventoryItemWithQtyMapper
+            );
+            for (InventoryItemWithQty item : menuItemToInventoryItems) {
+                productUsage.put(item.inventoryItem.itemName, item.quantity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return product;
+        return productUsage;
     }
 
     public void insertOrder(Order newOrder) {

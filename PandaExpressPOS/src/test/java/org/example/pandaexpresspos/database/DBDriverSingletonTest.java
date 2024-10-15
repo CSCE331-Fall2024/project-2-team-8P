@@ -248,7 +248,7 @@ class DBDriverSingletonTest {
     }
     @Test
     void productusage(){
-        HashMap <String, Integer> productUsageReport = driver.productUsageReport(1,2,1,2);
+        HashMap <String, Integer> productUsageReport = driver.selectProductUsage(1,2,1,2);
         System.out.println(productUsageReport);
     }
 
