@@ -10,6 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -19,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -29,6 +32,7 @@ import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
@@ -41,7 +45,8 @@ public class ManagerController {
 
     private Employee loggedInUser;
 
-
+    @FXML
+    private VBox rightVerBox;
     @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
@@ -74,6 +79,13 @@ public class ManagerController {
     private BarChart<String, Double> xReportBarChart;
     @FXML
     private BarChart<String, Double> zReportBarChart;
+    @FXML
+    private BarChart<String, Number> salesChart;
+    @FXML
+    private DatePicker startDatePicker;
+    @FXML
+    private DatePicker endDatePicker;
+
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -150,19 +162,14 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-
-//        if (loggedInUser == null) {
-//            throw new IllegalStateException("You have not logged in");
-//        }
-//        if (!loggedInUser.isManager) {
-//            throw new IllegalStateException("You are not authorized to view this page");
-//        }
+        // Initialize date pickers to have the previous week as the default time period
 
 
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+        createSalesReportChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -201,17 +208,14 @@ public class ManagerController {
                 fetchXOrZReport(true);
                 break;
             case SALES_REPORT:
-                // TODO: add Sales Report
+                updateSalesReport();
                 break;
             default:
                 break;
         }
 
 
-
     }
-
-
 
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
@@ -230,7 +234,6 @@ public class ManagerController {
                 break;
             default:
                 throw new RuntimeException();
-
         }
     }
 
@@ -279,34 +282,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
-        // If in update mode add a remove button and handle appropriately
-//        inventoryItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-////                inventoryItems.removeIf(item -> (
-////                        item.itemName.equals(safeItem.itemName)
-////                ));
-//                // Backend call here
-//
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    inventoryItemsGridPane.getChildren().clear();
-//                    createInventoryGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
@@ -408,32 +383,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
-        // If in update mode add a remove button and handle appropriately
-//        menuItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-////            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                menuItems.removeIf(item -> (
-//                        item.itemName.equals(safeItem.itemName)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    menuItemsGridPane.getChildren().clear();
-//                    createMenuItemsGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
 
         dialog.getDialogPane().setContent(inputsContainer);
 
@@ -543,32 +492,6 @@ public class ManagerController {
                 imageUrl
         );
 
-        // If in update mode add a remove button and handle appropriately
-//        employee.ifPresent(safeEmployee -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                employees.removeIf(person -> (
-//                        person.name.equals(safeEmployee.name)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    employeeItemsGridPane.getChildren().clear();
-//                    createEmployeesGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -627,7 +550,6 @@ public class ManagerController {
                 new SimpleObjectProperty(cellData.getValue().cashierId.toString())
         );
 
-
         // Setup other columns similarly
         Month.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().month.toString())
@@ -652,30 +574,40 @@ public class ManagerController {
         Text summaryText = new Text("Inventory Items\n");
         summary.getChildren().add(summaryText);
 
-        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
-            if(item.availableStock <= veryLowInventory) {
+        for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+            if (item.availableStock <= veryLowInventory) {
                 summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
                 summary.getChildren().add(summaryText);
-            }
-            else if(item.availableStock <= lowInventory) {
+            } else if (item.availableStock <= lowInventory) {
                 summaryText = new Text(item.itemName + " has low stock, restock soon\n");
                 summary.getChildren().add(summaryText);
             }
         }
         summaryText = new Text("\nMenu Items\n");
         summary.getChildren().add(summaryText);
-        for(MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
-            if(item.availableStock >= unpopularMenuItem) {
+        for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
+            if (item.availableStock >= unpopularMenuItem) {
                 summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
                 summary.getChildren().add(summaryText);
-            }
-            else if(item.availableStock <= popularMenuItem) {
+            } else if (item.availableStock <= popularMenuItem) {
                 summaryText = new Text(item.itemName + " is extremely popular\n");
                 summary.getChildren().add(summaryText);
             }
         }
     }
 
+    public void updateSalesReport() {
+        Map<String, Integer> salesReportData = getSalesReportData();
+        XYChart.Series newSeries = new XYChart.Series();
+        salesChart.getData().clear();
+
+        salesChart.setLegendVisible(false);
+
+        for (Map.Entry<String, Integer> entry : salesReportData.entrySet()) {
+            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+        salesChart.getData().add(newSeries);
+    }
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
@@ -760,7 +692,7 @@ public class ManagerController {
 
             // Update grid position
             x++;
-            if (x == columns){
+            if (x == columns) {
                 x = 0;
                 y++;
             }
@@ -891,6 +823,25 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
+    public void createSalesReportChart() {
+        startDatePicker.setValue(LocalDate.now().minusWeeks(1));
+        endDatePicker.setValue(LocalDate.now());
+    }
+
+    /*
+    Sales Report
+    Frontend: start/end date
+    dictionary menuItem : sales
+    Backend: menu item sales
+     */
+    private Map<String, Integer> getSalesReportData() {
+        int startDateMonth = startDatePicker.getValue().getMonthValue();
+        int startDateDay = startDatePicker.getValue().getDayOfMonth();
+        int endDateMonth = endDatePicker.getValue().getMonthValue();
+        int endDateDay = endDatePicker.getValue().getDayOfMonth();
+
+        return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
+    }
 
     // Helper method to display error alert
     private void showAlert(String title, String message) {
