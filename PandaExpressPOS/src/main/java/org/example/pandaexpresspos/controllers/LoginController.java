@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -51,23 +50,6 @@ public class LoginController {
         switch (employeeType) {
             case CASHIER:
                 loader = new FXMLLoader(LoginApplication.class.getResource("fxml/cashier-view.fxml"));
-
-                // Configure the controller factory to set the logged in user before calling `initialize()`
-                loader.setControllerFactory(controllerClass -> {
-                    if (controllerClass == CashierController.class) {
-                        CashierController controller = new CashierController();
-                        controller.setLoggedInUser(currentUser); // Inject the state here
-                        return controller;
-                    } else {
-                        try {
-                            // Default behavior for other controllers
-                            return controllerClass.getDeclaredConstructor().newInstance();
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                });
-
                 root = loader.load();
                 CashierController cashierController = loader.getController();
                 cashierController.setLoggedInUser(currentUser);
@@ -80,8 +62,8 @@ public class LoginController {
                 break;
             default:
                 // TODO: display UI for Error
-                return;
-
+                System.out.println("Employee does not exist, exiting...");
+                System.exit(1);
         }
 
         // Create a new scene and set it to the stage
@@ -98,7 +80,6 @@ public class LoginController {
     private EmployeeType getEmployeeType(String username) {
         setCurrentUser(username);
         if (currentUser == null) {
-            showAlert("Invalid Username", "The username you entered does not exist.");
             return EmployeeType.ERROR;
         }
 
@@ -108,11 +89,5 @@ public class LoginController {
             return EmployeeType.CASHIER;
         }
     }
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+
 }

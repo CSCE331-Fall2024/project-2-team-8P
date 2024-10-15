@@ -1,10 +1,13 @@
 package org.example.pandaexpresspos.controllers;
 
 import javafx.event.ActionEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.fxml.FXML;
-
 import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,9 +21,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
-import org.example.pandaexpresspos.database.DBDriverSingleton;
-import org.example.pandaexpresspos.database.DBSnapshotSingleton;
-import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order; // Import Order class
 
@@ -30,11 +30,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class CashierController {
-
-    private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
-    private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
-    
-    private Employee loggedInUser;
 
     // New Order instance
     private Order currentOrder; // Added to manage the current order
@@ -52,30 +47,13 @@ public class CashierController {
     private TableColumn<Map.Entry<MenuItem, Integer>, Double> priceColumn; // Updated type to OrderItem
 
     @FXML
-    public Button
-            clear,
-            placeOrder,
-            clearNum,
-            Enter,
-            button0,
-            button1,
-            button2,
-            button3,
-            button4,
-            button5,
-            button6,
-            button7,
-            button8,
-            button9,
-            Logout;
+    public Button clear, placeOrder, clearNum, Enter, button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, Logout;
 
     @FXML
     private TextField cashierTextField;
 
     @FXML
-    private TextField
-//            taxField,
-            totalField;
+    private TextField taxField, totalField;
 
     @FXML
     private GridPane menuItemGridPane;
@@ -84,7 +62,7 @@ public class CashierController {
 
     // constants for global use
     private static final double TAX_RATE = 0.0825;
-
+    private UUID cashierID = UUID.randomUUID();
     private LocalDate currentDate = LocalDate.now();
     private Integer month = currentDate.getMonthValue();
     private Integer week = (currentDate.getMonthValue()
@@ -97,39 +75,39 @@ public class CashierController {
 
     private StringBuilder currentQuantity = new StringBuilder();
 
+    ArrayList<MenuItem> menuItems = new ArrayList<>();
+
     @FXML
     void logOutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         Scene scene = new Scene(loader.load(), 1200, 800);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setTitle("Login");
+        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }
 
     // Constant sample image
 
-    private final String sampleImg = getClass()
-            .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png")
-            .toExternalForm();
+    //String sampleImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/Beijing Beef.png").toExternalForm();
 
 
     @FXML
-    public void initialize() {
-        // TODO: save information from the user who logged in and associate that user with each order
-        // For now, we're just picking a random employee from the database
-        dbSnapshot.refreshAllSnapshots();
+    public void initialize() {// Initialize current order
+//        if (loggedInUser == null) {
+//            throw new IllegalStateException("You have not logged in");
+//        }
 
         currentOrder = new Order(
-                loggedInUser.employeeId,
+                cashierID,
                 month,
                 week,
                 day,
                 hour,
                 0.0
         );
-
-        createMenuItemGrid();
+        populateMenuItems();
+        createInventoryGrid();
         initializeButtons();
         initializeTableView();
     }
@@ -141,27 +119,42 @@ public class CashierController {
         }
     }
 
-    public void createMenuItemGrid() {
+    //TODO: Query database for items
+    public void populateMenuItems() {
+        menuItems.add(new MenuItem(9.99, 100, "Chow Mein"));
+        menuItems.add(new MenuItem(8.99, 120, "Fried Rice"));
+        menuItems.add(new MenuItem(7.99, 130, "White Steamed Rice"));
+        menuItems.add(new MenuItem(8.49, 110, "Super Greens"));
+        menuItems.add(new MenuItem(11.49, 80, "Hot Ones Blazing Bourbon Chicken"));
+        menuItems.add(new MenuItem(10.99, 90, "The Original Orange Chicken"));
+        menuItems.add(new MenuItem(12.99, 60, "Black Pepper Sirloin Steak"));
+        menuItems.add(new MenuItem(13.99, 50, "Honey Walnut Shrimp"));
+        menuItems.add(new MenuItem(11.99, 70, "Grilled Teriyaki Chicken"));
+        menuItems.add(new MenuItem(10.49, 100, "Broccoli Beef"));
+        menuItems.add(new MenuItem(9.99, 90, "Kung Pao Chicken"));
+        menuItems.add(new MenuItem(10.49, 85, "Honey Sesame Chicken Breast"));
+        menuItems.add(new MenuItem(9.99, 110, "Beijing Beef"));
+        menuItems.add(new MenuItem(8.49, 100, "Black Pepper Chicken"));
+        menuItems.add(new MenuItem(5.49, 200, "Cream Cheese Rangoon"));
+        menuItems.add(new MenuItem(4.99, 150, "Chicken Egg Roll"));
+        menuItems.add(new MenuItem(1.99, 300, "Dr. Pepper"));
+        menuItems.add(new MenuItem(1.49, 350, "Aquafina"));
+        menuItems.add(new MenuItem(2.49, 300, "Sweet Tea"));
+        menuItems.add(new MenuItem(1.99, 300, "Pepsi"));
+    }
+
+    public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
         int y = 0;
 
-        menuItemGridPane.setHgap(10);
-        menuItemGridPane.setVgap(50);
+        menuItemGridPane.setHgap(100);
         menuItemGridPane.setAlignment(Pos.CENTER);
         menuItemGridPane.setStyle("-fx-padding: 10;");
 
-        for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
+        for (MenuItem item : menuItems) {
             String itemName = item.itemName;
-            String itemImg;
-            try {
-                itemImg = getClass()
-                        .getResource("/org/example/pandaexpresspos/fxml/Images/" + itemName + ".png")
-                        .toExternalForm();
-            } catch (Exception e) {
-                itemImg = sampleImg;
-            }
-          
+            String itemImg = getClass().getResource("/org/example/pandaexpresspos/fxml/Images/" + itemName + ".png").toExternalForm();
             String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
@@ -224,18 +217,7 @@ public class CashierController {
 
     private void initializeButtons() {
         // Numpad buttons
-        Button[] numpadButtons = {
-                button0,
-                button1,
-                button2,
-                button3,
-                button4,
-                button5,
-                button6,
-                button7,
-                button8,
-                button9
-        };
+        Button[] numpadButtons = {button0, button1, button2, button3, button4, button5, button6, button7, button8, button9};
         for (int i = 0; i < numpadButtons.length; i++) {
             final int num = i;
             numpadButtons[i].setOnAction(event -> appendQuantity(num));
@@ -279,25 +261,20 @@ public class CashierController {
             MenuItem prevItem = existingItem.getKey();
 
             if (prevItem.itemName.equals(item.itemName)) {
-                currentOrder.addOrUpdateMenuItem(prevItem, quantity);
-
+                currentOrder.menuItems.put(prevItem, quantity);
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
                 orderTable.setItems(orderItems);
-
                 updateTotals();
                 return;
             }
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        currentOrder.addOrUpdateMenuItem(item, quantity);
-
-        // Refresh what's displayed in the order table
+        currentOrder.menuItems.put(item, quantity);
         orderItems.clear();
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
-
         //currentOrder.addMenuItem(new MenuItem(itemName, price), quantity); // Add to current order
         updateTotals();
     }
@@ -306,12 +283,13 @@ public class CashierController {
         BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
 
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) { // Updated to OrderItem
+
             MenuItem prevItem = existingItem.getKey();
             Integer quantity = existingItem.getValue();
 
             if (prevItem.itemName.equals(item.itemName)) {
-                currentOrder.menuItems.replace(prevItem, quantity, quantity + 1);
 
+                currentOrder.menuItems.replace(prevItem, quantity, quantity + 1);
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
                 orderTable.setItems(orderItems);
@@ -321,7 +299,7 @@ public class CashierController {
         }
 
         // If the item does not exist, add a new item with the specified quantity
-        currentOrder.addOrUpdateMenuItem(item, 1);
+        currentOrder.menuItems.put(item, 1);
         orderItems.clear();
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
@@ -338,7 +316,7 @@ public class CashierController {
         orderTable.setItems(orderItems);
 
         // Reset tax and total fields to $0.00
-//        taxField.setText("Tax: $0.00");
+        taxField.setText("Tax: $0.00");
         totalField.setText("Total: $0.00");
 
         // Reset the price in the current order
@@ -349,29 +327,18 @@ public class CashierController {
     }
 
     private void addOrder() {
-        dbDriver.insertOrder(currentOrder);
-
-        // Log the current order's ID so we can easily query for it
-        System.out.println("Newly placed order: " + currentOrder.orderId);
-
+        // TODO: have to add order to the database
         // Add current order to the database logic here
         currentOrder = new Order(
-                loggedInUser.employeeId,
+                cashierID,
                 month,
                 week,
                 day,
                 hour,
                 0.0
         ); // Reset current order
-
-        dbSnapshot.refreshMenuSnapshot();
-
         orderItems.clear();
         updateTotals();
-
-        // Reset the list of menu items
-        menuItemGridPane.getChildren().clear();
-        createMenuItemGrid();
     }
 
     private void updateTotals() {
@@ -387,13 +354,13 @@ public class CashierController {
 
         BigDecimal subtotalBD = BigDecimal.valueOf(subtotal).setScale(2, RoundingMode.HALF_UP);
 
-//        double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
-//        BigDecimal taxBD = BigDecimal.valueOf(tax).setScale(2, RoundingMode.HALF_UP);
-//
-//        double total = subtotalBD.add(taxBD).doubleValue();
-//        BigDecimal totalBD = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
+        double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
+        BigDecimal taxBD = BigDecimal.valueOf(tax).setScale(2, RoundingMode.HALF_UP);
 
-//        taxField.setText("Tax: " + String.format("$%.2f", taxBD.doubleValue()));
-        totalField.setText("Total: " + String.format("$%.2f", subtotalBD.doubleValue()));
+        double total = subtotalBD.add(taxBD).doubleValue();
+        BigDecimal totalBD = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
+
+        taxField.setText("Tax: " + String.format("$%.2f", taxBD.doubleValue()));
+        totalField.setText("Total: " + String.format("$%.2f", totalBD.doubleValue()));
     }
 }
