@@ -69,18 +69,18 @@
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="X-Report">
                      <content>
-                        <AnchorPane>
+                        <AnchorPane style="-fx-background-color: white;">
                            <children>
                               <BarChart animated="false" legendVisible="false" prefHeight="400.0" prefWidth="500.0" title="Sales by Hour" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="xReportBarChart">
                                 <xAxis>
-                                  <CategoryAxis label="Hour" side="BOTTOM" style="-fx-text-fill: green;" tickLabelFill="WHITE">
+                                  <CategoryAxis label="Hour" side="BOTTOM">
                                        <tickLabelFont>
                                           <Font size="13.0" />
                                        </tickLabelFont>
                                     </CategoryAxis>
                                 </xAxis>
                                 <yAxis>
-                                  <NumberAxis label="Total Sales ($)" side="LEFT" style="-fx-text-fill: green;" tickLabelFill="WHITE" />
+                                  <NumberAxis label="Total Sales ($)" side="LEFT" />
                                 </yAxis>
                               </BarChart>
                            </children></AnchorPane>
