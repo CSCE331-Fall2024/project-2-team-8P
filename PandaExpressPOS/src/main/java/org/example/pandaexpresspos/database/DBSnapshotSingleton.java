@@ -2,10 +2,7 @@ package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class DBSnapshotSingleton {
     private static DBSnapshotSingleton instance;
@@ -15,13 +12,14 @@ public class DBSnapshotSingleton {
     I want to index on something that's intuitive
      */
     // Key: name of menu item
-    private final Map<String, MenuItem> menuSnapshot = new HashMap<>();
+    private final Map<String, MenuItem> menuSnapshot = new TreeMap<>();
     // Key: name of inventory item
-    private final Map<String, InventoryItem> inventorySnapshot = new HashMap<>();
+    private final Map<String, InventoryItem> inventorySnapshot = new TreeMap<>();
     // Key: name of employee
-    private final Map<String, Employee> employeeSnapshot = new HashMap<>();
+    private final Map<String, Employee> employeeSnapshot = new TreeMap<>();
     // Key: orderId (there's no other way to uniquely ID an order)
-    private final Map<UUID, Order> orderSnapshot = new HashMap<>();
+    private final Map<UUID, Order> orderSnapshot = new TreeMap<>();
+
 
     private DBSnapshotSingleton() {
     }

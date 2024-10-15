@@ -12,11 +12,11 @@ class QueryTemplate {
             ORDER BY month DESC, day DESC, hour DESC
             LIMIT %d;
             """;
-    public static final String selectOrderSumsByWeekRange = """
-            SELECT week, SUM(price) FROM "order"
-            WHERE week between %d and %d
-            GROUP BY week
-            ORDER BY week DESC;
+    public static final String selectOrderSumsByHour = """
+            SELECT hour, SUM(price) FROM "order"
+            WHERE month = %d AND day = %d AND hour <= %d
+            GROUP BY hour
+            ORDER BY hour DESC;
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
@@ -121,5 +121,29 @@ class QueryTemplate {
             UPDATE menuItem
             SET price = %f, availableStock = %d, itemName = '%s'
             WHERE menuItemId = '%s';
+            """;
+    public static final String selectMenuItemSalesByTimePeriod = """
+            SELECT m.menuItemId, m.price, m.availableStock, m.itemName, count(*)
+            FROM "order" o
+            JOIN orderToMenuItem otm
+            ON o.orderId = otm.orderId
+            JOIN menuItem m
+            ON otm.menuItemId = m.menuItemId
+            WHERE o.month BETWEEN %d AND %d
+            AND o.day BETWEEN %d AND %d
+            GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
+            """;
+    public static final String associateInventoryItemToMenuItem = """
+            SELECT
+            mi.menuitemid,
+            mi.itemname AS menuitem_name,
+            ii.inventoryitemid,
+            ii.itemname AS inventoryitem_name
+            FROM
+            menuitem mi
+            JOIN
+            menuitemtoinventoryitem itm ON mi.menuitemid = itm.menuitemid
+            JOIN
+            inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
             """;
 }

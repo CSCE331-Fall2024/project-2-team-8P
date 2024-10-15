@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -14,158 +16,196 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
    <HBox layoutX="183.0" layoutY="150.0" prefHeight="400.0" prefWidth="600.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <padding>
          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
       </padding>
-      <VBox minWidth="300.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-         <children>
-            <!-- Make the TabPane grow and fill the available vertical space -->
-            <TabPane fx:id="managerReportTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-               <tabs>
-                  <Tab text="Summary">
-                     <content>
-                        <AnchorPane>
-                           <children>
-                              <TextFlow fx:id="summary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </Tab>
-<!--                  <Tab text="Order Trends">-->
-<!--                     <content>-->
-<!--                        <AnchorPane>-->
-<!--                           <children>-->
-<!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
-<!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
-<!--                                 <xAxis>-->
-<!--                                    <CategoryAxis side="BOTTOM" />-->
-<!--                                 </xAxis>-->
-<!--                                 <yAxis>-->
-<!--                                    <NumberAxis side="LEFT" />-->
-<!--                                 </yAxis>-->
-<!--                              </LineChart>-->
-<!--                           </children>-->
-<!--                        </AnchorPane>-->
-<!--                     </content>-->
-<!--                  </Tab>-->
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+         <!-- Make the TabPane grow and fill the available vertical space -->
+         <TabPane fx:id="managerReportTabPane" prefHeight="800.0" prefWidth="290.0"
+                  style="-fx-background-color: transparent; -fx-border-color: transparent;"
+                  tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Order History">
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
+                           style="-fx-background-color: transparent;"><!-- Allow the TableView to grow and fill the available space -->
+                  <TableView fx:id="ordersTable" prefHeight="359.0" prefWidth="340.0"
+                             AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                             AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <columns>
+                        <TableColumn fx:id="Order" prefWidth="75.0" text="Order"/>
+                        <TableColumn fx:id="Cashier" prefWidth="75.0" text="Cashier"/>
+                        <TableColumn fx:id="Month" prefWidth="75.0" text="Month"/>
+                        <TableColumn fx:id="Week" prefWidth="75.0" text="Week"/>
+                        <TableColumn fx:id="Day" prefWidth="75.0" text="Day"/>
+                        <TableColumn fx:id="Hour" prefWidth="75.0" text="Hour"/>
+                        <TableColumn fx:id="Price" prefWidth="75.0" text="Price"/>
+                     </columns>
+                  </TableView>
+               </AnchorPane>
+            </Tab>
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Summary">
+               <AnchorPane>
+                  <TextFlow fx:id="summary" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+               </AnchorPane>
+            </Tab>
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Usage Chart">
+               <AnchorPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+               </AnchorPane>
+            </Tab>
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="X-Report">
+               <AnchorPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+               </AnchorPane>
+            </Tab>
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Z-Report">
+               <AnchorPane>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+               </AnchorPane>
+            </Tab>
+            <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Sales Report">
+               <AnchorPane style="-fx-background-color: white;">
+                  <VBox prefHeight="319.2" prefWidth="288.8" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                     </padding>
+                     <BarChart fx:id="salesChart" animated="false" prefHeight="800.0" prefWidth="395.0"
+                               VBox.vgrow="ALWAYS">
+                        <xAxis>
+                           <CategoryAxis label="Menu Items" fx:id="xAxis"/>
+                        </xAxis>
+                        <yAxis>
+                           <NumberAxis fx:id="yAxis" label="Sales"/>
+                        </yAxis>
+                     </BarChart>
+                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <Label text="Start Date"/>
+                           <DatePicker fx:id="startDatePicker"/>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0"
+                              prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <Label text="End Date"/>
+                           <DatePicker fx:id="endDatePicker"/>
+                        </VBox>
+                     </HBox>
+                  </VBox>
+               </AnchorPane>
+            </Tab>
+            <!--                  <Tab text="Order Trends">-->
+            <!--                     <content>-->
+            <!--                        <AnchorPane>-->
+            <!--                           <children>-->
+            <!--                              &lt;!&ndash; Allow the LineChart to grow inside the AnchorPane &ndash;&gt;-->
+            <!--                              <LineChart prefHeight="218.0" prefWidth="395.0">-->
+            <!--                                 <xAxis>-->
+            <!--                                    <CategoryAxis side="BOTTOM" />-->
+            <!--                                 </xAxis>-->
+            <!--                                 <yAxis>-->
+            <!--                                    <NumberAxis side="LEFT" />-->
+            <!--                                 </yAxis>-->
+            <!--                              </LineChart>-->
+            <!--                           </children>-->
+            <!--                        </AnchorPane>-->
+            <!--                     </content>-->
+            <!--                  </Tab>-->
 
-               </tabs>
-            </TabPane>
-
-            <!-- Allow the TableView to grow and fill the available space -->
-            <TableView fx:id="ordersTable" prefHeight="154.0" prefWidth="378.0" VBox.vgrow="ALWAYS">
-               <columns>
-                  <TableColumn fx:id="Order" prefWidth="75.0" text="Order" />
-                  <TableColumn fx:id="Cashier" prefWidth="75.0" text="Cashier" />
-                  <TableColumn fx:id="Month" prefWidth="75.0" text="Month" />
-                  <TableColumn fx:id="Week" prefWidth="75.0" text="Week" />
-                  <TableColumn fx:id="Day" prefWidth="75.0" text="Day" />
-                  <TableColumn fx:id="Hour" prefWidth="75.0" text="Hour" />
-                  <TableColumn fx:id="Price" prefWidth="75.0" text="Price" />
-               </columns>
-            </TableView>
-         </children>
+         </TabPane>
+         <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <Button fx:id="reportButton" minHeight="30.0" mnemonicParsing="false" onAction="#generateReport"
+                    style="-fx-background-color: black; -fx-cursor: hand;" text="Generate Report" textFill="WHITE"
+                    HBox.hgrow="ALWAYS"/>
+         </HBox>
       </VBox>
 
-      <VBox fx:id="rightVerBox" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-         <TabPane fx:id="itemsTabPane" prefHeight="900.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <VBox fx:id="rightVerBox" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+         <TabPane fx:id="itemsTabPane" prefHeight="800.0" prefWidth="200.0" style="-fx-background-color: transparent;" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
 
-            <Tab text="Inventory Items">
-               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="213.5" prefWidth="195.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                        <GridPane fx:id="inventoryItemsGridPane" prefHeight="213.5" prefWidth="195.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                        </GridPane>
-                     </content>
+            <Tab style="-fx-background-color: black; -fx-text-base-color: white;" text="Inventory Items">
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-border-color: transparent;">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="213.5" prefWidth="195.5"
+                              style="-fx-border-color: transparent; -fx-background-color: transparent;"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                     <GridPane fx:id="inventoryItemsGridPane" prefHeight="213.5" prefWidth="195.0"
+                               style="-fx-background-color: #ca2b2d; -fx-border-color: transparent;">
+                        <columnConstraints>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        </columnConstraints>
+                        <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                     </GridPane>
                   </ScrollPane>
                </AnchorPane>
             </Tab>
-            <Tab text="Menu Items">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="327.5" prefWidth="190.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <content>
-                              <GridPane fx:id="menuItemsGridPane" prefHeight="213.5" prefWidth="195.0">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                              </GridPane>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
-              </content>
+            <Tab style="-fx-background-color: black; -fx-text-base-color: white;" text="Menu Items">
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"
+                           style="-fx-border-color: transparent;">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="327.5" prefWidth="190.5"
+                              style="-fx-border-color: transparent; -fx-background-color: transparent;"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                     <GridPane fx:id="menuItemsGridPane" prefHeight="213.5" prefWidth="195.0"
+                               style="-fx-background-color: #ca2b2d; -fx-border-color: transparent;">
+                        <columnConstraints>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        </columnConstraints>
+                        <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                     </GridPane>
+                  </ScrollPane>
+               </AnchorPane>
             </Tab>
-            <Tab text="Employees">
-               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="327.5" prefWidth="190.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <content>
-                        <GridPane fx:id="employeeItemsGridPane" prefHeight="213.5" prefWidth="195.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                        </GridPane>
-                     </content>
+            <Tab style="-fx-background-color: black; -fx-text-base-color: white;" text="Employees">
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-border-color: transparent;">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="327.5" prefWidth="190.5"
+                              style="-fx-border-color: transparent; -fx-background-color: transparent;"
+                              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                              AnchorPane.topAnchor="0.0">
+                     <GridPane fx:id="employeeItemsGridPane" prefHeight="213.5" prefWidth="195.0"
+                               style="-fx-background-color: #ca2b2d; -fx-border-color: transparent;">
+                        <columnConstraints>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        </columnConstraints>
+                        <padding>
+                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        </padding>
+                     </GridPane>
                   </ScrollPane>
                </AnchorPane>
             </Tab>
          </TabPane>
-         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
-            <Button fx:id="addItemButton" mnemonicParsing="false" onAction="#addItem" text="Add item" />
-            <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" text="Logout">
+         <HBox alignment="BOTTOM_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+            <Button fx:id="addItemButton" minHeight="30.0" mnemonicParsing="false" onAction="#addItem" style="-fx-background-color: black; -fx-cursor: hand;" text="Add item" textFill="WHITE" />
+            <Button fx:id="logoutButton" minHeight="30.0" mnemonicParsing="false" onAction="#logout" style="-fx-background-color: black; -fx-cursor: hand;" text="Logout" textFill="WHITE">
                <HBox.margin>
-                  <Insets bottom="5.0" right="5.0" />
+                  <Insets />
                </HBox.margin>
             </Button>
-            <Button fx:id="reportButton" mnemonicParsing="false" onAction="#report" text="Generate Report" />
          </HBox>
       </VBox>
    </HBox>

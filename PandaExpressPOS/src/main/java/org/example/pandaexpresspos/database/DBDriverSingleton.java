@@ -1,14 +1,13 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.function.Function;
 
 public class DBDriverSingleton {
@@ -61,8 +60,71 @@ public class DBDriverSingleton {
         return orders;
     }
 
-    public Map<Integer, Double> selectOrders(Integer startDate, Integer endDate) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    // The indices in the returned list correspond to hours of the day - 1
+    // e.g., index 0 corresponds to hour 1
+    public List<Double> selectXReport() {
+        List<Double> xReport = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Workday starts at 10am and ends at 10pm
+            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
+
+            xReport = executeQuery(
+                    String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
+                    SQLToJavaMapper::orderSumMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return xReport;
+    }
+
+    // The indices in the returned list correspond to hours of the day - 1
+    // e.g., index 0 corresponds to hour 1
+    public List<Double> selectZReport() {
+        List<Double> zReport = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+            final int totalWorkingHoursPerDay = 12;
+
+            zReport = executeQuery(
+                    String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, totalWorkingHoursPerDay),
+                    SQLToJavaMapper::orderSumMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return zReport;
+    }
+
+    public Map<String, Integer> selectSalesReport(
+            Integer startMonth,
+            Integer endMonth,
+            Integer startDay,
+            Integer endDay
+    ) {
+        // Let's use `TreeMap` here so the items are ordered alphabetically in the UI
+        Map<String, Integer> sales = new TreeMap<>();
+        try {
+            List<MenuItemWithQty> itemsWithQty = executeQuery(
+                    String.format(QueryTemplate.selectMenuItemSalesByTimePeriod,
+                            startMonth,
+                            endMonth,
+                            startDay,
+                            endDay
+                    ),
+                    SQLToJavaMapper::menuItemWithQtyMapper
+            );
+            for (MenuItemWithQty item : itemsWithQty) {
+                sales.put(item.menuItem.itemName, item.quantity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sales;
     }
 
     public void insertOrder(Order newOrder) {
@@ -86,6 +148,8 @@ public class DBDriverSingleton {
         ));
 
         // Handle menu item connections:
+        // TODO: debug inventory item count not being updated correctly
+        // TODO: perhaps convert this for loop into a single SQL query for speed
         for (MenuItem item : newOrder.menuItems.keySet()) {
             Integer menuItemQty = newOrder.menuItems.get(item);
 
