@@ -4,7 +4,9 @@ import org.example.pandaexpresspos.models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static java.lang.System.err;
@@ -125,7 +127,7 @@ class DBDriverSingletonTest {
         out.println("Employee before updating:");
         printEmployee(employee);
         String originalName = employee.name;
-        
+
         // Update the employee
         employee.name = "RYAN KHA";
         driver.updateEmployee(employee);
@@ -173,7 +175,7 @@ class DBDriverSingletonTest {
         out.println("Inventory item before updating:");
         printInventoryItem(fortuneCookie);
         Integer originalQty = fortuneCookie.availableStock;
-        
+
         // Update the inventory item
         fortuneCookie.availableStock = 4200;
         driver.updateInventoryItem(fortuneCookie);
@@ -234,6 +236,17 @@ class DBDriverSingletonTest {
         driver.updateMenuItem(beijingBeef);
     }
 
+    @Test
+    void SalesReport() {
+        Map<String, Integer> salesReport = driver.selectSalesReport(
+                1,
+                2,
+                1,
+                2
+        );
+        printMap(salesReport);
+    }
+
     // Helpers
     private <T> void printItems(List<T> items) {
         for (T item : items) {
@@ -247,6 +260,12 @@ class DBDriverSingletonTest {
             printSeparator();
         }
         out.println("Items selected: " + items.size());
+    }
+
+    private <K, V> void printMap(Map<K, V> map) {
+        for (K key : map.keySet()) {
+            out.println(key + ": " + map.get(key));
+        }
     }
 
     private void printOrderSumsByHour(List<Double> orderSums) {

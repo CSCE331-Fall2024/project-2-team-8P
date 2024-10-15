@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -96,6 +97,33 @@ public class DBDriverSingleton {
             e.printStackTrace();
         }
         return zReport;
+    }
+
+    public Map<String, Integer> selectSalesReport(
+            Integer startMonth,
+            Integer endMonth,
+            Integer startDay,
+            Integer endDay
+    ) {
+        // Let's use `TreeMap` here so the items are ordered alphabetically in the UI
+        Map<String, Integer> sales = new TreeMap<>();
+        try {
+            List<MenuItemWithQty> itemsWithQty = executeQuery(
+                    String.format(QueryTemplate.selectMenuItemSalesByTimePeriod,
+                            startMonth,
+                            endMonth,
+                            startDay,
+                            endDay
+                    ),
+                    SQLToJavaMapper::menuItemWithQtyMapper
+            );
+            for (MenuItemWithQty item : itemsWithQty) {
+                sales.put(item.menuItem.itemName, item.quantity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sales;
     }
 
     public void insertOrder(Order newOrder) {
@@ -362,7 +390,6 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Insert
     // 2. Update
-    // 3. Delete
     private static void executeUpdate(String query) { //This function is used to update a query such as inserting
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
