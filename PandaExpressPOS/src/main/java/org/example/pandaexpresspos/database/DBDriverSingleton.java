@@ -2,6 +2,7 @@ package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
 import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -127,6 +128,14 @@ public class DBDriverSingleton {
     }
 
     public void insertOrder(Order newOrder) {
+        // Update quantities of base inventory items (napkin, utensils, fortune cookie):
+        for (InventoryItem item : newOrder.inventoryItems.keySet()) {
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                    newOrder.inventoryItems.get(item),
+                    item.inventoryItemId
+            ));
+        }
+
         // Insert the order entry
         executeUpdate(String.format(QueryTemplate.insertOrder,
                 newOrder.orderId,
@@ -138,40 +147,27 @@ public class DBDriverSingleton {
                 newOrder.price
         ));
 
-        // Handle inventory item connections:
-        for (InventoryItem item : newOrder.inventoryItems.keySet()) {
-            Integer quantity = newOrder.inventoryItems.get(item);
-
-            // Insert entry into table "orderToInventoryItem"
-            executeUpdate(String.format(QueryTemplate.insertOrderToInventoryItem,
-                    newOrder.orderId,
-                    item.inventoryItemId,
-                    quantity
-            ));
-
-            // Update quantity of item in inventory table
-            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
-                    quantity,
-                    item.inventoryItemId
-            ));
-        }
-
         // Handle menu item connections:
+        // TODO: debug inventory item count not being updated correctly
+        // TODO: perhaps convert this for loop into a single SQL query for speed
         for (MenuItem item : newOrder.menuItems.keySet()) {
-            Integer quantity = newOrder.menuItems.get(item);
+            Integer menuItemQty = newOrder.menuItems.get(item);
 
             // Insert entry into table "orderToMenuItem"
             executeUpdate(String.format(QueryTemplate.insertOrderToMenuItem,
                     newOrder.orderId,
                     item.menuItemId,
-                    quantity
+                    menuItemQty
             ));
 
-            // Update quantity of item in menu item table
-            executeUpdate(String.format(QueryTemplate.decreaseMenuItemQty,
-                    quantity,
-                    item.menuItemId
-            ));
+            // Update quantities of associated inventory items
+            List<InventoryItemWithQty> associatedInventory = selectMenuItemInventoryItems(item);
+            for (InventoryItemWithQty itemWithQty : associatedInventory) {
+                executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                        itemWithQty.quantity * menuItemQty,
+                        itemWithQty.inventoryItem.inventoryItemId
+                ));
+            }
         }
     }
 
@@ -335,6 +331,19 @@ public class DBDriverSingleton {
         return items;
     }
 
+    public List<InventoryItemWithQty> selectMenuItemInventoryItems(MenuItem menuItem) {
+        List<InventoryItemWithQty> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItem.itemName),
+                    SQLToJavaMapper::inventoryItemWithQtyMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public void insertMenuItem(MenuItem newMenuItem) {
         executeUpdate(String.format(QueryTemplate.insertMenuItem,
                 newMenuItem.menuItemId,
@@ -358,7 +367,7 @@ public class DBDriverSingleton {
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back
     // This is used for:
     // 1. Select
-    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException { //This function is used to execute a query such as selecting
+    private static <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper) throws SQLException {
         List<T> results = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
@@ -368,10 +377,6 @@ public class DBDriverSingleton {
              Statement stmt = conn.createStatement()) {
 
             ResultSet rs = stmt.executeQuery(query);
-
-            if (!rs.isBeforeFirst()) {
-                throw new SQLException("Query returned empty result");
-            }
 
             while (rs.next()) {
                 T item = mapper.apply(rs);
@@ -390,7 +395,8 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Insert
     // 2. Update
-    private static void executeUpdate(String query) { //This function is used to update a query such as inserting
+    // 3. Delete
+    private static void executeUpdate(String query) {
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,
                 DBCredentials.username,

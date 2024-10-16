@@ -3,8 +3,8 @@ package org.example.pandaexpresspos.database;
 import org.example.pandaexpresspos.models.*;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -86,6 +86,22 @@ class SQLToJavaMapper {
             return Math.round(orderSum * 100.0) / 100.0;
         } catch (SQLException e) {
             throw new RuntimeException("Error mapping ResultSet to Double", e);
+        }
+    }
+
+    public static InventoryItemWithQty inventoryItemWithQtyMapper(ResultSet rs) {
+        try {
+            return new InventoryItemWithQty(
+                    new InventoryItem(
+                            UUID.fromString(rs.getString("inventoryItemId")),
+                            rs.getDouble("cost"),
+                            rs.getInt("availableStock"),
+                            rs.getString("itemName")
+                    ),
+                    rs.getInt("quantity")
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Error mapping ResultSet to InventoryItemWithQty", e);
         }
     }
 }

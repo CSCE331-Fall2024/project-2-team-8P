@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -51,16 +52,18 @@ class DBDriverSingletonTest {
 
     @Test
     void insertOrder() {
-        InventoryItem napkin = driver.selectInventoryItem(
-                UUID.fromString("20fb88db-d71d-405c-ba98-1919c1e7d74e")
+        MenuItem beijingBeef = driver.selectMenuItem(
+                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
         );
-        MenuItem drPepper = driver.selectMenuItem(
-                UUID.fromString("db104ecc-18f3-4048-9d73-13b601d424ab")
-        );
+        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
 
         out.println("DB state before placing order:");
-        out.println("Napkin qty: " + napkin.availableStock);
-        out.println("Dr Pepper qty: " + drPepper.availableStock);
+        for (InventoryItemWithQty itemWithQty : associatedInventory) {
+            out.println(
+                    itemWithQty.inventoryItem.itemName +
+                            " stock: " + itemWithQty.inventoryItem.availableStock
+            );
+        }
 
         Order newOrder = new Order(
                 UUID.randomUUID(),
@@ -69,24 +72,25 @@ class DBDriverSingletonTest {
                 35,
                 20,
                 8,
-                50.0
+                0.0
         );
-        newOrder.addOrUpdateInventoryItem(napkin, 2);
-        newOrder.addOrUpdateMenuItem(drPepper, 1);
+        newOrder.addOrUpdateMenuItem(beijingBeef, 1);
 
         driver.insertOrder(newOrder);
 
-        napkin = driver.selectInventoryItem(
-                UUID.fromString("20fb88db-d71d-405c-ba98-1919c1e7d74e")
-        );
-        drPepper = driver.selectMenuItem(
-                UUID.fromString("db104ecc-18f3-4048-9d73-13b601d424ab")
+        beijingBeef = driver.selectMenuItem(
+                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
         );
 
         printSeparator();
         out.println("DB state after placing order:");
-        out.println("Napkin qty: " + napkin.availableStock);
-        out.println("Dr Pepper qty: " + drPepper.availableStock);
+        associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
+        for (InventoryItemWithQty itemWithQty : associatedInventory) {
+            out.println(
+                    itemWithQty.inventoryItem.itemName +
+                            " stock: " + itemWithQty.inventoryItem.availableStock
+            );
+        }
 
         printSeparator();
         newOrder = driver.selectOrder(newOrder.orderId);

@@ -93,7 +93,7 @@ public class ManagerController {
 
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
-                    .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
+                    .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png"))
             .toExternalForm();
 
     // Enum to check which item tab user has selected
@@ -161,9 +161,6 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-        // Initialize date pickers to have the previous week as the default time period
-
-
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
@@ -212,8 +209,6 @@ public class ManagerController {
             default:
                 break;
         }
-
-
     }
 
     // Handle adding items; special case of update item
@@ -350,8 +345,8 @@ public class ManagerController {
         Label menuItemPriceLabel = new Label("Menu Item Cost: ");
         TextField menuItemPrice = new TextField();
 
-        Label availableStockLabel = new Label("Available Stock: ");
-        TextField availableStock = new TextField();
+//        Label availableStockLabel = new Label("Available Stock: ");
+//        TextField availableStock = new TextField();
 
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
@@ -362,7 +357,7 @@ public class ManagerController {
         menuItem.ifPresent(safeItem -> {
             menuItemName.setText(safeItem.itemName);
             menuItemPrice.setText(String.valueOf(safeItem.price));
-            availableStock.setText(String.valueOf(safeItem.availableStock));
+//            availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");
         });
@@ -377,8 +372,8 @@ public class ManagerController {
                 menuItemName,
                 menuItemPriceLabel,
                 menuItemPrice,
-                availableStockLabel,
-                availableStock,
+//                availableStockLabel,
+//                availableStock,
                 imageUrlLabel,
                 imageUrl
         );
@@ -395,7 +390,7 @@ public class ManagerController {
                 return new ButtonType(
                         menuItemName.getText() + "," +
                                 menuItemPrice.getText() + ", " +
-                                availableStock.getText() + ", " +
+//                                availableStock.getText() + ", " +
                                 imageUrl.getText()
                 );
             }
@@ -407,21 +402,21 @@ public class ManagerController {
             String[] outputs = outputFields.getText().split(",");
             String name = outputs[0];
             String price = outputs[1];
-            String stock = outputs[2];
-            String imgUrl = outputs[3];
+//            String stock = outputs[2];
+            String imgUrl = outputs[2];
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
                 dbDriver.insertMenuItem(new MenuItem(
                         Double.parseDouble(price.trim()),
-                        Integer.parseInt(stock.trim()),
+                        0,
                         name)
                 );
             } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
                 item.price = Double.parseDouble(price.trim());
-                item.availableStock = Integer.parseInt(stock.trim());
+                item.availableStock = 0;
                 item.itemName = name;
 
                 dbDriver.updateMenuItem(item);
@@ -700,9 +695,7 @@ public class ManagerController {
             Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
-            Label menuStockLabel = new Label("Qty: " + menuItemStock);
-            menuStockLabel.setTextAlignment(TextAlignment.CENTER);
-            menuStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
+//            Label menuStockLabel = new Label("Qty: " + menuItemStock);
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -710,7 +703,7 @@ public class ManagerController {
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel, menuStockLabel);
+            layout.getChildren().addAll(button, nameLabel);
 
             // Add Vbox to grid
             menuItemsGridPane.add(layout, x, y);
