@@ -145,6 +145,7 @@ class QueryTemplate {
     public static final String deleteMenuItemToInventoryItem = """
             DELETE FROM menuItemToInventoryItem
             WHERE menuItemId = '%s';
+            """;
     public static final String selectInventoryUseByTimePeriod = """
             SELECT
                 i.inventoryItemId,
