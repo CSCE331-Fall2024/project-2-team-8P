@@ -10,8 +10,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -29,7 +27,6 @@ import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -45,17 +42,11 @@ public class ManagerController {
     private Employee loggedInUser;
 
     @FXML
-    private VBox rightVerBox;
-    @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
     private GridPane menuItemsGridPane;
     @FXML
     private GridPane employeeItemsGridPane;
-    @FXML
-    private Button logoutButton;
-    @FXML
-    private Button addItemButton;
     @FXML
     private TabPane itemsTabPane;
     @FXML
@@ -78,6 +69,10 @@ public class ManagerController {
     private TableColumn<Order, String> Price;
     @FXML
     private TextFlow summary;
+    @FXML
+    private BarChart<String, Double> xReportBarChart;
+    @FXML
+    private BarChart<String, Double> zReportBarChart;
     @FXML
     private BarChart<String, Number> salesChart;
     @FXML
@@ -165,7 +160,7 @@ public class ManagerController {
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
-        createSalesReportChart();
+        initSalesReportChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -189,22 +184,22 @@ public class ManagerController {
 
         switch (selectedTab) {
             case ORDER_HISTORY:
-                updateOrderHistory();
+                fetchOrderHistory();
                 break;
             case SUMMARY:
-                updateSummary();
+                fetchSummary();
                 break;
             case USAGE:
                 // TODO: add usage report
                 break;
             case X_REPORT:
-                // TODO: add X_Report
+                fetchXOrZReport(false);
                 break;
             case Z_REPORT:
-                // TODO: add Z_Report
+                fetchXOrZReport(true);
                 break;
             case SALES_REPORT:
-                updateSalesReport();
+                fetchSalesReport();
                 break;
             default:
                 break;
@@ -532,7 +527,7 @@ public class ManagerController {
         });
     }
 
-    public void updateOrderHistory() {
+    public void fetchOrderHistory() {
         ordersTable.getItems().clear();
 
         createOrdersTable();
@@ -562,7 +557,7 @@ public class ManagerController {
         );
     }
 
-    public void updateSummary() {
+    public void fetchSummary() {
         summary.getChildren().clear();
         summary.setStyle("-fx-background-color: white;");
         Text summaryText = new Text("Inventory Items\n");
@@ -590,7 +585,7 @@ public class ManagerController {
         }
     }
 
-    public void updateSalesReport() {
+    public void fetchSalesReport() {
         Map<String, Integer> salesReportData = getSalesReportData();
         XYChart.Series newSeries = new XYChart.Series();
         salesChart.getData().clear();
@@ -602,6 +597,39 @@ public class ManagerController {
         }
         salesChart.getData().add(newSeries);
     }
+    public void fetchXOrZReport(boolean wholeDay) {
+        // Get sales per hour data from DBDriverSingleton
+        List<Double> hourlySales;
+        BarChart<String, Double> chart;
+
+        if (wholeDay) {
+           hourlySales = DBDriverSingleton.getInstance().selectZReport();
+           chart = zReportBarChart;
+        } else {
+            hourlySales = DBDriverSingleton.getInstance().selectXReport();
+            chart = xReportBarChart;
+        }
+
+        // Create series to hold data
+        XYChart.Series<String, Double> sales = new XYChart.Series<>();
+        // X-label
+        String[] hours = {
+                "10 AM", "11 AM", "12 PM",
+                "1PM", "2PM", "3PM",
+                "4PM", "5PM", "6PM",
+                "7PM", "8PM", "9PM"
+        };
+
+        // Add data to series
+        for (int i = 0; i < hourlySales.size(); i++) {
+            sales.getData().add(new XYChart.Data<>(hours[i], hourlySales.get(i)));
+        }
+
+        // Add series to bar chart
+        chart.getData().add(sales);
+
+    }
+
 
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
@@ -782,7 +810,8 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
-    public void createSalesReportChart() {
+    public void initSalesReportChart() {
+        // Initialize date pickers to have the previous week as the default time period
         startDatePicker.setValue(LocalDate.now().minusWeeks(1));
         endDatePicker.setValue(LocalDate.now());
     }
