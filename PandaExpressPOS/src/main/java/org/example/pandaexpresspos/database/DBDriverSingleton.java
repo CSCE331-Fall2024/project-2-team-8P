@@ -126,11 +126,31 @@ public class DBDriverSingleton {
         return sales;
     }
 
-    public void decreaseQuantity(MenuItem current){
+    public void decreaseMenuItemInventoryQuantity(MenuItem current){
         System.out.println(current.inventoryItems.keySet());
         for(InventoryItem item : current.inventoryItems.keySet()){
             Integer quantity = current.inventoryItems.get(item);
-            executeUpdate(String.format(QueryTemplate.decreaseMenuItemQty,
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                    quantity,
+                    item.inventoryItemId
+            ));
+        }
+    }
+
+    public void decreaseMenuItemInventoryQuantity(MenuItem current, int quantity){
+        System.out.println(current.inventoryItems.keySet());
+        for(InventoryItem item : current.inventoryItems.keySet()){
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                    quantity,
+                    item.inventoryItemId
+            ));
+        }
+    }
+
+    public void increaseMenuItemInventoryQuantity(MenuItem current, int quantity){
+        System.out.println(current.inventoryItems.keySet());
+        for(InventoryItem item : current.inventoryItems.keySet()){
+            executeUpdate(String.format(QueryTemplate.increaseInventoryItemQty,
                     quantity,
                     item.inventoryItemId
             ));

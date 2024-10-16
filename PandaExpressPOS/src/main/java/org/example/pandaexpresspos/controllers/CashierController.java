@@ -39,6 +39,8 @@ public class CashierController {
     // New Order instance
     private Order currentOrder; // Added to manage the current order
 
+    private Order PreviousOrder;
+
     @FXML
     private TableView<Map.Entry<MenuItem, Integer>> orderTable; // Updated type to OrderItem
 
@@ -185,6 +187,7 @@ public class CashierController {
                                 "-fx-background-color: rgba(128, 128, 128, 0.5)" + // grey with 50% transparency
                         "-fx-background-blend-mode: overlay;" // ensures transparency is blended with the image
                 );
+                button.setDisable(true);
             }
             else {
                 button.setStyle("-fx-background-image: url('" + itemImg + "');" +
@@ -193,7 +196,7 @@ public class CashierController {
             // Handle clicks
             button.setOnMouseClicked(e -> {
                 selectItem(item);
-                dbDriver.decreaseQuantity(item);
+                dbDriver.decreaseMenuItemInventoryQuantity(item);
             });
 
             // Create labels with styles
@@ -300,9 +303,11 @@ public class CashierController {
 
         if (lastSelectedItem != null && !currentQuantity.isEmpty()) {
             int quantity = Integer.parseInt(currentQuantity.toString());
+            dbDriver.decreaseMenuItemInventoryQuantity(lastSelectedItem, quantity);
             updateItemQuantity(lastSelectedItem, quantity);
             currentQuantity.setLength(0); // Clear the quantity after updating
         }
+
     }
 
     private void clearQuantity() {
@@ -368,6 +373,10 @@ public class CashierController {
 
     @FXML
     private void clearTable() {
+        //replenish when clear is clicked
+        for(MenuItem curr : currentOrder.menuItems.keySet()){
+            dbDriver.increaseMenuItemInventoryQuantity(curr,Integer.parseInt(currentQuantity.toString()));
+        }
         // Remove all items from the menuItems map in the current order
         currentOrder.menuItems.clear();
 
