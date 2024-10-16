@@ -425,7 +425,6 @@ public class ManagerController {
         menuItem.ifPresent(safeItem -> {
             // Retrieve associated inventory items for the selected menu item);
             List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(safeItem.menuItemId.toString());
-
             // Loop through all the checkboxes and check the ones associated with the MenuItem
             for (Node node : selectInventoryItems.getChildren()) {
                 if (node instanceof CheckBox checkBox) {
@@ -512,6 +511,10 @@ public class ManagerController {
                 } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
+                List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(item.toString());
+
+
+
                 item.price = Double.parseDouble(price.trim());
                 item.availableStock = Integer.parseInt(stock.trim());
                 item.itemName = name;
