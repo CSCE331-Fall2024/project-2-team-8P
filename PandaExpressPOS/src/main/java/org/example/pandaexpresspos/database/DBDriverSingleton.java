@@ -377,6 +377,75 @@ public class DBDriverSingleton {
         ));
     }
 
+    // Test helpers (package-private):
+    Order selectRandomOrder() {
+        Order order = null;
+        try {
+            List<Order> items = executeQuery(
+                    QueryTemplate.selectRandomOrder,
+                    SQLToJavaMapper::orderMapper
+            );
+            if (items.isEmpty()) {
+                throw new SQLException("Order not found");
+            }
+            order = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
+
+    Employee selectRandomEmployee() {
+        Employee employee = null;
+        try {
+            List<Employee> items = executeQuery(
+                    QueryTemplate.selectRandomEmployee,
+                    SQLToJavaMapper::employeeMapper
+            );
+            if (items.isEmpty()) {
+                throw new SQLException("Employee not found");
+            }
+            employee = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employee;
+    }
+
+    MenuItem selectRandomMenuItem() {
+        MenuItem menuItem = null;
+        try {
+            List<MenuItem> items = executeQuery(
+                    QueryTemplate.selectRandomMenuItem,
+                    SQLToJavaMapper::menuItemMapper
+            );
+            if (items.isEmpty()) {
+                throw new SQLException("MenuItem not found");
+            }
+            menuItem = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return menuItem;
+    }
+
+    InventoryItem selectRandomInventoryItem() {
+        InventoryItem inventoryItem = null;
+        try {
+            List<InventoryItem> items = executeQuery(
+                    QueryTemplate.selectRandomInventoryItem,
+                    SQLToJavaMapper::inventoryItemMapper
+            );
+            if (items.isEmpty()) {
+                throw new SQLException("InventoryItem not found");
+            }
+            inventoryItem = items.getFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return inventoryItem;
+    }
+
     // Private helpers:
 
     // TODO: it may be slow to reconnect every time we need to execute a query if we have multiple back-to-back

@@ -26,9 +26,7 @@ class DBDriverSingletonTest {
 
     @Test
     void selectOrder() {
-        Order order = driver.selectOrder(
-                UUID.fromString("39de3ee8-d39d-4dd2-b67c-2aa0a6236166")
-        );
+        Order order = driver.selectRandomOrder();
         printOrder(order);
     }
 
@@ -52,10 +50,9 @@ class DBDriverSingletonTest {
 
     @Test
     void insertOrder() {
-        MenuItem beijingBeef = driver.selectMenuItem(
-                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
-        );
-        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
+        MenuItem menuItem = driver.selectRandomMenuItem();
+        System.out.println();
+        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
 
         out.println("DB state before placing order:");
         for (InventoryItemWithQty itemWithQty : associatedInventory) {
@@ -67,24 +64,22 @@ class DBDriverSingletonTest {
 
         Order newOrder = new Order(
                 UUID.randomUUID(),
-                UUID.fromString("99761186-b538-41ec-b9ba-109866af0653"),
+                driver.selectRandomEmployee().employeeId,
                 8,
                 35,
                 20,
                 8,
                 0.0
         );
-        newOrder.addOrUpdateMenuItem(beijingBeef, 1);
+        newOrder.addOrUpdateMenuItem(menuItem, 1);
 
         driver.insertOrder(newOrder);
 
-        beijingBeef = driver.selectMenuItem(
-                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
-        );
+        menuItem = driver.selectMenuItem(menuItem.menuItemId);
 
         printSeparator();
         out.println("DB state after placing order:");
-        associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
+        associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
         for (InventoryItemWithQty itemWithQty : associatedInventory) {
             out.println(
                     itemWithQty.inventoryItem.itemName +
@@ -99,9 +94,7 @@ class DBDriverSingletonTest {
 
     @Test
     void selectEmployee() {
-        Employee employee = driver.selectEmployee(
-                UUID.fromString("99761186-b538-41ec-b9ba-109866af0653")
-        );
+        Employee employee = driver.selectRandomEmployee();
         printEmployee(employee);
     }
 
@@ -125,9 +118,7 @@ class DBDriverSingletonTest {
 
     @Test
     void updateEmployee() {
-        Employee employee = driver.selectEmployee(
-                UUID.fromString("99761186-b538-41ec-b9ba-109866af0653")
-        );
+        Employee employee = driver.selectRandomEmployee();
         out.println("Employee before updating:");
         printEmployee(employee);
         String originalName = employee.name;
@@ -146,9 +137,7 @@ class DBDriverSingletonTest {
 
     @Test
     void selectInventoryItem() {
-        InventoryItem inventoryItem = driver.selectInventoryItem(
-                UUID.fromString("c4a1734e-45c2-4bb2-9d62-b9db6d6c1dc3")
-        );
+        InventoryItem inventoryItem = driver.selectRandomInventoryItem();
         printInventoryItem(inventoryItem);
     }
 
@@ -173,30 +162,26 @@ class DBDriverSingletonTest {
 
     @Test
     void updateInventoryItem() {
-        InventoryItem fortuneCookie = driver.selectInventoryItem(
-                UUID.fromString("3c29dea1-3d1a-4b76-96f5-5d6c5ffbbe7b")
-        );
+        InventoryItem inventoryItem = driver.selectRandomInventoryItem();
         out.println("Inventory item before updating:");
-        printInventoryItem(fortuneCookie);
-        Integer originalQty = fortuneCookie.availableStock;
+        printInventoryItem(inventoryItem);
+        Integer originalQty = inventoryItem.availableStock;
 
         // Update the inventory item
-        fortuneCookie.availableStock = 4200;
-        driver.updateInventoryItem(fortuneCookie);
+        inventoryItem.availableStock = 4200;
+        driver.updateInventoryItem(inventoryItem);
         printSeparator();
         out.println("Inventory item after updating:");
-        printInventoryItem(fortuneCookie);
+        printInventoryItem(inventoryItem);
 
         // Restore the inventory item's status so this test can be reused
-        fortuneCookie.availableStock = originalQty;
-        driver.updateInventoryItem(fortuneCookie);
+        inventoryItem.availableStock = originalQty;
+        driver.updateInventoryItem(inventoryItem);
     }
 
     @Test
     void selectMenuItem() {
-        MenuItem item = driver.selectMenuItem(
-                UUID.fromString("120cbe37-d4a6-4f9e-bf51-893cd1dfd647")
-        );
+        MenuItem item = driver.selectRandomMenuItem();
         printMenuItem(item);
     }
 
@@ -221,9 +206,7 @@ class DBDriverSingletonTest {
 
     @Test
     void updateMenuItem() {
-        MenuItem beijingBeef = driver.selectMenuItem(
-                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
-        );
+        MenuItem beijingBeef = driver.selectRandomMenuItem();
         out.println("Menu item before updating:");
         printMenuItem(beijingBeef);
         Integer originalQty = beijingBeef.availableStock;
@@ -250,10 +233,16 @@ class DBDriverSingletonTest {
         );
         printMap(salesReport);
     }
+
     @Test
-    void productusage(){
-        HashMap <String, Integer> productUsageReport = driver.selectProductUsage(1,2,1,2);
-        System.out.println(productUsageReport);
+    void productUsageReport() {
+        Map<String, Integer> productUsageReport = driver.selectProductUsage(
+                1,
+                2,
+                1,
+                2
+        );
+        printMap(productUsageReport);
     }
 
     // Helpers
@@ -284,7 +273,7 @@ class DBDriverSingletonTest {
     }
 
     private void printOrder(Order order) {
-        out.println(String.format("""
+        out.printf("""
                         orderId: '%s'
                         cashierId: '%s'
                         month: %d
@@ -292,7 +281,7 @@ class DBDriverSingletonTest {
                         day: %d
                         hour: %d
                         price: %f
-                        """,
+                        %n""",
                 order.orderId,
                 order.cashierId,
                 order.month,
@@ -300,7 +289,7 @@ class DBDriverSingletonTest {
                 order.day,
                 order.hour,
                 order.price
-        ));
+        );
     }
 
     private void printMenuItem(MenuItem menuItem) {
