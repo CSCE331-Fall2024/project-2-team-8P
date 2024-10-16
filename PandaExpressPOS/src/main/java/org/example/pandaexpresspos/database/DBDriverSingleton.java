@@ -1,8 +1,8 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
-import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
+import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -127,6 +127,32 @@ public class DBDriverSingleton {
         return sales;
     }
 
+    public Map<String, Integer> selectProductUsage(
+            Integer startMonth,
+            Integer endMonth,
+            Integer startDay,
+            Integer endDay
+    ) {
+        Map<String, Integer> productUsage = new TreeMap<>();
+        try {
+            List<InventoryItemWithQty> menuItemToInventoryItems = executeQuery(
+                    String.format(QueryTemplate.selectInventoryUseByTimePeriod,
+                            startMonth,
+                            endMonth,
+                            startDay,
+                            endDay
+                    ),
+                    SQLToJavaMapper::inventoryItemWithQtyMapper
+            );
+            for (InventoryItemWithQty item : menuItemToInventoryItems) {
+                productUsage.put(item.inventoryItem.itemName, item.quantity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productUsage;
+    }
+
     public void insertOrder(Order newOrder) {
         // Update quantities of base inventory items (napkin, utensils, fortune cookie):
         for (InventoryItem item : newOrder.inventoryItems.keySet()) {
@@ -169,17 +195,6 @@ public class DBDriverSingleton {
                 ));
             }
         }
-    }
-
-    public void updateOrder(Order updatedOrder) {
-        executeUpdate(String.format(QueryTemplate.updateOrder,
-                updatedOrder.month,
-                updatedOrder.week,
-                updatedOrder.day,
-                updatedOrder.hour,
-                updatedOrder.price,
-                updatedOrder.orderId
-        ));
     }
 
     // Employee
@@ -395,7 +410,6 @@ public class DBDriverSingleton {
     // This is used for:
     // 1. Insert
     // 2. Update
-    // 3. Delete
     private static void executeUpdate(String query) {
         try (Connection conn = DriverManager.getConnection(
                 DBCredentials.dbConnectionString,

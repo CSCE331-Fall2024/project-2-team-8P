@@ -10,11 +10,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -27,6 +29,7 @@ import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.example.pandaexpresspos.models.Order;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
@@ -76,10 +79,15 @@ public class ManagerController {
     @FXML
     private BarChart<String, Number> salesChart;
     @FXML
-    private DatePicker startDatePicker;
+    private BarChart<String, Number> productUsageChart;
     @FXML
-    private DatePicker endDatePicker;
-
+    private DatePicker startDatePickerSalesReport;
+    @FXML
+    private DatePicker endDatePickerSalesReport;
+    @FXML
+    private DatePicker startDatePickerProductUsage;
+    @FXML
+    private DatePicker endDatePickerProductUsage;
 
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
@@ -160,6 +168,7 @@ public class ManagerController {
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
+        createProductUsageChart();
         initSalesReportChart();
     }
 
@@ -190,6 +199,7 @@ public class ManagerController {
                 fetchSummary();
                 break;
             case USAGE:
+                updateProductUsage();
                 // TODO: add usage report
                 break;
             case X_REPORT:
@@ -597,14 +607,15 @@ public class ManagerController {
         }
         salesChart.getData().add(newSeries);
     }
+
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
         BarChart<String, Double> chart;
 
         if (wholeDay) {
-           hourlySales = DBDriverSingleton.getInstance().selectZReport();
-           chart = zReportBarChart;
+            hourlySales = DBDriverSingleton.getInstance().selectZReport();
+            chart = zReportBarChart;
         } else {
             hourlySales = DBDriverSingleton.getInstance().selectXReport();
             chart = xReportBarChart;
@@ -630,6 +641,22 @@ public class ManagerController {
 
     }
 
+
+    public void updateProductUsage() {
+        Map<String, Integer> productUsageData = getProductUsageData();
+        XYChart.Series newSeries = new XYChart.Series();
+        productUsageChart.getData().clear();
+
+        productUsageChart.setLegendVisible(false);
+
+        CategoryAxis xAxis = (CategoryAxis) productUsageChart.getXAxis();
+        xAxis.setTickLabelFont(Font.font("Lucida Grande", 10));
+
+        for (String item : productUsageData.keySet()) {
+            newSeries.getData().add(new XYChart.Data(item, productUsageData.get(item)));
+        }
+        productUsageChart.getData().add(newSeries);
+    }
 
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
@@ -812,8 +839,13 @@ public class ManagerController {
 
     public void initSalesReportChart() {
         // Initialize date pickers to have the previous week as the default time period
-        startDatePicker.setValue(LocalDate.now().minusWeeks(1));
-        endDatePicker.setValue(LocalDate.now());
+        startDatePickerSalesReport.setValue(LocalDate.now().minusWeeks(1));
+        endDatePickerSalesReport.setValue(LocalDate.now());
+    }
+
+    public void createProductUsageChart() {
+        startDatePickerProductUsage.setValue(LocalDate.now().minusWeeks(1));
+        endDatePickerProductUsage.setValue(LocalDate.now());
     }
 
     /*
@@ -823,12 +855,21 @@ public class ManagerController {
     Backend: menu item sales
      */
     private Map<String, Integer> getSalesReportData() {
-        int startDateMonth = startDatePicker.getValue().getMonthValue();
-        int startDateDay = startDatePicker.getValue().getDayOfMonth();
-        int endDateMonth = endDatePicker.getValue().getMonthValue();
-        int endDateDay = endDatePicker.getValue().getDayOfMonth();
+        int startDateMonth = startDatePickerSalesReport.getValue().getMonthValue();
+        int startDateDay = startDatePickerSalesReport.getValue().getDayOfMonth();
+        int endDateMonth = endDatePickerSalesReport.getValue().getMonthValue();
+        int endDateDay = endDatePickerSalesReport.getValue().getDayOfMonth();
 
         return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
+    }
+
+    private Map<String, Integer> getProductUsageData() {
+        int startDateMonth = startDatePickerProductUsage.getValue().getMonthValue();
+        int startDateDay = startDatePickerProductUsage.getValue().getDayOfMonth();
+        int endDateMonth = endDatePickerProductUsage.getValue().getMonthValue();
+        int endDateDay = endDatePickerProductUsage.getValue().getDayOfMonth();
+
+        return dbDriver.selectProductUsage(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
 
     // Helper method to display error alert

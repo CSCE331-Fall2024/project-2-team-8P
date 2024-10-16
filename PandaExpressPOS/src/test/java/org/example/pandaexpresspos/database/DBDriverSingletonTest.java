@@ -250,6 +250,11 @@ class DBDriverSingletonTest {
         );
         printMap(salesReport);
     }
+    @Test
+    void productusage(){
+        HashMap <String, Integer> productUsageReport = driver.selectProductUsage(1,2,1,2);
+        System.out.println(productUsageReport);
+    }
 
     // Helpers
     private <T> void printItems(List<T> items) {

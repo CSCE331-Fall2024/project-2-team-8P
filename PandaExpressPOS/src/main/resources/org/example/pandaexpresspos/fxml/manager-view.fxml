@@ -62,15 +62,34 @@
                      </content>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Usage Chart">
-                     <content>
-                        <AnchorPane>
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="In Progress" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font size="30.0" />
-                                 </font></Text>
-                           </children></AnchorPane>
-                     </content>
+                     <AnchorPane style="-fx-background-color: white;">
+                        <VBox prefHeight="319.2" prefWidth="288.8" AnchorPane.bottomAnchor="0.0"
+                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                           </padding>
+                           <BarChart fx:id="productUsageChart" title="Inventory Item Usage" animated="false" prefHeight="800.0" prefWidth="395.0"
+                                     VBox.vgrow="ALWAYS">
+                              <xAxis>
+                                 <CategoryAxis label="Inventory Items"/>
+                              </xAxis>
+                              <yAxis>
+                                 <NumberAxis label="Usage"/>
+                              </yAxis>
+                           </BarChart>
+                           <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                              <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                 <Label text="Start Date"/>
+                                 <DatePicker fx:id="startDatePickerProductUsage"/>
+                              </VBox>
+                              <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0"
+                                    prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                 <Label text="End Date"/>
+                                 <DatePicker fx:id="endDatePickerProductUsage"/>
+                              </VBox>
+                           </HBox>
+                        </VBox>
+                     </AnchorPane>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="X-Report">
                      <content>
@@ -88,7 +107,8 @@
                                   <NumberAxis label="Total Sales ($)" side="LEFT" />
                                 </yAxis>
                               </BarChart>
-                           </children></AnchorPane>
+                           </children>
+                        </AnchorPane>
                      </content>
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Z-Report">
@@ -116,22 +136,23 @@
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                           <BarChart fx:id="salesChart" animated="false" prefHeight="800.0" prefWidth="395.0" VBox.vgrow="ALWAYS">
+                           <BarChart fx:id="salesChart" title="Sales by Menu Item" animated="false" prefHeight="800.0" prefWidth="395.0"
+                                     VBox.vgrow="ALWAYS">
                               <xAxis>
-                                 <CategoryAxis label="Menu Items" fx:id="xAxis" />
+                                 <CategoryAxis label="Menu Items"/>
                               </xAxis>
                               <yAxis>
-                                 <NumberAxis fx:id="yAxis" label="Sales" />
+                                 <NumberAxis label="Sales"/>
                               </yAxis>
                            </BarChart>
                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                               <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                                  <Label text="Start Date" />
-                                 <DatePicker fx:id="startDatePicker" />
+                                 <DatePicker fx:id="startDatePickerSalesReport" />
                               </VBox>
                               <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                                  <Label text="End Date" />
-                                 <DatePicker fx:id="endDatePicker" />
+                                 <DatePicker fx:id="endDatePickerSalesReport" />
                               </VBox>
                            </HBox>
                         </VBox>
