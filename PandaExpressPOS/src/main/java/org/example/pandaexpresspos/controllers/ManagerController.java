@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -620,8 +621,11 @@ public class ManagerController {
 
         productUsageChart.setLegendVisible(false);
 
-        for (Map.Entry<String, Integer> entry : productUsageData.entrySet()) {
-            newSeries.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        CategoryAxis xAxis = (CategoryAxis) productUsageChart.getXAxis();
+        xAxis.setTickLabelFont(Font.font("Lucida Grande", 10));
+
+        for (String item : productUsageData.keySet()) {
+            newSeries.getData().add(new XYChart.Data(item, productUsageData.get(item)));
         }
         productUsageChart.getData().add(newSeries);
     }
