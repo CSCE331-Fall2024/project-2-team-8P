@@ -18,7 +18,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.example.pandaexpresspos.LoginApplication;
 import javafx.event.ActionEvent;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -151,15 +150,6 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-
-//        if (loggedInUser == null) {
-//            throw new IllegalStateException("You have not logged in");
-//        }
-//        if (!loggedInUser.isManager) {
-//            throw new IllegalStateException("You are not authorized to view this page");
-//        }
-
-
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
@@ -280,35 +270,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
-        // If in update mode add a remove button and handle appropriately
-//        inventoryItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-////                inventoryItems.removeIf(item -> (
-////                        item.itemName.equals(safeItem.itemName)
-////                ));
-//                // Backend call here
-//
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    inventoryItemsGridPane.getChildren().clear();
-//                    createInventoryGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -439,34 +400,6 @@ public class ManagerController {
             }
         });
 
-
-        // If in update mode add a remove button and handle appropriately
-//        menuItem.ifPresent(safeItem -> {
-//            Label removeLabel = new Label("Remove Item: ");
-////            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                menuItems.removeIf(item -> (
-//                        item.itemName.equals(safeItem.itemName)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    menuItemsGridPane.getChildren().clear();
-//                    createMenuItemsGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
-
         // Add buttons to dialog pane
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -594,32 +527,6 @@ public class ManagerController {
                 imageUrl
         );
 
-        // If in update mode add a remove button and handle appropriately
-//        employee.ifPresent(safeEmployee -> {
-//            Label removeLabel = new Label("Remove Item: ");
-//            Button removeButton = new Button("Remove");
-//
-//            // Handle button click
-//            removeButton.setOnMouseClicked(e -> {
-//                employees.removeIf(person -> (
-//                        person.name.equals(safeEmployee.name)
-//                ));
-//
-//                // Added for thread safety
-//                Platform.runLater(() -> {
-//                    // Repopulate the grid
-//                    employeeItemsGridPane.getChildren().clear();
-//                    createEmployeesGrid();
-//                });
-//
-//                dialog.close();
-//            });
-//
-//            // Add to view hierarcy
-//            inputsContainer.getChildren().addAll(removeLabel, removeButton);
-//
-//        });
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -703,7 +610,7 @@ public class ManagerController {
         Text summaryText = new Text("Inventory Items\n");
         summary.getChildren().add(summaryText);
 
-        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+        for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
             if(item.availableStock <= veryLowInventory) {
                 summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
                 summary.getChildren().add(summaryText);
@@ -715,7 +622,7 @@ public class ManagerController {
         }
         summaryText = new Text("\nMenu Items\n");
         summary.getChildren().add(summaryText);
-        for(MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
+        for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
             if(item.availableStock >= unpopularMenuItem) {
                 summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
                 summary.getChildren().add(summaryText);

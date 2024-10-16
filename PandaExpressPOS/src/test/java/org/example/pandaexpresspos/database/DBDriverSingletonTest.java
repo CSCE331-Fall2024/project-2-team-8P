@@ -247,7 +247,7 @@ class DBDriverSingletonTest {
         printMap(salesReport);
     }
     @Test
-    void print(){
+    void selectMenuItemToInventoryItemFunctionTest(){
         List<InventoryItem> test;
                 test=driver.selectMenuItemToInventoryItem("db104ecc-18f3-4048-9d73-13b601d424ab");
         printItems(test);

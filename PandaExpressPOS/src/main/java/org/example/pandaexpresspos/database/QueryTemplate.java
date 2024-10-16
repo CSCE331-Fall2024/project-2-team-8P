@@ -124,19 +124,6 @@ class QueryTemplate {
             AND o.day BETWEEN %d AND %d
             GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
             """;
-    public static final String associateInventoryItemToMenuItem = """
-            SELECT
-            mi.menuitemid,
-            mi.itemname AS menuitem_name,
-            ii.inventoryitemid,
-            ii.itemname AS inventoryitem_name
-            FROM
-            menuitem mi
-            JOIN
-            menuitemtoinventoryitem itm ON mi.menuitemid = itm.menuitemid
-            JOIN
-            inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
-            """;
     public static final String insertMenuItemToInventoryItem = """
             INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
             VALUES ('%s', '%s' , %d);
