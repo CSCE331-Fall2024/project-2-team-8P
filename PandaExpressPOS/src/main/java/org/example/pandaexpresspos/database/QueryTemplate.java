@@ -16,7 +16,7 @@ class QueryTemplate {
             SELECT hour, SUM(price) FROM "order"
             WHERE month = %d AND day = %d AND hour <= %d
             GROUP BY hour
-            ORDER BY hour DESC;
+            ORDER BY hour ASC;
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
@@ -94,6 +94,15 @@ class QueryTemplate {
     public static final String selectAllMenuItems = """
             SELECT * FROM menuItem;
             """;
+    public static final String selectMenuItemInventoryItems = """
+            SELECT i.inventoryItemId, i.cost, i.availableStock, i.itemName, mi.quantity
+            FROM menuItem m
+            JOIN menuItemToInventoryItem mi
+            ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i
+            ON i.inventoryItemId = mi.inventoryItemId
+            WHERE m.itemName = '%s';
+            """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
             VALUES ('%s', %f, %d, '%s');
@@ -101,11 +110,6 @@ class QueryTemplate {
     public static final String decreaseMenuItemQty = """
             UPDATE menuItem
             SET availableStock = availableStock - %d
-            WHERE menuItemId = '%s';
-            """;
-    public static final String increaseMenuItemQty = """
-            UPDATE menuItem
-            SET availableStock = availableStock + %d
             WHERE menuItemId = '%s';
             """;
     public static final String updateMenuItem = """
@@ -116,25 +120,51 @@ class QueryTemplate {
     public static final String selectMenuItemSalesByTimePeriod = """
             SELECT m.menuItemId, m.price, m.availableStock, m.itemName, count(*)
             FROM "order" o
-            JOIN orderToMenuItem otm
-            ON o.orderId = otm.orderId
-            JOIN menuItem m
-            ON otm.menuItemId = m.menuItemId
+            JOIN orderToMenuItem otm ON o.orderId = otm.orderId
+            JOIN menuItem m ON otm.menuItemId = m.menuItemId
             WHERE o.month BETWEEN %d AND %d
             AND o.day BETWEEN %d AND %d
             GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
             """;
-    public static final String associateInventoryItemToMenuItem = """
-            SELECT
-            mi.menuitemid,
-            mi.itemname AS menuitem_name,
-            ii.inventoryitemid,
-            ii.itemname AS inventoryitem_name
-            FROM
-            menuitem mi
-            JOIN
-            menuitemtoinventoryitem itm ON mi.menuitemid = itm.menuitemid
-            JOIN
-            inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
+    public static final String insertMenuItemToInventoryItem = """
+            INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
+            VALUES ('%s', '%s' , %d);
             """;
+    public static final String inventoryItemAssociatedWithMenuItem = """
+            SELECT
+            i.inventoryItemId,
+            i.cost,
+            i.availableStock,
+            i.itemName
+            FROM
+            menuitem m
+            JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mti.inventoryItemId
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String deleteMenuItemToInventoryItem = """
+            DELETE FROM menuItemToInventoryItem
+            WHERE menuItemId = '%s';
+            """;
+    public static final String selectInventoryUseByTimePeriod = """
+            SELECT
+                i.inventoryItemId,
+                i.cost,
+                i.availableStock,
+                i.itemName,
+                count(*) AS itemsUsed
+            FROM "order" o
+            JOIN orderToMenuItem otm ON o.orderId = otm.orderId
+            JOIN menuItem m ON otm.menuItemId = m.menuItemId
+            JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
+            JOIN inventoryItem i ON mti.inventoryItemId = i.inventoryItemId
+            WHERE o.month BETWEEN %d AND %d
+            AND o.day BETWEEN %d AND %d
+            GROUP BY
+                i.inventoryItemId,
+                i.cost,
+                i.availableStock,
+                i.itemName;
+            """;
+
 }
