@@ -126,6 +126,26 @@ class QueryTemplate {
             AND o.day BETWEEN %d AND %d
             GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
             """;
+    public static final String insertMenuItemToInventoryItem = """
+            INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
+            VALUES ('%s', '%s' , %d);
+            """;
+    public static final String inventoryItemAssociatedWithMenuItem = """
+            SELECT
+            i.inventoryItemId,
+            i.cost,
+            i.availableStock,
+            i.itemName
+            FROM
+            menuitem m
+            JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mti.inventoryItemId
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String deleteMenuItemToInventoryItem = """
+            DELETE FROM menuItemToInventoryItem
+            WHERE menuItemId = '%s';
+            """;
     public static final String selectInventoryUseByTimePeriod = """
             SELECT
                 i.inventoryItemId,
@@ -146,4 +166,5 @@ class QueryTemplate {
                 i.availableStock,
                 i.itemName;
             """;
+
 }
