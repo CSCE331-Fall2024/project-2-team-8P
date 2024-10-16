@@ -419,6 +419,26 @@ public class ManagerController {
             selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
             inventoryItemnameToID.put(item.itemName, item.inventoryItemId.toString());
         }
+        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
+        dialog.getDialogPane().setContent(menuContainer);
+
+        menuItem.ifPresent(safeItem -> {
+            // Retrieve associated inventory items for the selected menu item);
+            List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(safeItem.menuItemId.toString());
+
+            // Loop through all the checkboxes and check the ones associated with the MenuItem
+            for (Node node : selectInventoryItems.getChildren()) {
+                if (node instanceof CheckBox checkBox) {
+                    String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                    // Check if this inventory item is associated with the menu item
+                    for (InventoryItem associatedItem : associatedInventoryItems) {
+                        if (associatedItem.inventoryItemId.toString().equals(inventoryItemId)) {
+                            checkBox.setSelected(true);
+                        }
+                    }
+                }
+            }
+        });
 
         // If in update mode add a remove button and handle appropriately
 //        menuItem.ifPresent(safeItem -> {

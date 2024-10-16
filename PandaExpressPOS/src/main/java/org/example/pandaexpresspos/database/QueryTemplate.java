@@ -138,7 +138,24 @@ class QueryTemplate {
             inventoryitem ii ON ii.inventoryitemid = itm.inventoryitemid;
             """;
     public static final String insertMenuItemToInventoryItem = """
-            INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId)
-            VALUES ('%s', '%s');
+            INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
+            VALUES ('%s', '%s' , %d);
             """;
+    public static final String inventoryItemAssociatedWithMenuItem = """
+            SELECT
+            i.inventoryItemId,
+            i.cost,
+            i.availableStock,
+            i.itemName
+            FROM
+            menuitem m
+            JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mti.inventoryItemId
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String deleteMenuItemToInventoryItem = """
+            DELETE FROM menuItemToInventoryItem
+            WHERE menuItemId = '%s' AND inventoryItemId = '%s';
+            """;
+
 }

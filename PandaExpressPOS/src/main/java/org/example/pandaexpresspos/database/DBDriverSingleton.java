@@ -355,9 +355,23 @@ public class DBDriverSingleton {
     public void insertMenuItemToInventoryItem(String menuItemId, String inventoryItemId) {
         executeUpdate(String.format(QueryTemplate.insertMenuItemToInventoryItem,
                 menuItemId,
-                inventoryItemId
+                inventoryItemId,
+                1
         ));
     }
+    public List<InventoryItem> selectMenuItemToInventoryItem(String menuItemId) {
+        List<InventoryItem> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.inventoryItemAssociatedWithMenuItem, menuItemId),
+                    SQLToJavaMapper::inventoryItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
 
     // Private helpers:
 
