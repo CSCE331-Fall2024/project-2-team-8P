@@ -16,7 +16,7 @@ class QueryTemplate {
             SELECT hour, SUM(price) FROM "order"
             WHERE month = %d AND day = %d AND hour <= %d
             GROUP BY hour
-            ORDER BY hour DESC;
+            ORDER BY hour ASC;
             """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
@@ -93,6 +93,15 @@ class QueryTemplate {
             """;
     public static final String selectAllMenuItems = """
             SELECT * FROM menuItem;
+            """;
+    public static final String selectMenuItemInventoryItems = """
+            SELECT i.inventoryItemId, i.cost, i.availableStock, i.itemName, mi.quantity
+            FROM menuItem m
+            JOIN menuItemToInventoryItem mi
+            ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i
+            ON i.inventoryItemId = mi.inventoryItemId
+            WHERE m.itemName = '%s';
             """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)

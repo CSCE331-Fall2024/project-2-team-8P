@@ -1,7 +1,6 @@
 package org.example.pandaexpresspos.models.wrappers;
 
 import org.example.pandaexpresspos.models.InventoryItem;
-import org.example.pandaexpresspos.models.MenuItem;
 
 public class InventoryItemWithQty {
     public InventoryItem inventoryItem;

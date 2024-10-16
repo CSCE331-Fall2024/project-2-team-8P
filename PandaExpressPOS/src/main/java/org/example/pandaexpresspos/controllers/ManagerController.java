@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -46,17 +45,11 @@ public class ManagerController {
     private Employee loggedInUser;
 
     @FXML
-    private VBox rightVerBox;
-    @FXML
     private GridPane inventoryItemsGridPane;
     @FXML
     private GridPane menuItemsGridPane;
     @FXML
     private GridPane employeeItemsGridPane;
-    @FXML
-    private Button logoutButton;
-    @FXML
-    private Button addItemButton;
     @FXML
     private TabPane itemsTabPane;
     @FXML
@@ -80,6 +73,10 @@ public class ManagerController {
     @FXML
     private TextFlow summary;
     @FXML
+    private BarChart<String, Double> xReportBarChart;
+    @FXML
+    private BarChart<String, Double> zReportBarChart;
+    @FXML
     private BarChart<String, Number> salesChart;
     @FXML
     private BarChart<String, Number> productUsageChart;
@@ -99,7 +96,7 @@ public class ManagerController {
 
     // Global Constant for Images
     private final String sampleImg = Objects.requireNonNull(getClass()
-                    .getResource("/org/example/pandaexpresspos/fxml/Images/sample_image.png"))
+                    .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png"))
             .toExternalForm();
 
     // Enum to check which item tab user has selected
@@ -167,15 +164,12 @@ public class ManagerController {
     // Initialize the state of the UI after FXML elements are injected
     @FXML
     public void initialize() {
-        // Initialize date pickers to have the previous week as the default time period
-
-
         dbSnapshot.refreshAllSnapshots();
         createInventoryGrid();
         createMenuItemsGrid();
         createEmployeesGrid();
-        createSalesReportChart();
         createProductUsageChart();
+        initSalesReportChart();
     }
 
     public void setLoggedInUser(Employee user) {
@@ -199,23 +193,23 @@ public class ManagerController {
 
         switch (selectedTab) {
             case ORDER_HISTORY:
-                updateOrderHistory();
+                fetchOrderHistory();
                 break;
             case SUMMARY:
-                updateSummary();
+                fetchSummary();
                 break;
             case USAGE:
                 updateProductUsage();
                 // TODO: add usage report
                 break;
             case X_REPORT:
-                // TODO: add X_Report
+                fetchXOrZReport(false);
                 break;
             case Z_REPORT:
-                // TODO: add Z_Report
+                fetchXOrZReport(true);
                 break;
             case SALES_REPORT:
-                updateSalesReport();
+                fetchSalesReport();
                 break;
             default:
                 break;
@@ -356,8 +350,8 @@ public class ManagerController {
         Label menuItemPriceLabel = new Label("Menu Item Cost: ");
         TextField menuItemPrice = new TextField();
 
-        Label availableStockLabel = new Label("Available Stock: ");
-        TextField availableStock = new TextField();
+//        Label availableStockLabel = new Label("Available Stock: ");
+//        TextField availableStock = new TextField();
 
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
@@ -368,7 +362,7 @@ public class ManagerController {
         menuItem.ifPresent(safeItem -> {
             menuItemName.setText(safeItem.itemName);
             menuItemPrice.setText(String.valueOf(safeItem.price));
-            availableStock.setText(String.valueOf(safeItem.availableStock));
+//            availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");
         });
@@ -383,8 +377,8 @@ public class ManagerController {
                 menuItemName,
                 menuItemPriceLabel,
                 menuItemPrice,
-                availableStockLabel,
-                availableStock,
+//                availableStockLabel,
+//                availableStock,
                 imageUrlLabel,
                 imageUrl
         );
@@ -401,7 +395,7 @@ public class ManagerController {
                 return new ButtonType(
                         menuItemName.getText() + "," +
                                 menuItemPrice.getText() + ", " +
-                                availableStock.getText() + ", " +
+//                                availableStock.getText() + ", " +
                                 imageUrl.getText()
                 );
             }
@@ -413,21 +407,21 @@ public class ManagerController {
             String[] outputs = outputFields.getText().split(",");
             String name = outputs[0];
             String price = outputs[1];
-            String stock = outputs[2];
-            String imgUrl = outputs[3];
+//            String stock = outputs[2];
+            String imgUrl = outputs[2];
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
                 dbDriver.insertMenuItem(new MenuItem(
                         Double.parseDouble(price.trim()),
-                        Integer.parseInt(stock.trim()),
+                        0,
                         name)
                 );
             } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
                 item.price = Double.parseDouble(price.trim());
-                item.availableStock = Integer.parseInt(stock.trim());
+                item.availableStock = 0;
                 item.itemName = name;
 
                 dbDriver.updateMenuItem(item);
@@ -543,7 +537,7 @@ public class ManagerController {
         });
     }
 
-    public void updateOrderHistory() {
+    public void fetchOrderHistory() {
         ordersTable.getItems().clear();
 
         createOrdersTable();
@@ -573,7 +567,7 @@ public class ManagerController {
         );
     }
 
-    public void updateSummary() {
+    public void fetchSummary() {
         summary.getChildren().clear();
         summary.setStyle("-fx-background-color: white;");
         Text summaryText = new Text("Inventory Items\n");
@@ -601,7 +595,7 @@ public class ManagerController {
         }
     }
 
-    public void updateSalesReport() {
+    public void fetchSalesReport() {
         Map<String, Integer> salesReportData = getSalesReportData();
         XYChart.Series newSeries = new XYChart.Series();
         salesChart.getData().clear();
@@ -613,6 +607,40 @@ public class ManagerController {
         }
         salesChart.getData().add(newSeries);
     }
+
+    public void fetchXOrZReport(boolean wholeDay) {
+        // Get sales per hour data from DBDriverSingleton
+        List<Double> hourlySales;
+        BarChart<String, Double> chart;
+
+        if (wholeDay) {
+            hourlySales = DBDriverSingleton.getInstance().selectZReport();
+            chart = zReportBarChart;
+        } else {
+            hourlySales = DBDriverSingleton.getInstance().selectXReport();
+            chart = xReportBarChart;
+        }
+
+        // Create series to hold data
+        XYChart.Series<String, Double> sales = new XYChart.Series<>();
+        // X-label
+        String[] hours = {
+                "10 AM", "11 AM", "12 PM",
+                "1PM", "2PM", "3PM",
+                "4PM", "5PM", "6PM",
+                "7PM", "8PM", "9PM"
+        };
+
+        // Add data to series
+        for (int i = 0; i < hourlySales.size(); i++) {
+            sales.getData().add(new XYChart.Data<>(hours[i], hourlySales.get(i)));
+        }
+
+        // Add series to bar chart
+        chart.getData().add(sales);
+
+    }
+
 
     public void updateProductUsage() {
         Map<String, Integer> productUsageData = getProductUsageData();
@@ -722,9 +750,7 @@ public class ManagerController {
             Label nameLabel = new Label(menuItemName);
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
-            Label menuStockLabel = new Label("Qty: " + menuItemStock);
-            menuStockLabel.setTextAlignment(TextAlignment.CENTER);
-            menuStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
+//            Label menuStockLabel = new Label("Qty: " + menuItemStock);
 
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
@@ -732,7 +758,7 @@ public class ManagerController {
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel, menuStockLabel);
+            layout.getChildren().addAll(button, nameLabel);
 
             // Add Vbox to grid
             menuItemsGridPane.add(layout, x, y);
@@ -811,7 +837,8 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
-    public void createSalesReportChart() {
+    public void initSalesReportChart() {
+        // Initialize date pickers to have the previous week as the default time period
         startDatePickerSalesReport.setValue(LocalDate.now().minusWeeks(1));
         endDatePickerSalesReport.setValue(LocalDate.now());
     }
