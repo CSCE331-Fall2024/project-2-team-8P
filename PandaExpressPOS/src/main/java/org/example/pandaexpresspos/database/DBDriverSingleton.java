@@ -126,6 +126,17 @@ public class DBDriverSingleton {
         return sales;
     }
 
+    public void decreaseQuantity(MenuItem current){
+        System.out.println(current.inventoryItems.keySet());
+        for(InventoryItem item : current.inventoryItems.keySet()){
+            Integer quantity = current.inventoryItems.get(item);
+            executeUpdate(String.format(QueryTemplate.decreaseMenuItemQty,
+                    quantity,
+                    item.inventoryItemId
+            ));
+        }
+    }
+
     public void insertOrder(Order newOrder) {
         // Insert the order entry
         executeUpdate(String.format(QueryTemplate.insertOrder,

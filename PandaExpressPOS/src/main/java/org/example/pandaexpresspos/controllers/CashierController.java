@@ -20,9 +20,9 @@ import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
 import org.example.pandaexpresspos.database.DBSnapshotSingleton;
+import org.example.pandaexpresspos.models.*;
 import org.example.pandaexpresspos.models.Employee;
 import org.example.pandaexpresspos.models.MenuItem;
-import org.example.pandaexpresspos.models.Order; // Import Order class
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -171,12 +171,29 @@ public class CashierController {
             // Create a button, set background to img
             Button button = new Button();
             button.setMinSize(100, 80);
-            button.setStyle("-fx-background-image: url('" + itemImg + "');" +
-                    "-fx-background-size: cover;-fx-cursor: hand;");
-
+            Boolean check = false;
+            for(InventoryItem inter : item.inventoryItems.keySet()){
+                if(inter.availableStock <= 0 ){
+                    check = true;
+                }
+            }
+            if(check){
+                button.setStyle(
+                        "-fx-background-image: url('" + itemImg + "');" +
+                                "-fx-background-size: cover;" +
+                                "-fx-cursor: hand;" +
+                                "-fx-background-color: rgba(128, 128, 128, 0.5)" + // grey with 50% transparency
+                        "-fx-background-blend-mode: overlay;" // ensures transparency is blended with the image
+                );
+            }
+            else {
+                button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+                        "-fx-background-size: cover;-fx-cursor: hand;");
+            }
             // Handle clicks
             button.setOnMouseClicked(e -> {
                 selectItem(item);
+                dbDriver.decreaseQuantity(item);
             });
 
             // Create labels with styles
@@ -249,10 +266,31 @@ public class CashierController {
     }
 
     private void selectItem(MenuItem item) {
+        boolean check = false;
+        for(InventoryItem inter : item.inventoryItems.keySet()){
+            if(inter.availableStock <= 0 ){
+                check = true;
+            }
+        }
+        if(check){
+
+            showAlert("Cannot Fulfill Order", "Inventory Item out of stock");
+
+        } else {
         lastSelectedItem = item;
         currentQuantity.setLength(0); // Clear the current quantity
         addItemToOrder(item); // Add one item immediately
+        }
     }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     private void appendQuantity(int num) {
         currentQuantity.append(num);
