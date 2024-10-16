@@ -197,6 +197,7 @@ public class CashierController {
             button.setOnMouseClicked(e -> {
                 selectItem(item);
                 dbDriver.decreaseMenuItemInventoryQuantity(item);
+                createMenuItemGrid();
             });
 
             // Create labels with styles
@@ -307,6 +308,10 @@ public class CashierController {
             updateItemQuantity(lastSelectedItem, quantity);
             currentQuantity.setLength(0); // Clear the quantity after updating
         }
+        else{
+            updateItemQuantity(lastSelectedItem, quantity);
+            currentQuantity.setLength(0);
+        }
 
     }
 
@@ -375,7 +380,7 @@ public class CashierController {
     private void clearTable() {
         //replenish when clear is clicked
         for(MenuItem curr : currentOrder.menuItems.keySet()){
-            dbDriver.increaseMenuItemInventoryQuantity(curr,Integer.parseInt(currentQuantity.toString()));
+            dbDriver.increaseMenuItemInventoryQuantity(curr,currentOrder.menuItems.get(curr));
         }
         // Remove all items from the menuItems map in the current order
         currentOrder.menuItems.clear();
