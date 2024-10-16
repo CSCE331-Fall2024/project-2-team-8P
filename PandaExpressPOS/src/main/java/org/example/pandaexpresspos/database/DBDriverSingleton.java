@@ -371,10 +371,9 @@ public class DBDriverSingleton {
         }
         return items;
     }
-    public void deleteMenuItemToInventoryItem(String menuItemId, String inventoryItemId) {
+    public void deleteMenuItemToInventoryItem(String menuItemId) {
         executeUpdate(String.format(QueryTemplate.deleteMenuItemToInventoryItem,
-                menuItemId,
-                inventoryItemId
+                menuItemId
         ));
     }
 

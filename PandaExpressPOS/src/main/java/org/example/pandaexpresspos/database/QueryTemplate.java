@@ -155,7 +155,7 @@ class QueryTemplate {
             """;
     public static final String deleteMenuItemToInventoryItem = """
             DELETE FROM menuItemToInventoryItem
-            WHERE menuItemId = '%s' AND inventoryItemId = '%s';
+            WHERE menuItemId = '%s';
             """;
 
 }

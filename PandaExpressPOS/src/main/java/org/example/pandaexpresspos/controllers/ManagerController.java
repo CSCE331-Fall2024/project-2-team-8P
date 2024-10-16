@@ -439,9 +439,6 @@ public class ManagerController {
             }
         });
 
-        menuContainer.getChildren().addAll(inputsContainer, selectInventoryItems);
-        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
-        dialog.getDialogPane().setContent(menuContainer);
 
         // If in update mode add a remove button and handle appropriately
 //        menuItem.ifPresent(safeItem -> {
@@ -515,8 +512,15 @@ public class ManagerController {
                 } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
-                List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(item.toString());
-
+                dbDriver.deleteMenuItemToInventoryItem(item.menuItemId.toString());
+                for (Node node : selectInventoryItems.getChildren()) {
+                    if (node instanceof CheckBox checkBox) {
+                        if (checkBox.isSelected()) {
+                            String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                            dbDriver.insertMenuItemToInventoryItem(item.menuItemId.toString(), inventoryItemId);
+                        }
+                    }
+                }
 
 
                 item.price = Double.parseDouble(price.trim());
