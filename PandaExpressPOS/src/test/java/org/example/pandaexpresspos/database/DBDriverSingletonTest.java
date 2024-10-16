@@ -1,10 +1,7 @@
 package org.example.pandaexpresspos.database;
-
 import org.example.pandaexpresspos.models.*;
-import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,18 +49,16 @@ class DBDriverSingletonTest {
 
     @Test
     void insertOrder() {
-        MenuItem beijingBeef = driver.selectMenuItem(
-                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
+        InventoryItem napkin = driver.selectInventoryItem(
+                UUID.fromString("20fb88db-d71d-405c-ba98-1919c1e7d74e")
         );
-        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
+        MenuItem drPepper = driver.selectMenuItem(
+                UUID.fromString("db104ecc-18f3-4048-9d73-13b601d424ab")
+        );
 
         out.println("DB state before placing order:");
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
-        }
+        out.println("Napkin qty: " + napkin.availableStock);
+        out.println("Dr Pepper qty: " + drPepper.availableStock);
 
         Order newOrder = new Order(
                 UUID.randomUUID(),
@@ -72,25 +67,24 @@ class DBDriverSingletonTest {
                 35,
                 20,
                 8,
-                0.0
+                50.0
         );
-        newOrder.addOrUpdateMenuItem(beijingBeef, 1);
+        newOrder.addOrUpdateInventoryItem(napkin, 2);
+        newOrder.addOrUpdateMenuItem(drPepper, 1);
 
         driver.insertOrder(newOrder);
 
-        beijingBeef = driver.selectMenuItem(
-                UUID.fromString("1293aa61-f866-4146-bbd7-26eac4752cfe")
+        napkin = driver.selectInventoryItem(
+                UUID.fromString("20fb88db-d71d-405c-ba98-1919c1e7d74e")
+        );
+        drPepper = driver.selectMenuItem(
+                UUID.fromString("db104ecc-18f3-4048-9d73-13b601d424ab")
         );
 
         printSeparator();
         out.println("DB state after placing order:");
-        associatedInventory = driver.selectMenuItemInventoryItems(beijingBeef);
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
-        }
+        out.println("Napkin qty: " + napkin.availableStock);
+        out.println("Dr Pepper qty: " + drPepper.availableStock);
 
         printSeparator();
         newOrder = driver.selectOrder(newOrder.orderId);
@@ -251,17 +245,11 @@ class DBDriverSingletonTest {
         printMap(salesReport);
     }
     @Test
-
-    void selectMenuItemToInventoryItemFunctionTest(){
+    void selectMenuItemToInventoryItemTest(){
         List<InventoryItem> test;
-                test=driver.selectMenuItemToInventoryItem("db104ecc-18f3-4048-9d73-13b601d424ab");
+        test=driver.selectMenuItemToInventoryItem("db104ecc-18f3-4048-9d73-13b601d424ab");
         printItems(test);
 
-
-    void productusage(){
-        HashMap <String, Integer> productUsageReport = driver.selectProductUsage(1,2,1,2);
-        System.out.println(productUsageReport);
-    }
 
 
     }

@@ -49,7 +49,7 @@ public class DBSnapshotSingleton {
         for (Order order : orders) {
             orderSnapshot.put(order.orderId, order);
         }
-    }a
+    }
 
     public void refreshEmployeeSnapshot() {
         List<Employee> employees = DBDriverSingleton.getInstance()
