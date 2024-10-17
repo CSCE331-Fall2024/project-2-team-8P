@@ -2,7 +2,7 @@ package org.example.pandaexpresspos.database;
 import org.example.pandaexpresspos.models.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -244,15 +244,14 @@ class DBDriverSingletonTest {
         );
         printMap(salesReport);
     }
+
     @Test
     void selectMenuItemToInventoryItemTest(){
         List<InventoryItem> test;
-        test=driver.selectMenuItemToInventoryItem("db104ecc-18f3-4048-9d73-13b601d424ab");
+        test = driver.selectMenuItemInventoryItems(UUID.fromString("27ed4ed2-4b8a-48e6-9372-98febf0122a6"));
         printItems(test);
-
-
-
     }
+
     // Helpers
     private <T> void printItems(List<T> items) {
         for (T item : items) {

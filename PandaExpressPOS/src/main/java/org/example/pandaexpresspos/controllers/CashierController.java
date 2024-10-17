@@ -34,7 +34,7 @@ public class CashierController {
 
     private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
     private final DBSnapshotSingleton dbSnapshot = DBSnapshotSingleton.getInstance();
-    
+
     private Employee loggedInUser;
 
     // New Order instance
@@ -145,8 +145,8 @@ public class CashierController {
         menuItemGridPane.setAlignment(Pos.CENTER);
         menuItemGridPane.setStyle("-fx-padding: 10;");
 
-        for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
-            String itemName = item.itemName;
+        for (MenuItem menuItem : dbSnapshot.getMenuSnapshot().values()) {
+            String itemName = menuItem.itemName;
             String itemImg;
             try {
                 itemImg = getClass()
@@ -155,42 +155,37 @@ public class CashierController {
             } catch (Exception e) {
                 itemImg = sampleImg;
             }
-          
-//            String itemStock = String.valueOf(item.availableStock);
 
             // Create a vertical box for image and label
             VBox layout = new VBox(10);
             layout.setAlignment(Pos.CENTER);
 
-            // Create a button, set background to img
-            Button button = new Button();
-            button.setMinSize(100, 80);
-            Boolean check = false;
-            for(InventoryItem inter : item.inventoryItems.keySet()){
-                if(inter.availableStock <= 0 ){
-                    check = true;
-                }
-            }
-            if(check){
-                button.setStyle(
+            // Create a button for every menu item in our grid of menu items
+            Button menuItemBtn = new Button();
+            menuItemBtn.setMinSize(100, 80);
+
+            // Gray out items that don't have enough inventory
+            if (!menuItem.isAvailable()) {
+                menuItemBtn.setStyle(
                         "-fx-background-image: url('" + itemImg + "');" +
                                 "-fx-background-size: cover;" +
                                 "-fx-cursor: hand;" +
                                 "-fx-background-color: rgba(128, 128, 128, 0.5)" + // grey with 50% transparency
-                        "-fx-background-blend-mode: overlay;" // ensures transparency is blended with the image
+                                "-fx-background-blend-mode: overlay;" // ensures transparency is blended with the image
                 );
-                button.setDisable(true);
-            }
-            else {
-                button.setStyle("-fx-background-image: url('" + itemImg + "');" +
+                menuItemBtn.setDisable(true);
+            } else {
+                menuItemBtn.setStyle("-fx-background-image: url('" + itemImg + "');" +
                         "-fx-background-size: cover;-fx-cursor: hand;");
             }
-            // Handle clicks
-            button.setOnMouseClicked(e -> {
-                //item.inventoryItems = dbDriver.getMenuItemMap(item);
-                selectItem(item);
-                dbDriver.decreaseMenuItemInventoryQuantity(item);
-                createMenuItemGrid();
+
+            // Handle when the user clicks on a menu item
+            menuItemBtn.setOnMouseClicked(e -> {
+                // If this returns false, then there wasn't enough inventory to add the item to the order
+                if (tryAddItemToOrder(menuItem)) {
+                    dbDriver.decreaseMenuItemInventoryQuantity(menuItem, 1);
+                    createMenuItemGrid();
+                }
             });
 
             // Create labels with styles
@@ -198,16 +193,13 @@ public class CashierController {
             nameLabel.setTextAlignment(TextAlignment.CENTER);
             nameLabel.setStyle("-fx-padding:5;-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333; -fx-background-color: white");
 
-//            Label itemStockLabel = new Label("Qty: " + itemStock);
-//            itemStockLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;-fx-background-color: black;");
-
             // Allow the VBox to grow in the GridPane cell
             layout.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE); // Let it grow
             GridPane.setVgrow(layout, Priority.ALWAYS); // Let the VBox grow vertically
             GridPane.setHgrow(layout, Priority.ALWAYS); // Let the VBox grow horizontally
 
             // Add items to vbox
-            layout.getChildren().addAll(button, nameLabel);
+            layout.getChildren().addAll(menuItemBtn, nameLabel);
 
             // Add vbox to grid
             menuItemGridPane.add(layout, x, y);
@@ -262,22 +254,18 @@ public class CashierController {
         placeOrder.setOnAction(event -> addOrder());
     }
 
-    private void selectItem(MenuItem item) {
-        boolean check = false;
-        for(InventoryItem inter : item.inventoryItems.keySet()){
-            if(inter.availableStock <= 0 ){
-                check = true;
-            }
-        }
-        if(check){
+    private Boolean tryAddItemToOrder(MenuItem item) {
+        boolean hasEnoughInventory = item.isAvailable();
 
+        if (!hasEnoughInventory) {
             showAlert("Cannot Fulfill Order", "Inventory Item out of stock");
-
         } else {
-        lastSelectedItem = item;
-        currentQuantity.setLength(0); // Clear the current quantity
-        addItemToOrder(item); // Add one item immediately
+            lastSelectedItem = item;
+            currentQuantity.setLength(0); // Clear the current quantity
+            addItemToOrder(item); // Add one item immediately
         }
+
+        return hasEnoughInventory;
     }
 
     private void showAlert(String title, String message) {
@@ -288,25 +276,23 @@ public class CashierController {
         alert.showAndWait();
     }
 
-
     private void appendQuantity(int num) {
         currentQuantity.append(num);
     }
 
     private void updateSelectedItemQuantity() {
-
+        int quantity = Integer.parseInt(currentQuantity.toString());
         if (lastSelectedItem != null && !currentQuantity.isEmpty()) {
-            int quantity = Integer.parseInt(currentQuantity.toString());
-            dbDriver.decreaseMenuItemInventoryQuantity(lastSelectedItem, quantity);
-            updateItemQuantity(lastSelectedItem, quantity);
-            currentQuantity.setLength(0); // Clear the quantity after updating
-        }
-        else{
-            int quantity = Integer.parseInt(currentQuantity.toString());
-            updateItemQuantity(lastSelectedItem, quantity);
-            currentQuantity.setLength(0);
-        }
+            // If we are updating the quantity of `lastSelectedItem`, we need to find
+            // the difference between our current quantity and the previous quantity
+            int oldQuantity = currentOrder.menuItems.getOrDefault(lastSelectedItem, 0);
+            int quantityDiff = quantity - oldQuantity;
 
+            dbDriver.decreaseMenuItemInventoryQuantity(lastSelectedItem, quantityDiff);
+            updateItemQuantity(lastSelectedItem, quantity);
+        }
+        // Clear the quantity after updating
+        currentQuantity.setLength(0);
     }
 
     private void clearQuantity() {
@@ -317,7 +303,6 @@ public class CashierController {
         BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
 
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
-
             MenuItem prevItem = existingItem.getKey();
 
             if (prevItem.itemName.equals(item.itemName)) {
@@ -372,9 +357,9 @@ public class CashierController {
 
     @FXML
     private void clearTable() {
-        //replenish when clear is clicked
-        for(MenuItem curr : currentOrder.menuItems.keySet()){
-            dbDriver.increaseMenuItemInventoryQuantity(curr,currentOrder.menuItems.get(curr));
+        // Put back inventory if the order is cleared
+        for (MenuItem associatedInventory : currentOrder.menuItems.keySet()) {
+            dbDriver.increaseMenuItemInventoryQuantity(associatedInventory, currentOrder.menuItems.get(associatedInventory));
         }
         // Remove all items from the menuItems map in the current order
         currentOrder.menuItems.clear();
@@ -384,7 +369,6 @@ public class CashierController {
         orderTable.setItems(orderItems);
 
         // Reset tax and total fields to $0.00
-//        taxField.setText("Tax: $0.00");
         totalField.setText("Total: $0.00");
 
         // Reset the price in the current order
@@ -434,7 +418,6 @@ public class CashierController {
     }
 
     private void updateTotals() {
-//        double subtotal = orderItems.stream().mapToDouble(OrderItem::getPrice).sum(); // Updated to OrderItem
         double subtotal = 0;
         for (Map.Entry<MenuItem, Integer> entry : currentOrder.menuItems.entrySet()) {
             MenuItem currentItem = entry.getKey();
@@ -446,13 +429,6 @@ public class CashierController {
 
         BigDecimal subtotalBD = BigDecimal.valueOf(subtotal).setScale(2, RoundingMode.HALF_UP);
 
-//        double tax = subtotalBD.multiply(BigDecimal.valueOf(TAX_RATE)).doubleValue();
-//        BigDecimal taxBD = BigDecimal.valueOf(tax).setScale(2, RoundingMode.HALF_UP);
-//
-//        double total = subtotalBD.add(taxBD).doubleValue();
-//        BigDecimal totalBD = BigDecimal.valueOf(total).setScale(2, RoundingMode.HALF_UP);
-
-//        taxField.setText("Tax: " + String.format("$%.2f", taxBD.doubleValue()));
         totalField.setText("Total: " + String.format("$%.2f", subtotalBD.doubleValue()));
     }
 }

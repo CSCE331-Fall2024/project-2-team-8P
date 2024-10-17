@@ -359,9 +359,6 @@ public class ManagerController {
         Label menuItemPriceLabel = new Label("Menu Item Cost: ");
         TextField menuItemPrice = new TextField();
 
-//        Label availableStockLabel = new Label("Available Stock: ");
-//        TextField availableStock = new TextField();
-
         Label imageUrlLabel = new Label("Image Url: ");
         TextField imageUrl = new TextField();
 
@@ -371,7 +368,6 @@ public class ManagerController {
         menuItem.ifPresent(safeItem -> {
             menuItemName.setText(safeItem.itemName);
             menuItemPrice.setText(String.valueOf(safeItem.price));
-//            availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
             dialogLabelName.set("Update");  // Set dialog label to update
         });
@@ -386,8 +382,6 @@ public class ManagerController {
                 menuItemName,
                 menuItemPriceLabel,
                 menuItemPrice,
-//                availableStockLabel,
-//                availableStock,
                 imageUrlLabel,
                 imageUrl
         );
@@ -401,8 +395,10 @@ public class ManagerController {
         dialog.getDialogPane().setContent(menuContainer);
 
         menuItem.ifPresent(safeItem -> {
-            // Retrieve associated inventory items for the selected menu item);
-            List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(safeItem.menuItemId.toString());
+            // Retrieve associated inventory items for the selected menu item;
+            List<InventoryItem> associatedInventoryItems =
+                    dbDriver.selectMenuItemInventoryItems(safeItem.menuItemId);
+
             // Loop through all the checkboxes and check the ones associated with the MenuItem
             for (Node node : selectInventoryItems.getChildren()) {
                 if (node instanceof CheckBox checkBox) {
@@ -455,19 +451,19 @@ public class ManagerController {
                     if (node instanceof CheckBox checkBox) {
                         if (checkBox.isSelected()) {
                             String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
-                            dbDriver.insertMenuItemToInventoryItem(String.valueOf(menuitemid), inventoryItemId);
+                            dbDriver.insertMenuItemToInventoryItem(menuitemid, UUID.fromString(inventoryItemId));
                         }
                     }
                 }
                 } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
-                dbDriver.deleteMenuItemToInventoryItem(item.menuItemId.toString());
+                dbDriver.deleteMenuItemToInventoryItem(item.menuItemId);
                 for (Node node : selectInventoryItems.getChildren()) {
                     if (node instanceof CheckBox checkBox) {
                         if (checkBox.isSelected()) {
                             String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
-                            dbDriver.insertMenuItemToInventoryItem(item.menuItemId.toString(), inventoryItemId);
+                            dbDriver.insertMenuItemToInventoryItem(item.menuItemId, UUID.fromString(inventoryItemId));
                         }
                     }
                 }
