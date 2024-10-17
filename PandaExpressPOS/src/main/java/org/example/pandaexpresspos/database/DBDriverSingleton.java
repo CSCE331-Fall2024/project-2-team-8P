@@ -426,6 +426,37 @@ public class DBDriverSingleton {
         }
         return items;
     }
+
+//    public static InventoryItemWithQty inventoryItemWithQtyMapper(ResultSet rs) {
+//        try {
+//            return new InventoryItemWithQty(
+//                            rs.,
+//                            rs.getInt("availiblestock")
+//            );
+//        } catch (SQLException e) {
+//            throw new RuntimeException("Error mapping ResultSet to InventoryItemWithQty", e);
+//        }
+//    }
+
+    public Map<InventoryItem, Integer> getMenuItemMap(MenuItem item) {
+        Map<InventoryItem, Integer> inventoryMap = new HashMap<>();
+        String name = item.itemName;
+        try {
+            List<InventoryItemWithQty> map =
+                    executeQuery(String.format(QueryTemplate.selectInventoryItemandStock, name
+                            ),
+                            SQLToJavaMapper::inventoryItemWithQtyMapper
+                    );
+            for (InventoryItemWithQty iven : map) {
+                inventoryMap.put(iven.inventoryItem, iven.quantity);
+            }
+
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return inventoryMap;
+    }
+
     public void deleteMenuItemToInventoryItem(String menuItemId) {
         executeUpdate(String.format(QueryTemplate.deleteMenuItemToInventoryItem,
                 menuItemId

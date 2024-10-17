@@ -187,6 +187,7 @@ public class CashierController {
             }
             // Handle clicks
             button.setOnMouseClicked(e -> {
+                //item.inventoryItems = dbDriver.getMenuItemMap(item);
                 selectItem(item);
                 dbDriver.decreaseMenuItemInventoryQuantity(item);
                 createMenuItemGrid();
@@ -301,6 +302,7 @@ public class CashierController {
             currentQuantity.setLength(0); // Clear the quantity after updating
         }
         else{
+            int quantity = Integer.parseInt(currentQuantity.toString());
             updateItemQuantity(lastSelectedItem, quantity);
             currentQuantity.setLength(0);
         }

@@ -166,5 +166,19 @@ class QueryTemplate {
                 i.availableStock,
                 i.itemName;
             """;
-
+    public static final String selectInventoryItemandStock = """
+                         SELECT 
+                ii.inventoryitemid,
+                ii.cost,
+                ii.availablestock,
+                ii.itemname
+            FROM 
+                inventoryitem ii
+            JOIN 
+                menuitemtoinventoryitem itm ON ii.inventoryitemid = itm.inventoryitemid
+            JOIN 
+                menuitem mi ON mi.menuitemid = itm.menuitemid
+            WHERE 
+                mi.itemname = '%s';
+            """;
 }
