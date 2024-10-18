@@ -6,6 +6,11 @@ class QueryTemplate {
             SELECT * FROM "order"
             WHERE orderId = '%s';
             """;
+    public static final String selectRandomOrder = """
+            SELECT * FROM "order"
+            ORDER BY RANDOM()
+            LIMIT 1;
+            """;
     public static final String selectRecentOrders = """
             SELECT * FROM "order"
             WHERE month = %d
@@ -45,6 +50,11 @@ class QueryTemplate {
             SELECT * FROM employee
             WHERE name = '%s';
             """;
+    public static final String selectRandomEmployee = """
+            SELECT * FROM employee
+            ORDER BY RANDOM()
+            LIMIT 1;
+            """;
     public static final String selectAllEmployees = """
             SELECT * FROM employee;
             """;
@@ -65,6 +75,11 @@ class QueryTemplate {
             """;
     public static final String selectAllInventoryItems = """
             SELECT * FROM inventoryItem;
+            """;
+    public static final String selectRandomInventoryItem = """
+            SELECT * FROM inventoryItem
+            ORDER BY RANDOM()
+            LIMIT 1;
             """;
     public static final String insertInventoryItem = """
             INSERT INTO inventoryItem (inventoryItemId, cost, availableStock, itemName)
@@ -94,26 +109,22 @@ class QueryTemplate {
     public static final String selectAllMenuItems = """
             SELECT * FROM menuItem;
             """;
+    public static final String selectRandomMenuItem = """
+            SELECT * FROM menuItem
+            ORDER BY RANDOM()
+            LIMIT 1;
+            """;
     public static final String selectMenuItemInventoryItems = """
-            SELECT i.inventoryItemId, i.cost, i.availableStock, i.itemName, mi.quantity
+            SELECT
+                i.inventoryItemId,
+                i.cost,
+                i.availableStock,
+                i.itemName,
+                mi.quantity AS itemsUsed
             FROM menuItem m
             JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
             JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId
-            WHERE m.menuItemId = '%s';
-            """;
-    public static final String selectMenuItemToInventoryItem = """
-            SELECT
-                m.menuItemId,
-                m.price AS menuItemPrice,
-                m.availableStock AS menuItemStock,
-                m.itemName AS menuItemName,
-                i.inventoryItemId,
-                i.cost AS inventoryItemCost,
-                i.availableStock AS inventoryItemStock,
-                i.itemName AS inventoryItemName
-            FROM menuItem m
-            JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
-            JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId;
+            WHERE m.itemName = '%s';
             """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
