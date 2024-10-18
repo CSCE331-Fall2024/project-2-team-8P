@@ -165,9 +165,15 @@ class QueryTemplate {
             FROM "order" o
             JOIN orderToMenuItem otm ON o.orderId = otm.orderId
             JOIN menuItem m ON otm.menuItemId = m.menuItemId
-            WHERE o.month BETWEEN %d AND %d
-            AND o.day BETWEEN %d AND %d
-            GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
+            WHERE
+                (o.month = %d AND o.day >= %d)
+                OR (o.month = %d AND o.day <= %d)
+                OR (o.month > %d AND o.month < %d)
+            GROUP BY
+                m.menuItemId,
+                m.price,
+                m.availableStock,
+                m.itemName;
             """;
     public static final String insertMenuItemToInventoryItem = """
             INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
@@ -189,8 +195,10 @@ class QueryTemplate {
             JOIN menuItem m ON otm.menuItemId = m.menuItemId
             JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
             JOIN inventoryItem i ON mti.inventoryItemId = i.inventoryItemId
-            WHERE o.month BETWEEN %d AND %d
-            AND o.day BETWEEN %d AND %d
+            WHERE
+                (o.month = %d AND o.day >= %d)
+                OR (o.month = %d AND o.day <= %d)
+                OR (o.month > %d AND o.month < %d)
             GROUP BY
                 i.inventoryItemId,
                 i.cost,
