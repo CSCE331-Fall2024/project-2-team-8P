@@ -1,6 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
+import org.example.pandaexpresspos.models.wrappers.MenuItemToInventoryItem;
 
 import java.util.*;
 
@@ -69,12 +70,28 @@ public class DBSnapshotSingleton {
         }
     }
 
+    // Update: this function now populates the 'inventoryItems' map within each MenuItem
     public void refreshMenuSnapshot() {
-        List<MenuItem> menuItems = DBDriverSingleton.getInstance()
-                .selectMenuItems();
+        List<MenuItemToInventoryItem> menuItemToInventoryItems = DBDriverSingleton.getInstance()
+                .selectMenuItemToInventoryItems();
+
+        // Let's refresh our inventory snapshot so we have the most updated
+        // view of our inventory item table
+        refreshInventorySnapshot();
+
         menuSnapshot.clear();
-        for (MenuItem menuItem : menuItems) {
-            menuSnapshot.put(menuItem.itemName, menuItem);
+        for (MenuItemToInventoryItem item : menuItemToInventoryItems) {
+            // Let's get the associated inventory item from our inventory snapshot
+            InventoryItem associatedInventoryItem = inventorySnapshot.get(item.inventoryItem.itemName);
+
+            if (menuSnapshot.containsKey(item.menuItem.itemName)) {
+                MenuItem existingMenuItem = menuSnapshot.get(item.menuItem.itemName);
+                existingMenuItem.addOrUpdateInventoryItem(associatedInventoryItem, 1);
+            } else {
+                MenuItem newMenuItem = item.menuItem;
+                newMenuItem.addOrUpdateInventoryItem(associatedInventoryItem, 1);
+                menuSnapshot.put(item.menuItem.itemName, newMenuItem);
+            }
         }
     }
 

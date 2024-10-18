@@ -97,11 +97,23 @@ class QueryTemplate {
     public static final String selectMenuItemInventoryItems = """
             SELECT i.inventoryItemId, i.cost, i.availableStock, i.itemName, mi.quantity
             FROM menuItem m
-            JOIN menuItemToInventoryItem mi
-            ON m.menuItemId = mi.menuItemId
-            JOIN inventoryItem i
-            ON i.inventoryItemId = mi.inventoryItemId
-            WHERE m.itemName = '%s';
+            JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String selectMenuItemToInventoryItem = """
+            SELECT
+                m.menuItemId,
+                m.price AS menuItemPrice,
+                m.availableStock AS menuItemStock,
+                m.itemName AS menuItemName,
+                i.inventoryItemId,
+                i.cost AS inventoryItemCost,
+                i.availableStock AS inventoryItemStock,
+                i.itemName AS inventoryItemName
+            FROM menuItem m
+            JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId;
             """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
@@ -130,18 +142,6 @@ class QueryTemplate {
             INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
             VALUES ('%s', '%s' , %d);
             """;
-    public static final String inventoryItemAssociatedWithMenuItem = """
-            SELECT
-            i.inventoryItemId,
-            i.cost,
-            i.availableStock,
-            i.itemName
-            FROM
-            menuitem m
-            JOIN menuItemToInventoryItem mti ON m.menuItemId = mti.menuItemId
-            JOIN inventoryItem i ON i.inventoryItemId = mti.inventoryItemId
-            WHERE m.menuItemId = '%s';
-            """;
     public static final String deleteMenuItemToInventoryItem = """
             DELETE FROM menuItemToInventoryItem
             WHERE menuItemId = '%s';
@@ -166,5 +166,4 @@ class QueryTemplate {
                 i.availableStock,
                 i.itemName;
             """;
-
 }

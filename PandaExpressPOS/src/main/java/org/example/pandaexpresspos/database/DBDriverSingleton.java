@@ -2,6 +2,7 @@ package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
 import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
+import org.example.pandaexpresspos.models.wrappers.MenuItemToInventoryItem;
 import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
@@ -62,7 +63,7 @@ public class DBDriverSingleton {
 
     // The indices in the returned list correspond to hours of the day - 1
     // e.g., index 0 corresponds to hour 1
-    public List<Double> selectXReport() {
+    public List<Double> selectSalesByHour() {
         List<Double> xReport = null;
         try {
             int currentMonth = LocalDate.now().getMonthValue();
@@ -127,6 +128,24 @@ public class DBDriverSingleton {
         return sales;
     }
 
+    public void decreaseMenuItemInventoryQuantity(MenuItem menuItem, int menuItemQty) {
+        for (InventoryItem item : menuItem.inventoryItems.keySet()) {
+            executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
+                    menuItemQty,
+                    item.inventoryItemId
+            ));
+        }
+    }
+
+    public void increaseMenuItemInventoryQuantity(MenuItem menuItem, int menuItemQty) {
+        for (InventoryItem item : menuItem.inventoryItems.keySet()) {
+            executeUpdate(String.format(QueryTemplate.increaseInventoryItemQty,
+                    menuItemQty,
+                    item.inventoryItemId
+            ));
+        }
+    }
+
     public Map<String, Integer> selectProductUsage(
             Integer startMonth,
             Integer endMonth,
@@ -174,8 +193,6 @@ public class DBDriverSingleton {
         ));
 
         // Handle menu item connections:
-        // TODO: debug inventory item count not being updated correctly
-        // TODO: perhaps convert this for loop into a single SQL query for speed
         for (MenuItem item : newOrder.menuItems.keySet()) {
             Integer menuItemQty = newOrder.menuItems.get(item);
 
@@ -185,15 +202,6 @@ public class DBDriverSingleton {
                     item.menuItemId,
                     menuItemQty
             ));
-
-            // Update quantities of associated inventory items
-            List<InventoryItemWithQty> associatedInventory = selectMenuItemInventoryItems(item);
-            for (InventoryItemWithQty itemWithQty : associatedInventory) {
-                executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
-                        itemWithQty.quantity * menuItemQty,
-                        itemWithQty.inventoryItem.inventoryItemId
-                ));
-            }
         }
     }
 
@@ -346,11 +354,24 @@ public class DBDriverSingleton {
         return items;
     }
 
+    public List<MenuItemToInventoryItem> selectMenuItemToInventoryItems() {
+        List<MenuItemToInventoryItem> items = null;
+        try {
+            items = executeQuery(
+                    QueryTemplate.selectMenuItemToInventoryItem,
+                    SQLToJavaMapper::menuItemToInventoryItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
     public List<InventoryItemWithQty> selectMenuItemInventoryItems(MenuItem menuItem) {
         List<InventoryItemWithQty> items = null;
         try {
             items = executeQuery(
-                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItem.itemName),
+                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItem.menuItemId),
                     SQLToJavaMapper::inventoryItemWithQtyMapper
             );
         } catch (SQLException e) {
@@ -376,18 +397,20 @@ public class DBDriverSingleton {
                 updatedMenuItem.menuItemId
         ));
     }
-    public void insertMenuItemToInventoryItem(String menuItemId, String inventoryItemId) {
+
+    public void insertMenuItemToInventoryItem(UUID menuItemId, UUID inventoryItemId) {
         executeUpdate(String.format(QueryTemplate.insertMenuItemToInventoryItem,
                 menuItemId,
                 inventoryItemId,
                 1
         ));
     }
-    public List<InventoryItem> selectMenuItemToInventoryItem(String menuItemId) {
+
+    public List<InventoryItem> selectMenuItemInventoryItems(UUID menuItemId) {
         List<InventoryItem> items = null;
         try {
             items = executeQuery(
-                    String.format(QueryTemplate.inventoryItemAssociatedWithMenuItem, menuItemId),
+                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItemId),
                     SQLToJavaMapper::inventoryItemMapper
             );
         } catch (SQLException e) {
@@ -395,7 +418,8 @@ public class DBDriverSingleton {
         }
         return items;
     }
-    public void deleteMenuItemToInventoryItem(String menuItemId) {
+
+    public void deleteMenuItemToInventoryItem(UUID menuItemId) {
         executeUpdate(String.format(QueryTemplate.deleteMenuItemToInventoryItem,
                 menuItemId
         ));
