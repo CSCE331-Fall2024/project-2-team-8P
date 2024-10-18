@@ -130,10 +130,9 @@ class SQLToJavaMapper {
 
     public static Double orderTotalMapper(ResultSet rs) {
         try {
-            double orderSum = rs.getDouble("count");
-            return Math.round(orderSum * 100.0) / 100.0;
+            return (double) rs.getInt("count");
         } catch (SQLException e) {
-            throw new RuntimeException("Error mapping ResultSet to Double", e);
+            throw new RuntimeException("Error mapping ResultSet to Integer", e);
         }
     }
 }

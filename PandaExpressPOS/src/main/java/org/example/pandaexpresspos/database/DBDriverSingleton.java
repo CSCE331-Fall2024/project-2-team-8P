@@ -74,7 +74,7 @@ public class DBDriverSingleton {
 
             salesByHour = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
-                    SQLToJavaMapper::orderTotalMapper
+                    SQLToJavaMapper::orderSumMapper
             );
         } catch (SQLException e) {
             e.printStackTrace();
