@@ -18,7 +18,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ca2b2d;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.pandaexpresspos.controllers.ManagerController">
@@ -63,29 +62,26 @@
                   </Tab>
                   <Tab style="-fx-text-base-color: white; -fx-background-color: black;" text="Usage Chart">
                      <AnchorPane style="-fx-background-color: white;">
-                        <VBox prefHeight="319.2" prefWidth="288.8" AnchorPane.bottomAnchor="0.0"
-                              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox prefHeight="319.2" prefWidth="288.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                           <BarChart fx:id="productUsageChart" title="Inventory Item Usage" animated="false" prefHeight="800.0" prefWidth="395.0"
-                                     VBox.vgrow="ALWAYS">
+                           <BarChart fx:id="productUsageChart" animated="false" prefHeight="800.0" prefWidth="395.0" title="Inventory Item Usage" VBox.vgrow="ALWAYS">
                               <xAxis>
-                                 <CategoryAxis label="Inventory Items"/>
+                                 <CategoryAxis label="Inventory Items" />
                               </xAxis>
                               <yAxis>
-                                 <NumberAxis label="Usage"/>
+                                 <NumberAxis label="Usage" />
                               </yAxis>
                            </BarChart>
                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                               <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                 <Label text="Start Date"/>
-                                 <DatePicker fx:id="startDatePickerProductUsage"/>
+                                 <Label text="Start Date" />
+                                 <DatePicker fx:id="startDatePickerProductUsage" />
                               </VBox>
-                              <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0"
-                                    prefWidth="100.0" HBox.hgrow="ALWAYS">
-                                 <Label text="End Date"/>
-                                 <DatePicker fx:id="endDatePickerProductUsage"/>
+                              <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                 <Label text="End Date" />
+                                 <DatePicker fx:id="endDatePickerProductUsage" />
                               </VBox>
                            </HBox>
                         </VBox>
@@ -95,7 +91,7 @@
                      <content>
                         <AnchorPane style="-fx-background-color: white;">
                            <children>
-                              <BarChart animated="false" legendVisible="false" prefHeight="400.0" prefWidth="500.0" title="Sales by Hour" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="xReportBarChart">
+                              <BarChart animated="false" prefHeight="400.0" prefWidth="500.0" title="X-Report" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="xReportBarChart">
                                 <xAxis>
                                   <CategoryAxis label="Hour" side="BOTTOM">
                                        <tickLabelFont>
@@ -104,7 +100,7 @@
                                     </CategoryAxis>
                                 </xAxis>
                                 <yAxis>
-                                  <NumberAxis label="Total Sales ($)" side="LEFT" />
+                                  <NumberAxis side="LEFT" />
                                 </yAxis>
                               </BarChart>
                            </children>
@@ -115,7 +111,7 @@
                      <content>
                         <AnchorPane style="-fx-background-color: white;">
                            <children>
-                              <BarChart fx:id="zReportBarChart" animated="false" legendVisible="false" prefHeight="400.0" prefWidth="500.0" title="Sales by Hour" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <BarChart fx:id="zReportBarChart" animated="false" prefHeight="400.0" prefWidth="500.0" title="Z-Report" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <xAxis>
                                     <CategoryAxis label="Hour" side="BOTTOM">
                                        <tickLabelFont>
@@ -124,7 +120,7 @@
                                     </CategoryAxis>
                                  </xAxis>
                                  <yAxis>
-                                    <NumberAxis label="Total Sales ($)" side="LEFT" />
+                                    <NumberAxis side="LEFT" />
                                  </yAxis>
                               </BarChart>
                            </children></AnchorPane>
@@ -136,13 +132,12 @@
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
-                           <BarChart fx:id="salesChart" title="Sales by Menu Item" animated="false" prefHeight="800.0" prefWidth="395.0"
-                                     VBox.vgrow="ALWAYS">
+                           <BarChart fx:id="salesChart" animated="false" prefHeight="800.0" prefWidth="395.0" title="Sales by Menu Item" VBox.vgrow="ALWAYS">
                               <xAxis>
-                                 <CategoryAxis label="Menu Items"/>
+                                 <CategoryAxis label="Menu Items" />
                               </xAxis>
                               <yAxis>
-                                 <NumberAxis label="Sales"/>
+                                 <NumberAxis label="Sales" />
                               </yAxis>
                            </BarChart>
                            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
