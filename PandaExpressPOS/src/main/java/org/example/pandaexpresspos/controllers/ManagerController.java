@@ -89,7 +89,7 @@ public class ManagerController {
     private DatePicker startDatePickerProductUsage;
     @FXML
     private DatePicker endDatePickerProductUsage;
-  
+
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
     private int lowInventory = 50;
@@ -218,7 +218,6 @@ public class ManagerController {
         }
 
     }
-
 
 
     // Handle adding items; special case of update item
@@ -385,9 +384,9 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-        Map<String,String> inventoryItemnameToID = new HashMap<>();
+        Map<String, String> inventoryItemnameToID = new HashMap<>();
 
-        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+        for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
             selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
             inventoryItemnameToID.put(item.itemName, item.inventoryItemId.toString());
         }
@@ -423,7 +422,6 @@ public class ManagerController {
                 return new ButtonType(
                         menuItemName.getText() + "," +
                                 menuItemPrice.getText() + ", " +
-//                                availableStock.getText() + ", " +
                                 imageUrl.getText()
                 );
             }
@@ -435,16 +433,14 @@ public class ManagerController {
             String[] outputs = outputFields.getText().split(",");
             String name = outputs[0];
             String price = outputs[1];
-//            String stock = outputs[2];
             String imgUrl = outputs[2];
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
                 UUID menuitemid;
                 dbDriver.insertMenuItem(new MenuItem(
-                        menuitemid= UUID.fromString(UUID.randomUUID().toString()),
+                        menuitemid = UUID.fromString(UUID.randomUUID().toString()),
                         Double.parseDouble(price.trim()),
-                        0,
                         name)
                 );
                 for (Node node : selectInventoryItems.getChildren()) {
@@ -455,7 +451,7 @@ public class ManagerController {
                         }
                     }
                 }
-                } else {
+            } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
                 dbDriver.deleteMenuItemToInventoryItem(item.menuItemId);
@@ -468,9 +464,7 @@ public class ManagerController {
                     }
                 }
 
-
                 item.price = Double.parseDouble(price.trim());
-                item.availableStock = 0;
                 item.itemName = name;
 
                 dbDriver.updateMenuItem(item);
@@ -624,27 +618,16 @@ public class ManagerController {
         summary.getChildren().add(summaryText);
 
         for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
-            if(item.availableStock <= veryLowInventory) {
+            if (item.availableStock <= veryLowInventory) {
                 summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
                 summary.getChildren().add(summaryText);
-            }
-            else if(item.availableStock <= lowInventory) {
+            } else if (item.availableStock <= lowInventory) {
                 summaryText = new Text(item.itemName + " has low stock, restock soon\n");
                 summary.getChildren().add(summaryText);
             }
         }
         summaryText = new Text("\nMenu Items\n");
         summary.getChildren().add(summaryText);
-        for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
-            if(item.availableStock >= unpopularMenuItem) {
-                summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
-                summary.getChildren().add(summaryText);
-            }
-            else if(item.availableStock <= popularMenuItem) {
-                summaryText = new Text(item.itemName + " is extremely popular\n");
-                summary.getChildren().add(summaryText);
-            }
-        }
     }
 
 
@@ -660,6 +643,7 @@ public class ManagerController {
         }
         salesChart.getData().add(newSeries);
     }
+
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
@@ -701,7 +685,6 @@ public class ManagerController {
         chart.getData().add(orders);
 
     }
-
 
     public void updateProductUsage() {
         Map<String, Integer> productUsageData = getProductUsageData();
@@ -769,7 +752,7 @@ public class ManagerController {
 
             // Update grid position
             x++;
-            if (x == columns){
+            if (x == columns) {
                 x = 0;
                 y++;
             }
@@ -789,7 +772,6 @@ public class ManagerController {
         for (MenuItem menuItem : dbSnapshot.getMenuSnapshot().values()) {
 
             String menuItemName = menuItem.itemName;
-            String menuItemStock = String.valueOf(menuItem.availableStock);
             String menuItemImg = sampleImg;
 
             // Create a vertical box for button and label

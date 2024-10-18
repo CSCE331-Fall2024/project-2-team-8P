@@ -307,8 +307,6 @@ public class CashierController {
     }
 
     private void updateItemQuantity(MenuItem item, int quantity) {
-        BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
-
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
             MenuItem prevItem = existingItem.getKey();
 
@@ -337,14 +335,12 @@ public class CashierController {
     }
 
     private void addItemToOrder(MenuItem item) {
-        BigDecimal priceBD = BigDecimal.valueOf(item.price).setScale(2, RoundingMode.HALF_UP);
-
-        for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) { // Updated to OrderItem
+        for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
             MenuItem prevItem = existingItem.getKey();
             Integer quantity = existingItem.getValue();
 
             if (prevItem.itemName.equals(item.itemName)) {
-                currentOrder.menuItems.replace(prevItem, quantity, quantity + 1);
+                currentOrder.addOrUpdateMenuItem(prevItem, quantity + 1);
 
                 orderItems.clear();
                 orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
