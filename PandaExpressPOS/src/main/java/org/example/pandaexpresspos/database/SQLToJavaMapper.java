@@ -58,7 +58,6 @@ class SQLToJavaMapper {
             return new MenuItem(
                     UUID.fromString(rs.getString("menuItemId")),
                     rs.getDouble("price"),
-                    rs.getInt("availableStock"),
                     rs.getString("itemName")
             );
         } catch (SQLException e) {
@@ -72,7 +71,6 @@ class SQLToJavaMapper {
                     new MenuItem(
                             UUID.fromString(rs.getString("menuItemId")),
                             rs.getDouble("price"),
-                            rs.getInt("availableStock"),
                             rs.getString("itemName")
                     ),
                     rs.getInt("count")
@@ -104,7 +102,6 @@ class SQLToJavaMapper {
                     new MenuItem(
                             UUID.fromString(rs.getString("menuItemId")),
                             rs.getDouble("menuItemPrice"),
-                            rs.getInt("menuItemStock"),
                             rs.getString("menuItemName")
                     ),
                     new InventoryItem(

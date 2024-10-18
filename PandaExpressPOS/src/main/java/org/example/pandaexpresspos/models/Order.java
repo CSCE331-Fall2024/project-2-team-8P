@@ -49,21 +49,9 @@ public class Order {
         inventoryItems.put(item, quantity);
     }
 
-    public void removeInventoryItem(InventoryItem item) {
-        inventoryItems.remove(item);
-    }
-
     public void addOrUpdateMenuItem(MenuItem item, int quantity) {
         double priceDiff = (quantity - menuItems.getOrDefault(item, 0)) * item.price;
         price += priceDiff;
         menuItems.put(item, quantity);
-    }
-
-    public void removeMenuItem(MenuItem item) {
-        menuItems.remove(item);
-    }
-
-    public void addTax(double tax){
-        price += tax;
     }
 }

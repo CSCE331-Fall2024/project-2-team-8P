@@ -420,7 +420,6 @@ public class DBDriverSingleton {
         executeUpdate(String.format(QueryTemplate.insertMenuItem,
                 newMenuItem.menuItemId,
                 newMenuItem.price,
-                newMenuItem.availableStock,
                 newMenuItem.itemName
         ));
     }
@@ -428,7 +427,6 @@ public class DBDriverSingleton {
     public void updateMenuItem(MenuItem updatedMenuItem) {
         executeUpdate(String.format(QueryTemplate.updateMenuItem,
                 updatedMenuItem.price,
-                updatedMenuItem.availableStock,
                 updatedMenuItem.itemName,
                 updatedMenuItem.menuItemId
         ));

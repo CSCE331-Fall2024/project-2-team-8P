@@ -140,34 +140,28 @@ class QueryTemplate {
                 i.itemName AS inventoryItemName,
                 m.menuItemId,
                 m.price as menuItemPrice,
-                m.availableStock AS menuItemStock,
                 m.itemName AS menuItemName
             FROM menuItem m
             JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
             JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId;
             """;
     public static final String insertMenuItem = """
-            INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
-            VALUES ('%s', %f, %d, '%s');
-            """;
-    public static final String decreaseMenuItemQty = """
-            UPDATE menuItem
-            SET availableStock = availableStock - %d
-            WHERE menuItemId = '%s';
+            INSERT INTO menuItem (menuItemId, price, itemName)
+            VALUES ('%s', %f, '%s');
             """;
     public static final String updateMenuItem = """
             UPDATE menuItem
-            SET price = %f, availableStock = %d, itemName = '%s'
+            SET price = %f, itemName = '%s'
             WHERE menuItemId = '%s';
             """;
     public static final String selectMenuItemSalesByTimePeriod = """
-            SELECT m.menuItemId, m.price, m.availableStock, m.itemName, count(*)
+            SELECT m.menuItemId, m.price, m.itemName, count(*)
             FROM "order" o
             JOIN orderToMenuItem otm ON o.orderId = otm.orderId
             JOIN menuItem m ON otm.menuItemId = m.menuItemId
             WHERE o.month BETWEEN %d AND %d
             AND o.day BETWEEN %d AND %d
-            GROUP BY m.menuItemId, m.price, m.availableStock, m.itemName;
+            GROUP BY m.menuItemId, m.price, m.itemName;
             """;
     public static final String insertMenuItemToInventoryItem = """
             INSERT INTO menuItemToInventoryItem (menuItemId, inventoryItemId, quantity)
