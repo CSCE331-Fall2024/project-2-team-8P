@@ -666,7 +666,7 @@ public class ManagerController {
         BarChart<String, Double> chart;
 
         if (wholeDay) {
-            hourlySales = DBDriverSingleton.getInstance().selectZReport();
+            hourlySales = DBDriverSingleton.getInstance().selectSalesByHourForDay();
             chart = zReportBarChart;
         } else {
             hourlySales = DBDriverSingleton.getInstance().selectSalesByHour();

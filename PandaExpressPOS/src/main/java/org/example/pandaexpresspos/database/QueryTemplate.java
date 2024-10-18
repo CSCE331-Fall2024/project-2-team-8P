@@ -23,6 +23,12 @@ class QueryTemplate {
             GROUP BY hour
             ORDER BY hour ASC;
             """;
+    public static final String selectOrderByHour = """
+            SELECT hour, COUNT(*) FROM "order"
+            WHERE month = %d AND day = %d AND hour <= %d
+            GROUP BY hour
+            ORDER BY hour ASC;
+            """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
             VALUES ('%s', '%s', %d, %d, %d, %d, %f);
@@ -114,7 +120,7 @@ class QueryTemplate {
             ORDER BY RANDOM()
             LIMIT 1;
             """;
-    public static final String selectMenuItemInventoryItems = """
+    public static final String selectMenuItemInventoryItem = """
             SELECT
                 i.inventoryItemId,
                 i.cost,
