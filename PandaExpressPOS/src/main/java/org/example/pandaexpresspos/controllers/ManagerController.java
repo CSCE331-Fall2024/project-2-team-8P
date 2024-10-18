@@ -663,12 +663,15 @@ public class ManagerController {
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
+        List<Double> hourlyOrders;
         BarChart<String, Double> chart;
 
         if (wholeDay) {
             hourlySales = DBDriverSingleton.getInstance().selectSalesByHourForDay();
+            hourlyOrders = DBDriverSingleton.getInstance().selectOrdersByHourForDay();
             chart = zReportBarChart;
         } else {
+            hourlyOrders = DBDriverSingleton.getInstance().selectOrdersByHour();
             hourlySales = DBDriverSingleton.getInstance().selectSalesByHour();
             chart = xReportBarChart;
         }
@@ -686,6 +689,7 @@ public class ManagerController {
         // Add data to series
         for (int i = 0; i < hourlySales.size(); i++) {
             sales.getData().add(new XYChart.Data<>(hours[i], hourlySales.get(i)));
+            sales.getData().add(new XYChart.Data<>(hours[i], hourlyOrders.get(i)));
         }
 
         // Add series to bar chart
