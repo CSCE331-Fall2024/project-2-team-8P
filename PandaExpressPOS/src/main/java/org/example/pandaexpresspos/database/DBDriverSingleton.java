@@ -63,7 +63,7 @@ public class DBDriverSingleton {
 
     // The indices in the returned list correspond to hours of the day - 1
     // e.g., index 0 corresponds to hour 1
-    public List<Double> selectXReport() {
+    public List<Double> selectSalesByHour() {
         List<Double> xReport = null;
         try {
             int currentMonth = LocalDate.now().getMonthValue();

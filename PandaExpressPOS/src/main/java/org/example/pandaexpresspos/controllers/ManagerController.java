@@ -669,7 +669,7 @@ public class ManagerController {
             hourlySales = DBDriverSingleton.getInstance().selectZReport();
             chart = zReportBarChart;
         } else {
-            hourlySales = DBDriverSingleton.getInstance().selectXReport();
+            hourlySales = DBDriverSingleton.getInstance().selectSalesByHour();
             chart = xReportBarChart;
         }
 

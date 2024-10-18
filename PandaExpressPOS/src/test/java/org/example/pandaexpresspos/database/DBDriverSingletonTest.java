@@ -37,7 +37,7 @@ class DBDriverSingletonTest {
 
     @Test
     void selectXReport() {
-        List<Double> xReport = driver.selectXReport();
+        List<Double> xReport = driver.selectSalesByHour();
         printOrderSumsByHour(xReport);
     }
 

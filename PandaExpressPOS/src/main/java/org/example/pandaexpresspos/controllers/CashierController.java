@@ -184,8 +184,10 @@ public class CashierController {
                 // If this returns false, then there wasn't enough inventory to add the item to the order
                 if (tryAddItemToOrder(menuItem)) {
                     dbDriver.decreaseMenuItemInventoryQuantity(menuItem, 1);
-                    createMenuItemGrid();
                 }
+
+                menuItemGridPane.getChildren().clear();
+                createMenuItemGrid();
             });
 
             // Create labels with styles
@@ -281,6 +283,11 @@ public class CashierController {
     }
 
     private void updateSelectedItemQuantity() {
+        if (!lastSelectedItem.isAvailable()) {
+            showAlert("Cannot Fulfill Order", "Inventory Item out of stock");
+            return;
+        }
+
         int quantity = Integer.parseInt(currentQuantity.toString());
         if (lastSelectedItem != null && !currentQuantity.isEmpty()) {
             // If we are updating the quantity of `lastSelectedItem`, we need to find
