@@ -130,7 +130,21 @@ class QueryTemplate {
             FROM menuItem m
             JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
             JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId
-            WHERE m.itemName = '%s';
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String selectAllMenuItemInventoryItem = """
+            SELECT
+                i.inventoryItemId,
+                i.cost AS inventoryItemCost,
+                i.availableStock AS inventoryItemStock,
+                i.itemName AS inventoryItemName,
+                m.menuItemId,
+                m.price as menuItemPrice,
+                m.availableStock AS menuItemStock,
+                m.itemName AS menuItemName
+            FROM menuItem m
+            JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId;
             """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)

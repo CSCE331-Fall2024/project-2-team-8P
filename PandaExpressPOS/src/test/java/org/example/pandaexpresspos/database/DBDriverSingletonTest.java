@@ -36,18 +36,6 @@ class DBDriverSingletonTest {
     }
 
     @Test
-    void selectXReport() {
-        List<Double> xReport = driver.selectXReport();
-        printOrderSumsByHour(xReport);
-    }
-
-    @Test
-    void selectZReport() {
-        List<Double> zReport = driver.selectSalesByHourForDay();
-        printOrderSumsByHour(zReport);
-    }
-
-    @Test
     void insertOrder() {
         MenuItem menuItem = driver.selectRandomMenuItem();
         System.out.println();

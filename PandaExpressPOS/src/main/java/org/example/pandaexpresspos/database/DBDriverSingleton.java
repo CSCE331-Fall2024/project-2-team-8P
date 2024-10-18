@@ -394,7 +394,7 @@ public class DBDriverSingleton {
         List<MenuItemToInventoryItem> items = null;
         try {
             items = executeQuery(
-                    QueryTemplate.selectMenuItemInventoryItem,
+                    QueryTemplate.selectAllMenuItemInventoryItem,
                     SQLToJavaMapper::menuItemToInventoryItemMapper
             );
         } catch (SQLException e) {
