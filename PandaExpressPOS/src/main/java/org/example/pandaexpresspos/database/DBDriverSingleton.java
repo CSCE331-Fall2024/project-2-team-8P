@@ -64,7 +64,7 @@ public class DBDriverSingleton {
     // The indices in the returned list correspond to hours of the day - 1
     // e.g., index 0 corresponds to hour 1
     public List<Double> selectSalesByHour() {
-        List<Double> xReport = null;
+        List<Double> salesByHour = null;
         try {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentDay = LocalDate.now().getDayOfMonth();
@@ -72,33 +72,69 @@ public class DBDriverSingleton {
             // Workday starts at 10am and ends at 10pm
             int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
 
-            xReport = executeQuery(
+            salesByHour = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
                     SQLToJavaMapper::orderSumMapper
             );
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return xReport;
+        return salesByHour;
+    }
+
+    public List<Double> selectOrdersByHour() {
+        List<Double> ordersByHour = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Workday starts at 10am and ends at 10pm
+            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
+
+            ordersByHour = executeQuery(
+                    String.format(QueryTemplate.selectOrderByHour, currentMonth, currentDay, currentHour),
+                    SQLToJavaMapper::orderTotalMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ordersByHour;
     }
 
     // The indices in the returned list correspond to hours of the day - 1
     // e.g., index 0 corresponds to hour 1
-    public List<Double> selectZReport() {
-        List<Double> zReport = null;
+    public List<Double> selectSalesByHourForDay() {
+        List<Double> selectOrderByHourForDay = null;
         try {
             int currentMonth = LocalDate.now().getMonthValue();
             int currentDay = LocalDate.now().getDayOfMonth();
             final int totalWorkingHoursPerDay = 12;
 
-            zReport = executeQuery(
+            selectOrderByHourForDay = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, totalWorkingHoursPerDay),
                     SQLToJavaMapper::orderSumMapper
             );
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return zReport;
+        return selectOrderByHourForDay;
+    }
+
+    public List<Double> selectOrdersByHourForDay() {
+        List<Double> selectOrderByHourForDay = null;
+        try {
+            int currentMonth = LocalDate.now().getMonthValue();
+            int currentDay = LocalDate.now().getDayOfMonth();
+            final int totalWorkingHoursPerDay = 12;
+
+            selectOrderByHourForDay = executeQuery(
+                    String.format(QueryTemplate.selectOrderByHour, currentMonth, currentDay, totalWorkingHoursPerDay),
+                    SQLToJavaMapper::orderTotalMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return selectOrderByHourForDay;
     }
 
     public Map<String, Integer> selectSalesReport(
@@ -358,7 +394,7 @@ public class DBDriverSingleton {
         List<MenuItemToInventoryItem> items = null;
         try {
             items = executeQuery(
-                    QueryTemplate.selectMenuItemToInventoryItem,
+                    QueryTemplate.selectAllMenuItemInventoryItem,
                     SQLToJavaMapper::menuItemToInventoryItemMapper
             );
         } catch (SQLException e) {
@@ -371,7 +407,7 @@ public class DBDriverSingleton {
         List<InventoryItemWithQty> items = null;
         try {
             items = executeQuery(
-                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItem.menuItemId),
+                    String.format(QueryTemplate.selectMenuItemInventoryItem, menuItem.menuItemId),
                     SQLToJavaMapper::inventoryItemWithQtyMapper
             );
         } catch (SQLException e) {
@@ -410,7 +446,7 @@ public class DBDriverSingleton {
         List<InventoryItem> items = null;
         try {
             items = executeQuery(
-                    String.format(QueryTemplate.selectMenuItemInventoryItems, menuItemId),
+                    String.format(QueryTemplate.selectMenuItemInventoryItem, menuItemId),
                     SQLToJavaMapper::inventoryItemMapper
             );
         } catch (SQLException e) {
@@ -424,7 +460,6 @@ public class DBDriverSingleton {
                 menuItemId
         ));
     }
-
 
     // Test helpers (package-private):
     Order selectRandomOrder() {

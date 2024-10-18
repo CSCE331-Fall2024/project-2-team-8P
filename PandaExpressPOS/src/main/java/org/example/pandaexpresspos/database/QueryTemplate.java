@@ -23,6 +23,12 @@ class QueryTemplate {
             GROUP BY hour
             ORDER BY hour ASC;
             """;
+    public static final String selectOrderByHour = """
+            SELECT hour, COUNT(*) FROM "order"
+            WHERE month = %d AND day = %d AND hour <= %d
+            GROUP BY hour
+            ORDER BY hour ASC;
+            """;
     public static final String insertOrder = """
             INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
             VALUES ('%s', '%s', %d, %d, %d, %d, %f);
@@ -114,7 +120,7 @@ class QueryTemplate {
             ORDER BY RANDOM()
             LIMIT 1;
             """;
-    public static final String selectMenuItemInventoryItems = """
+    public static final String selectMenuItemInventoryItem = """
             SELECT
                 i.inventoryItemId,
                 i.cost,
@@ -124,7 +130,21 @@ class QueryTemplate {
             FROM menuItem m
             JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
             JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId
-            WHERE m.itemName = '%s';
+            WHERE m.menuItemId = '%s';
+            """;
+    public static final String selectAllMenuItemInventoryItem = """
+            SELECT
+                i.inventoryItemId,
+                i.cost AS inventoryItemCost,
+                i.availableStock AS inventoryItemStock,
+                i.itemName AS inventoryItemName,
+                m.menuItemId,
+                m.price as menuItemPrice,
+                m.availableStock AS menuItemStock,
+                m.itemName AS menuItemName
+            FROM menuItem m
+            JOIN menuItemToInventoryItem mi ON m.menuItemId = mi.menuItemId
+            JOIN inventoryItem i ON i.inventoryItemId = mi.inventoryItemId;
             """;
     public static final String insertMenuItem = """
             INSERT INTO menuItem (menuItemId, price, availableStock, itemName)

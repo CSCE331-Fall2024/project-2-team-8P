@@ -127,4 +127,12 @@ class SQLToJavaMapper {
             throw new RuntimeException("Error mapping ResultSet to Double", e);
         }
     }
+
+    public static Double orderTotalMapper(ResultSet rs) {
+        try {
+            return (double) rs.getInt("count");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error mapping ResultSet to Integer", e);
+        }
+    }
 }

@@ -5,7 +5,6 @@ import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,18 +33,6 @@ class DBDriverSingletonTest {
     void selectOrders() {
         List<Order> orders = driver.selectOrders(50);
         printItems(orders);
-    }
-
-    @Test
-    void selectXReport() {
-        List<Double> xReport = driver.selectXReport();
-        printOrderSumsByHour(xReport);
-    }
-
-    @Test
-    void selectZReport() {
-        List<Double> zReport = driver.selectZReport();
-        printOrderSumsByHour(zReport);
     }
 
     @Test
