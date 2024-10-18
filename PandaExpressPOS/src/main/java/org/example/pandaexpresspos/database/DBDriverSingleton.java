@@ -376,6 +376,31 @@ public class DBDriverSingleton {
                 updatedMenuItem.menuItemId
         ));
     }
+    public void insertMenuItemToInventoryItem(String menuItemId, String inventoryItemId) {
+        executeUpdate(String.format(QueryTemplate.insertMenuItemToInventoryItem,
+                menuItemId,
+                inventoryItemId,
+                1
+        ));
+    }
+    public List<InventoryItem> selectMenuItemToInventoryItem(String menuItemId) {
+        List<InventoryItem> items = null;
+        try {
+            items = executeQuery(
+                    String.format(QueryTemplate.inventoryItemAssociatedWithMenuItem, menuItemId),
+                    SQLToJavaMapper::inventoryItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+    public void deleteMenuItemToInventoryItem(String menuItemId) {
+        executeUpdate(String.format(QueryTemplate.deleteMenuItemToInventoryItem,
+                menuItemId
+        ));
+    }
+
 
     // Test helpers (package-private):
     Order selectRandomOrder() {

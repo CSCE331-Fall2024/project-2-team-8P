@@ -14,6 +14,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -88,7 +89,7 @@ public class ManagerController {
     private DatePicker startDatePickerProductUsage;
     @FXML
     private DatePicker endDatePickerProductUsage;
-
+  
     private int unpopularMenuItem = 500;
     private int popularMenuItem = 10;
     private int lowInventory = 50;
@@ -170,6 +171,7 @@ public class ManagerController {
         createEmployeesGrid();
         createProductUsageChart();
         initSalesReportChart();
+
     }
 
     public void setLoggedInUser(Employee user) {
@@ -214,7 +216,10 @@ public class ManagerController {
             default:
                 break;
         }
+
     }
+
+
 
     // Handle adding items; special case of update item
     public void addItem() throws RuntimeException {
@@ -233,6 +238,7 @@ public class ManagerController {
                 break;
             default:
                 throw new RuntimeException();
+
         }
     }
 
@@ -281,7 +287,6 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
-
         dialog.getDialogPane().setContent(inputsContainer);
 
         // Add buttons to dialog pane
@@ -342,7 +347,11 @@ public class ManagerController {
         Dialog<ButtonType> dialog = new Dialog<>();
 
         // Create the layout to add to dialog
-        VBox inputsContainer = new VBox();
+        VBox inputsContainer = new VBox(10);
+        HBox menuContainer = new HBox(20);
+        VBox selectInventoryItems = new VBox(10);
+        ScrollPane inventoryItemsScroll = new ScrollPane(selectInventoryItems);
+        inventoryItemsScroll.maxHeightProperty().bind(menuContainer.heightProperty());
 
         Label menuItemNameLabel = new Label("Menu Item Name: ");
         TextField menuItemName = new TextField();
@@ -364,7 +373,7 @@ public class ManagerController {
             menuItemPrice.setText(String.valueOf(safeItem.price));
 //            availableStock.setText(String.valueOf(safeItem.availableStock));
             imageUrl.setText(sampleImg);
-            dialogLabelName.set("Update");
+            dialogLabelName.set("Update");  // Set dialog label to update
         });
 
         // Set the header and dialog to either Update or Add Menu Item
@@ -382,8 +391,31 @@ public class ManagerController {
                 imageUrlLabel,
                 imageUrl
         );
+        Map<String,String> inventoryItemnameToID = new HashMap<>();
 
-        dialog.getDialogPane().setContent(inputsContainer);
+        for(InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
+            selectInventoryItems.getChildren().add(new CheckBox(item.itemName));
+            inventoryItemnameToID.put(item.itemName, item.inventoryItemId.toString());
+        }
+        menuContainer.getChildren().addAll(inputsContainer, inventoryItemsScroll);
+        dialog.getDialogPane().setContent(menuContainer);
+
+        menuItem.ifPresent(safeItem -> {
+            // Retrieve associated inventory items for the selected menu item);
+            List<InventoryItem> associatedInventoryItems = dbDriver.selectMenuItemToInventoryItem(safeItem.menuItemId.toString());
+            // Loop through all the checkboxes and check the ones associated with the MenuItem
+            for (Node node : selectInventoryItems.getChildren()) {
+                if (node instanceof CheckBox checkBox) {
+                    String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                    // Check if this inventory item is associated with the menu item
+                    for (InventoryItem associatedItem : associatedInventoryItems) {
+                        if (associatedItem.inventoryItemId.toString().equals(inventoryItemId)) {
+                            checkBox.setSelected(true);
+                        }
+                    }
+                }
+            }
+        });
 
         // Add buttons to dialog pane
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -412,14 +444,35 @@ public class ManagerController {
 
             // If no menu item is passed in, we need to add a new one
             if (menuItem.isEmpty()) {
+                UUID menuitemid;
                 dbDriver.insertMenuItem(new MenuItem(
+                        menuitemid= UUID.fromString(UUID.randomUUID().toString()),
                         Double.parseDouble(price.trim()),
                         0,
                         name)
                 );
-            } else {
+                for (Node node : selectInventoryItems.getChildren()) {
+                    if (node instanceof CheckBox checkBox) {
+                        if (checkBox.isSelected()) {
+                            String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                            dbDriver.insertMenuItemToInventoryItem(String.valueOf(menuitemid), inventoryItemId);
+                        }
+                    }
+                }
+                } else {
                 // If the menu item is not null, we are updating an existing item
                 MenuItem item = menuItem.get();
+                dbDriver.deleteMenuItemToInventoryItem(item.menuItemId.toString());
+                for (Node node : selectInventoryItems.getChildren()) {
+                    if (node instanceof CheckBox checkBox) {
+                        if (checkBox.isSelected()) {
+                            String inventoryItemId = inventoryItemnameToID.get(checkBox.getText());
+                            dbDriver.insertMenuItemToInventoryItem(item.menuItemId.toString(), inventoryItemId);
+                        }
+                    }
+                }
+
+
                 item.price = Double.parseDouble(price.trim());
                 item.availableStock = 0;
                 item.itemName = name;
@@ -549,6 +602,7 @@ public class ManagerController {
                 new SimpleObjectProperty(cellData.getValue().cashierId.toString())
         );
 
+
         // Setup other columns similarly
         Month.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().month.toString())
@@ -574,10 +628,11 @@ public class ManagerController {
         summary.getChildren().add(summaryText);
 
         for (InventoryItem item : dbSnapshot.getInventorySnapshot().values()) {
-            if (item.availableStock <= veryLowInventory) {
+            if(item.availableStock <= veryLowInventory) {
                 summaryText = new Text(item.itemName + " has extremely low stock, restock immediately\n");
                 summary.getChildren().add(summaryText);
-            } else if (item.availableStock <= lowInventory) {
+            }
+            else if(item.availableStock <= lowInventory) {
                 summaryText = new Text(item.itemName + " has low stock, restock soon\n");
                 summary.getChildren().add(summaryText);
             }
@@ -585,15 +640,17 @@ public class ManagerController {
         summaryText = new Text("\nMenu Items\n");
         summary.getChildren().add(summaryText);
         for (MenuItem item : dbSnapshot.getMenuSnapshot().values()) {
-            if (item.availableStock >= unpopularMenuItem) {
+            if(item.availableStock >= unpopularMenuItem) {
                 summaryText = new Text(item.itemName + " is not popular/was made in excess\n");
                 summary.getChildren().add(summaryText);
-            } else if (item.availableStock <= popularMenuItem) {
+            }
+            else if(item.availableStock <= popularMenuItem) {
                 summaryText = new Text(item.itemName + " is extremely popular\n");
                 summary.getChildren().add(summaryText);
             }
         }
     }
+
 
     public void fetchSalesReport() {
         Map<String, Integer> salesReportData = getSalesReportData();
@@ -607,7 +664,6 @@ public class ManagerController {
         }
         salesChart.getData().add(newSeries);
     }
-
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
@@ -708,7 +764,7 @@ public class ManagerController {
 
             // Update grid position
             x++;
-            if (x == columns) {
+            if (x == columns){
                 x = 0;
                 y++;
             }

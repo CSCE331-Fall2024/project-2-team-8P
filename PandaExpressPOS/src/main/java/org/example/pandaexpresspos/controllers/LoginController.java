@@ -80,6 +80,7 @@ public class LoginController {
                 break;
             default:
                 // TODO: display UI for Error
+                showAlert("Invalid Username", "The username you entered does not exist.");
                 return;
 
         }
