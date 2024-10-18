@@ -678,6 +678,10 @@ public class ManagerController {
 
         // Create series to hold data
         XYChart.Series<String, Double> sales = new XYChart.Series<>();
+        sales.setName("Sales ($)");
+
+        XYChart.Series<String, Double> orders = new XYChart.Series<>();
+        orders.setName("Orders Placed");
         // X-label
         String[] hours = {
                 "10 AM", "11 AM", "12 PM",
@@ -689,11 +693,12 @@ public class ManagerController {
         // Add data to series
         for (int i = 0; i < hourlySales.size(); i++) {
             sales.getData().add(new XYChart.Data<>(hours[i], hourlySales.get(i)));
-            sales.getData().add(new XYChart.Data<>(hours[i], hourlyOrders.get(i)));
+            orders.getData().add(new XYChart.Data<>(hours[i], hourlyOrders.get(i)));
         }
 
         // Add series to bar chart
         chart.getData().add(sales);
+        chart.getData().add(orders);
 
     }
 
