@@ -182,7 +182,6 @@ class DBDriverSingletonTest {
     void insertMenuItem() {
         MenuItem newItem = new MenuItem(
                 500.00,
-                400,
                 "Fish Soup"
         );
         driver.insertMenuItem(newItem);
@@ -193,21 +192,21 @@ class DBDriverSingletonTest {
 
     @Test
     void updateMenuItem() {
-        MenuItem beijingBeef = driver.selectRandomMenuItem();
+        MenuItem menuItem = driver.selectRandomMenuItem();
         out.println("Menu item before updating:");
-        printMenuItem(beijingBeef);
-        Integer originalQty = beijingBeef.availableStock;
+        printMenuItem(menuItem);
+        String originalName = menuItem.itemName;
 
         // Update the menu item
-        beijingBeef.availableStock = 4200;
-        driver.updateMenuItem(beijingBeef);
+        menuItem.itemName = "SOHAM NAGAWANSHI";
+        driver.updateMenuItem(menuItem);
         printSeparator();
         out.println("Menu item after updating:");
-        printMenuItem(beijingBeef);
+        printMenuItem(menuItem);
 
         // Restore the menu item's status so this test can be reused
-        beijingBeef.availableStock = originalQty;
-        driver.updateMenuItem(beijingBeef);
+        menuItem.itemName = originalName;
+        driver.updateMenuItem(menuItem);
     }
 
     @Test
@@ -283,12 +282,10 @@ class DBDriverSingletonTest {
         out.printf("""
                         menuItemId: '%s'
                         price: %f
-                        availableStock: %d
                         itemName: '%s'
                         """,
                 menuItem.menuItemId,
                 menuItem.price,
-                menuItem.availableStock,
                 menuItem.itemName
         );
     }
