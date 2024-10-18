@@ -138,7 +138,12 @@ public class DBDriverSingleton {
     }
 
     public void increaseMenuItemInventoryQuantity(MenuItem menuItem, int menuItemQty) {
-//        decreaseMenuItemInventoryQuantity(menuItem, -menuItemQty);
+        for (InventoryItem item : menuItem.inventoryItems.keySet()) {
+            executeUpdate(String.format(QueryTemplate.increaseInventoryItemQty,
+                    menuItemQty,
+                    item.inventoryItemId
+            ));
+        }
     }
 
     public Map<String, Integer> selectProductUsage(
@@ -188,8 +193,6 @@ public class DBDriverSingleton {
         ));
 
         // Handle menu item connections:
-        // TODO: debug inventory item count not being updated correctly
-        // TODO: perhaps convert this for loop into a single SQL query for speed
         for (MenuItem item : newOrder.menuItems.keySet()) {
             Integer menuItemQty = newOrder.menuItems.get(item);
 
@@ -199,15 +202,6 @@ public class DBDriverSingleton {
                     item.menuItemId,
                     menuItemQty
             ));
-
-            // Update quantities of associated inventory items
-            List<InventoryItemWithQty> associatedInventory = selectMenuItemInventoryItems(item);
-            for (InventoryItemWithQty itemWithQty : associatedInventory) {
-                executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
-                        itemWithQty.quantity * menuItemQty,
-                        itemWithQty.inventoryItem.inventoryItemId
-                ));
-            }
         }
     }
 

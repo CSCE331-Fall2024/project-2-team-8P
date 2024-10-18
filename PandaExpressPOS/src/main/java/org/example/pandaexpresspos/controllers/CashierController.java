@@ -359,7 +359,10 @@ public class CashierController {
     private void clearTable() {
         // Put back inventory if the order is cleared
         for (MenuItem associatedInventory : currentOrder.menuItems.keySet()) {
-            dbDriver.increaseMenuItemInventoryQuantity(associatedInventory, currentOrder.menuItems.get(associatedInventory));
+            dbDriver.increaseMenuItemInventoryQuantity(
+                    associatedInventory,
+                    currentOrder.menuItems.get(associatedInventory)
+            );
         }
         // Remove all items from the menuItems map in the current order
         currentOrder.menuItems.clear();
