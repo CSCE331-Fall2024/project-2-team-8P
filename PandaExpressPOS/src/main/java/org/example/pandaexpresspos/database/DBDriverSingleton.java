@@ -6,14 +6,16 @@ import org.example.pandaexpresspos.models.wrappers.MenuItemToInventoryItem;
 import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
 public class DBDriverSingleton {
 
     private static DBDriverSingleton instance;
+
+    public final Calendar calendar = Calendar.getInstance();
+    public final TimeZone timeZone = TimeZone.getTimeZone("America/Chicago");
+
 
     // Why a private constructor?
     // This is how we implement the *singleton* design pattern
@@ -23,6 +25,7 @@ public class DBDriverSingleton {
     public static DBDriverSingleton getInstance() {
         if (instance == null) {
             instance = new DBDriverSingleton();
+            instance.calendar.setTimeZone(instance.timeZone);
         }
         return instance;
     }
@@ -50,7 +53,8 @@ public class DBDriverSingleton {
     public List<Order> selectOrders(Integer mostRecent) {
         List<Order> orders = null;
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
+            // Add one because January = 0 in calendar
+            int currentMonth = calendar.get(Calendar.MONTH) + 1;
             orders = executeQuery(
                     String.format(QueryTemplate.selectRecentOrders, currentMonth, mostRecent),
                     SQLToJavaMapper::orderMapper
@@ -66,11 +70,23 @@ public class DBDriverSingleton {
     public List<Double> selectSalesByHour() {
         List<Double> salesByHour = null;
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
-            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Add one because January = 0 in calendar
+            int currentMonth = calendar.get(Calendar.MONTH) + 1;
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Get the current hour in 12h format
+            int currentHour = calendar.get(Calendar.HOUR);
+
+            // 12 PM  is represented as 0
+            currentHour = currentHour == 0 ? 12 : currentHour;
 
             // Workday starts at 10am and ends at 10pm
-            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
+            currentHour = (currentHour - 10) % 12 + 1;
+
+            // Return the positive modulus rather than negative
+            if (currentHour < 0)
+                currentHour += 12;
 
             salesByHour = executeQuery(
                     String.format(QueryTemplate.selectOrderSumsByHour, currentMonth, currentDay, currentHour),
@@ -85,11 +101,23 @@ public class DBDriverSingleton {
     public List<Double> selectOrdersByHour() {
         List<Double> ordersByHour = null;
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
-            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Add one because January = 0 in calendar
+            int currentMonth = calendar.get(Calendar.MONTH) + 1;
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Get the current hour in 12h format
+            int currentHour = calendar.get(Calendar.HOUR);
+
+            // 12 PM  is represented as 0
+            currentHour = currentHour == 0 ? 12 : currentHour;
 
             // Workday starts at 10am and ends at 10pm
-            int currentHour = (LocalDateTime.now().getHour() - 10) % 12 + 1;
+            currentHour = (currentHour - 10) % 12 + 1;
+
+            // Return the positive modulus rather than negative
+            if (currentHour < 0)
+                currentHour += 12;
 
             ordersByHour = executeQuery(
                     String.format(QueryTemplate.selectOrderByHour, currentMonth, currentDay, currentHour),
@@ -106,8 +134,10 @@ public class DBDriverSingleton {
     public List<Double> selectSalesByHourForDay() {
         List<Double> selectOrderByHourForDay = null;
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
-            int currentDay = LocalDate.now().getDayOfMonth();
+
+            // Add one because January = 0 in calendar
+            int currentMonth = calendar.get(Calendar.MONTH) + 1;
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
             final int totalWorkingHoursPerDay = 12;
 
             selectOrderByHourForDay = executeQuery(
@@ -123,8 +153,9 @@ public class DBDriverSingleton {
     public List<Double> selectOrdersByHourForDay() {
         List<Double> selectOrderByHourForDay = null;
         try {
-            int currentMonth = LocalDate.now().getMonthValue();
-            int currentDay = LocalDate.now().getDayOfMonth();
+            // Add one because January = 0 in calendar
+            int currentMonth = calendar.get(Calendar.MONTH) + 1;
+            int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
             final int totalWorkingHoursPerDay = 12;
 
             selectOrderByHourForDay = executeQuery(

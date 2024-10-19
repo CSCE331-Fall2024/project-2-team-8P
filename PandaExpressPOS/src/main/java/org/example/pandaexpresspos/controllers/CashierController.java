@@ -27,7 +27,6 @@ import org.example.pandaexpresspos.models.MenuItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.*;
 
 public class CashierController {
@@ -88,12 +87,6 @@ public class CashierController {
     // constants for global use
     private static final double TAX_RATE = 0.0825;
 
-    private LocalDate currentDate = LocalDate.now();
-    private Integer month = currentDate.getMonthValue();
-    private Integer week = (currentDate.getMonthValue()
-            * currentDate.getDayOfMonth()) / 7;
-    private Integer day = currentDate.getDayOfMonth();
-    private Integer hour = Calendar.HOUR_OF_DAY;
 
 
     private MenuItem lastSelectedItem = null;
@@ -402,12 +395,29 @@ public class CashierController {
     }
 
     private void resetCurrentOrder() {
+
+        // Add one because January = 0 in calendar
+        int currentMonth = dbDriver.calendar.get(Calendar.MONTH) + 1;
+
+        // Get the current hour in 12h format
+        int currentHour = dbDriver.calendar.get(Calendar.HOUR);
+
+        // 12 PM  is represented as 0
+        currentHour = currentHour == 0 ? 12 : currentHour;
+
+        // Workday starts at 10am and ends at 10pm
+        currentHour = (currentHour - 10) % 12 + 1;
+
+        // Return the positive modulus rather than negative
+        if (currentHour < 0)
+            currentHour += 12;
+
         currentOrder = new Order(
                 loggedInUser.employeeId,
-                month,
-                week,
-                day,
-                hour,
+                currentMonth,
+                dbDriver.calendar.get(Calendar.WEEK_OF_YEAR),
+                dbDriver.calendar.get(Calendar.DAY_OF_MONTH),
+                currentHour,
                 0.0
         );
 
