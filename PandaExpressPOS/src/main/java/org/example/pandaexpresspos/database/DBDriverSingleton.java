@@ -151,7 +151,9 @@ public class DBDriverSingleton {
                             startMonth,
                             endMonth,
                             startDay,
-                            endDay
+                            endDay,
+                            startMonth,
+                            endMonth
                     ),
                     SQLToJavaMapper::menuItemWithQtyMapper
             );
@@ -195,7 +197,9 @@ public class DBDriverSingleton {
                             startMonth,
                             endMonth,
                             startDay,
-                            endDay
+                            endDay,
+                            startMonth,
+                            endMonth
                     ),
                     SQLToJavaMapper::inventoryItemWithQtyMapper
             );
