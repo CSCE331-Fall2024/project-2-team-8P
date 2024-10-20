@@ -660,6 +660,9 @@ public class ManagerController {
             chart = xReportBarChart;
         }
 
+        // Remove any existing data
+        chart.getData().clear();
+
         // Create series to hold data
         XYChart.Series<String, Double> sales = new XYChart.Series<>();
         sales.setName("Sales ($)");
