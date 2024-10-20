@@ -9,19 +9,31 @@ import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * Singleton class that directly interacts with the PostgreSQL database via JDBC calls and converts results into data models.
+ * Because this class is a singleton, only one instance may exist throughout the entire application at any point in time.
+ */
 public class DBDriverSingleton {
+
+    /**
+     * Object that gives us current time information
+     */
+    public final Calendar calendar = Calendar.getInstance();
 
     private static DBDriverSingleton instance;
 
-    public final Calendar calendar = Calendar.getInstance();
-    public final TimeZone timeZone = TimeZone.getTimeZone("America/Chicago");
-
+    private final TimeZone timeZone = TimeZone.getTimeZone("America/Chicago");
 
     // Why a private constructor?
     // This is how we implement the *singleton* design pattern
     private DBDriverSingleton() {
     }
 
+    /**
+     * Gets the current singleton instance of {@code DBDriverSingleton}. Creates a new instance if one doesn't exist.
+     *
+     * @return The singleton instance of {@code DBDriverSingleton}
+     */
     public static DBDriverSingleton getInstance() {
         if (instance == null) {
             instance = new DBDriverSingleton();
@@ -33,6 +45,13 @@ public class DBDriverSingleton {
     // Public methods:
 
     // Order
+
+    /**
+     * Selects an order from the database with the given orderId
+     *
+     * @param orderId the UUID of the order to select
+     * @return the {@code Order} object representing the selected order
+     */
     public Order selectOrder(UUID orderId) {
         Order order = null;
         try {
@@ -50,6 +69,12 @@ public class DBDriverSingleton {
         return order;
     }
 
+    /**
+     * Selects the {@code mostRecent} most recent orders from the database
+     *
+     * @param mostRecent the number of most recent orders to select
+     * @return a {@code List<Order>} of most recent orders
+     */
     public List<Order> selectOrders(Integer mostRecent) {
         List<Order> orders = null;
         try {
@@ -65,12 +90,15 @@ public class DBDriverSingleton {
         return orders;
     }
 
-    // The indices in the returned list correspond to hours of the day - 1
-    // e.g., index 0 corresponds to hour 1
+    /**
+     * Selects the sum of order prices grouped by hour. This only returns hours of the day up until the current hour,
+     * determined by Java's internal DateTime methods.
+     *
+     * @return a {@code List<Double>} of order price totals, grouped by hour. Index 0 corresponds to the 1st hour, etc.
+     */
     public List<Double> selectSalesByHour() {
         List<Double> salesByHour = null;
         try {
-
             // Add one because January = 0 in calendar
             int currentMonth = calendar.get(Calendar.MONTH) + 1;
             int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -98,6 +126,12 @@ public class DBDriverSingleton {
         return salesByHour;
     }
 
+    /**
+     * Selects the total number of orders grouped by hour. This only returns hours of the day up until the current hour,
+     * determined by Java's internal DateTime methods.
+     *
+     * @return a {@code List<Double>} of orders placed, grouped by hour. Index 0 corresponds to the 1st hour, etc.
+     */
     public List<Double> selectOrdersByHour() {
         List<Double> ordersByHour = null;
         try {
@@ -129,8 +163,11 @@ public class DBDriverSingleton {
         return ordersByHour;
     }
 
-    // The indices in the returned list correspond to hours of the day - 1
-    // e.g., index 0 corresponds to hour 1
+    /**
+     * Selects the sum of order prices grouped by hour. This returns all hours of the day (1-12).
+     *
+     * @return a {@code List<Double>} of order price totals, grouped by hour. Index 0 corresponds to the 1st hour, etc.
+     */
     public List<Double> selectSalesByHourForDay() {
         List<Double> selectOrderByHourForDay = null;
         try {
@@ -150,6 +187,11 @@ public class DBDriverSingleton {
         return selectOrderByHourForDay;
     }
 
+    /**
+     * Selects the total number of orders placed grouped by hour. This returns all hours of the day (1-12).
+     *
+     * @return a {@code List<Double>} of order placed, grouped by hour. Index 0 corresponds to the 1st hour, etc.
+     */
     public List<Double> selectOrdersByHourForDay() {
         List<Double> selectOrderByHourForDay = null;
         try {
@@ -168,6 +210,16 @@ public class DBDriverSingleton {
         return selectOrderByHourForDay;
     }
 
+    /**
+     * Totals up the number of times each menu item was included in an order in a specified time period
+     *
+     * @param startMonth the start month
+     * @param endMonth   the end month
+     * @param startDay   the start day
+     * @param endDay     the end day
+     * @return a {@code Map<String, Integer>}, where the keys are menu item names, and the values are the number of times
+     * the respective menu item was contained in an order
+     */
     public Map<String, Integer> selectSalesReport(
             Integer startMonth,
             Integer endMonth,
@@ -197,6 +249,13 @@ public class DBDriverSingleton {
         return sales;
     }
 
+    /**
+     * Decreases the stock of inventory items associated with a given menu item
+     *
+     * @param menuItem    the menu item to decrease the inventory stock for
+     * @param menuItemQty the number of times the menu item was included in an order. For example, if we have 5
+     *                    "Orange Chicken" in an order, we need to decrease its associated inventory stock 5 times
+     */
     public void decreaseMenuItemInventoryQuantity(MenuItem menuItem, int menuItemQty) {
         for (InventoryItem item : menuItem.inventoryItems.keySet()) {
             executeUpdate(String.format(QueryTemplate.decreaseInventoryItemQty,
@@ -206,6 +265,14 @@ public class DBDriverSingleton {
         }
     }
 
+    /**
+     * Increases the stock of inventory items associated with a given menu item. This is primarily used to replenish
+     * stock after canceling an order.
+     *
+     * @param menuItem    the menu item to increase the inventory stock for
+     * @param menuItemQty the number of times the menu item was included in an order. For example, if we have 5
+     *                    "Orange Chicken" in an order, we need to increase its associated inventory stock 5 times
+     */
     public void increaseMenuItemInventoryQuantity(MenuItem menuItem, int menuItemQty) {
         for (InventoryItem item : menuItem.inventoryItems.keySet()) {
             executeUpdate(String.format(QueryTemplate.increaseInventoryItemQty,
@@ -215,6 +282,16 @@ public class DBDriverSingleton {
         }
     }
 
+    /**
+     * Totals up the number of times each inventory item was used over the specified time period
+     *
+     * @param startMonth the start month
+     * @param endMonth   the end month
+     * @param startDay   the start day
+     * @param endDay     the end day
+     * @return a {@code Map<String, Integer>}, where the keys are inventory item names, and the values are the number of
+     * times the respective inventory item was used
+     */
     public Map<String, Integer> selectProductUsage(
             Integer startMonth,
             Integer endMonth,
@@ -243,6 +320,11 @@ public class DBDriverSingleton {
         return productUsage;
     }
 
+    /**
+     * Places an order
+     *
+     * @param newOrder the order to place
+     */
     public void insertOrder(Order newOrder) {
         // Update quantities of base inventory items (napkin, utensils, fortune cookie):
         for (InventoryItem item : newOrder.inventoryItems.keySet()) {
@@ -277,6 +359,13 @@ public class DBDriverSingleton {
     }
 
     // Employee
+
+    /**
+     * Selects an employee
+     *
+     * @param employeeId the UUID of the employee to select
+     * @return an {@code Employee} object representing the selected employee
+     */
     public Employee selectEmployee(UUID employeeId) {
         // 1. Accepts employeeId
         // 2. Executes a select SQL query
@@ -297,6 +386,12 @@ public class DBDriverSingleton {
         return employee;
     }
 
+    /**
+     * Selects an employee
+     *
+     * @param name the name of the employee to select
+     * @return an {@code Employee} object representing the selected employee
+     */
     public Employee selectEmployee(String name) {
         Employee employee = null;
         try {
@@ -314,6 +409,11 @@ public class DBDriverSingleton {
         return employee;
     }
 
+    /**
+     * Selects all the employees
+     *
+     * @return a {@code List<Employee>} of all employees
+     */
     public List<Employee> selectEmployees() {
         List<Employee> employees = null;
         try {
@@ -327,6 +427,11 @@ public class DBDriverSingleton {
         return employees;
     }
 
+    /**
+     * Adds a new employee
+     *
+     * @param newEmployee the employee to add
+     */
     public void insertEmployee(Employee newEmployee) {
         executeUpdate(String.format(QueryTemplate.insertEmployee,
                 newEmployee.employeeId,
@@ -335,6 +440,11 @@ public class DBDriverSingleton {
         ));
     }
 
+    /**
+     * Updates an employee's information
+     *
+     * @param updatedEmployee an {@code Employee} object containing an employee's updated information
+     */
     public void updateEmployee(Employee updatedEmployee) {
         executeUpdate(String.format(QueryTemplate.updateEmployee,
                 updatedEmployee.isManager,
@@ -344,6 +454,13 @@ public class DBDriverSingleton {
     }
 
     // Inventory
+
+    /**
+     * Selects an inventory item
+     *
+     * @param inventoryItemId the UUID of the inventory item to select
+     * @return an {@code InventoryItem} object representing the selected inventory item
+     */
     public InventoryItem selectInventoryItem(UUID inventoryItemId) {
         InventoryItem item = null;
         try {
@@ -362,6 +479,11 @@ public class DBDriverSingleton {
         return item;
     }
 
+    /**
+     * Selects all inventory items
+     *
+     * @return a {@code List<InventoryItem>} of all inventory items
+     */
     public List<InventoryItem> selectInventoryItems() {
         List<InventoryItem> items = null;
         try {
@@ -375,6 +497,11 @@ public class DBDriverSingleton {
         return items;
     }
 
+    /**
+     * Adds a new inventory item
+     *
+     * @param newInventoryItem the inventory item to add
+     */
     public void insertInventoryItem(InventoryItem newInventoryItem) {
         executeUpdate(String.format(QueryTemplate.insertInventoryItem,
                 newInventoryItem.inventoryItemId,
@@ -384,6 +511,11 @@ public class DBDriverSingleton {
         ));
     }
 
+    /**
+     * Updates an existing inventory item
+     *
+     * @param updatedInventoryItem an {@code InventoryItem} object containing an inventory item's updated information
+     */
     public void updateInventoryItem(InventoryItem updatedInventoryItem) {
         executeUpdate(String.format(QueryTemplate.updateInventoryItem,
                 updatedInventoryItem.cost,
@@ -394,6 +526,13 @@ public class DBDriverSingleton {
     }
 
     // Menu items
+
+    /**
+     * Selects a menu item
+     *
+     * @param menuItemId the UUID of the menu item to select
+     * @return a {@code MenuItem} object represented the selected menu item
+     */
     public MenuItem selectMenuItem(UUID menuItemId) {
         MenuItem item = null;
         try {
@@ -412,6 +551,11 @@ public class DBDriverSingleton {
         return item;
     }
 
+    /**
+     * Selects all menu items
+     *
+     * @return a {@code List<MenuItem>} of all menu items
+     */
     public List<MenuItem> selectMenuItems() {
         List<MenuItem> items = null;
         try {
@@ -425,32 +569,11 @@ public class DBDriverSingleton {
         return items;
     }
 
-    public List<MenuItemToInventoryItem> selectMenuItemToInventoryItems() {
-        List<MenuItemToInventoryItem> items = null;
-        try {
-            items = executeQuery(
-                    QueryTemplate.selectAllMenuItemInventoryItem,
-                    SQLToJavaMapper::menuItemToInventoryItemMapper
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return items;
-    }
-
-    public List<InventoryItemWithQty> selectMenuItemInventoryItems(MenuItem menuItem) {
-        List<InventoryItemWithQty> items = null;
-        try {
-            items = executeQuery(
-                    String.format(QueryTemplate.selectMenuItemInventoryItem, menuItem.menuItemId),
-                    SQLToJavaMapper::inventoryItemWithQtyMapper
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return items;
-    }
-
+    /**
+     * Adds a new menu item
+     *
+     * @param newMenuItem the menu item to add
+     */
     public void insertMenuItem(MenuItem newMenuItem) {
         executeUpdate(String.format(QueryTemplate.insertMenuItem,
                 newMenuItem.menuItemId,
@@ -459,6 +582,11 @@ public class DBDriverSingleton {
         ));
     }
 
+    /**
+     * Updates an existing menu item
+     *
+     * @param updatedMenuItem a {@code MenuItem} object reprsenting the menu item to update
+     */
     public void updateMenuItem(MenuItem updatedMenuItem) {
         executeUpdate(String.format(QueryTemplate.updateMenuItem,
                 updatedMenuItem.price,
@@ -467,6 +595,12 @@ public class DBDriverSingleton {
         ));
     }
 
+    /**
+     * Associates an inventory item with a menu item
+     *
+     * @param menuItemId the menu item to associate
+     * @param inventoryItemId the inventory item to associate
+     */
     public void insertMenuItemToInventoryItem(UUID menuItemId, UUID inventoryItemId) {
         executeUpdate(String.format(QueryTemplate.insertMenuItemToInventoryItem,
                 menuItemId,
@@ -475,6 +609,12 @@ public class DBDriverSingleton {
         ));
     }
 
+    /**
+     * Selects all inventory items associated with a given menu item
+     *
+     * @param menuItemId the UUID of the menu item to select inventory items for
+     * @return a {@code List<InventoryItem>} of inventory items associated with the given menu item
+     */
     public List<InventoryItem> selectMenuItemInventoryItems(UUID menuItemId) {
         List<InventoryItem> items = null;
         try {
@@ -488,13 +628,41 @@ public class DBDriverSingleton {
         return items;
     }
 
+    /**
+     * Removes all inventory items associated with a given menu item
+     *
+     * @param menuItemId the UUID of the menu item to remove connections for
+     */
     public void deleteMenuItemToInventoryItem(UUID menuItemId) {
         executeUpdate(String.format(QueryTemplate.deleteMenuItemToInventoryItem,
                 menuItemId
         ));
     }
 
-    // Test helpers (package-private):
+    // Package private methods:
+
+    /**
+     * Selects all associations between menu items and inventory items. This corresponds to entries from the
+     * table obtained by joining the <span style="font-weight: bold">MenuItem</span>,
+     * <span style="font-weight: bold">MenuItemToInventoryItem</span>, and
+     * <span style="font-weight: bold">InventoryItem</span> tables.
+     *
+     * @return a {@code List<MenuItemToInventoryItem>} of such connections
+     */
+    List<MenuItemToInventoryItem> selectMenuItemToInventoryItems() {
+        List<MenuItemToInventoryItem> items = null;
+        try {
+            items = executeQuery(
+                    QueryTemplate.selectAllMenuItemInventoryItem,
+                    SQLToJavaMapper::menuItemToInventoryItemMapper
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    // Test helpers
     Order selectRandomOrder() {
         Order order = null;
         try {

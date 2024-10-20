@@ -38,15 +38,11 @@ class DBDriverSingletonTest {
     @Test
     void insertOrder() {
         MenuItem menuItem = driver.selectRandomMenuItem();
-        System.out.println();
-        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
+        List<InventoryItem> associatedInventory = driver.selectMenuItemInventoryItems(menuItem.menuItemId);
 
         out.println("DB state before placing order:");
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
+        for (InventoryItem item : associatedInventory) {
+            out.println(item.itemName);
         }
 
         Order newOrder = new Order(
@@ -66,12 +62,9 @@ class DBDriverSingletonTest {
 
         printSeparator();
         out.println("DB state after placing order:");
-        associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
+        associatedInventory = driver.selectMenuItemInventoryItems(menuItem.menuItemId);
+        for (InventoryItem item : associatedInventory) {
+            out.println(item.itemName);
         }
 
         printSeparator();

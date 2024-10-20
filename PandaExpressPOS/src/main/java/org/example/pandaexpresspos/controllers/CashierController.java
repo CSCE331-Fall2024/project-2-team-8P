@@ -35,9 +35,9 @@ import java.util.*;
  * interface in the POS system. It handles user interactions with the menu, manages the current
  * order, and updates the UI accordingly.
  *
- * The controller uses a singleton database driver and snapshot to interact with the underlying
+ * <p>The controller uses a singleton database driver and snapshot to interact with the underlying
  * database and inventory system. It also manages the cashier's logged-in status and keeps track
- * of the items ordered, their quantities, and the total price.
+ * of the items ordered, their quantities, and the total price.</p>
  */
 public class CashierController {
 
@@ -48,8 +48,6 @@ public class CashierController {
 
     // New Order instance
     private Order currentOrder; // Added to manage the current order
-
-    private Order PreviousOrder;
 
     @FXML
     private TableView<Map.Entry<MenuItem, Integer>> orderTable; // Updated type to OrderItem
@@ -64,7 +62,7 @@ public class CashierController {
     private TableColumn<Map.Entry<MenuItem, Integer>, Double> priceColumn; // Updated type to OrderItem
 
     @FXML
-    public Button
+    private Button
             clear,
             placeOrder,
             clearNum,
@@ -78,30 +76,23 @@ public class CashierController {
             button6,
             button7,
             button8,
-            button9,
-            Logout;
+            button9;
 
     @FXML
     private TextField cashierTextField;
 
     @FXML
-    private TextField
-//            taxField,
-            totalField;
+    private TextField totalField;
 
     @FXML
     private GridPane menuItemGridPane;
 
     private ObservableList<Map.Entry<MenuItem, Integer>> orderItems;
 
-    // constants for global use
-    private static final double TAX_RATE = 0.0825;
-
-
-
     private MenuItem lastSelectedItem = null;
 
     private StringBuilder currentQuantity = new StringBuilder();
+
     /**
      * Logs out the current user and returns them to the login screen.
      *
@@ -119,7 +110,6 @@ public class CashierController {
     }
 
     // Constant sample image
-
     private final String sampleImg = getClass()
             .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png")
             .toExternalForm();
@@ -138,6 +128,7 @@ public class CashierController {
         initializeButtons();
         initializeTableView();
     }
+
     /**
      * Sets the logged-in user and displays their name in the cashier text field.
      *
@@ -149,6 +140,7 @@ public class CashierController {
             cashierTextField.setText("Cashier: " + loggedInUser.name);
         }
     }
+
     /**
      * Creates a grid layout of available menu items, displaying their name and image. Items
      * with insufficient inventory are grayed out and disabled.
@@ -232,6 +224,7 @@ public class CashierController {
             }
         }
     }
+
     /**
      * Initializes the order table by setting the columns for item name, quantity, and price.
      */
@@ -249,6 +242,7 @@ public class CashierController {
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
     }
+
     /**
      * Initializes the numpad buttons, enter, clear, and place order buttons with their respective
      * action handlers.
@@ -278,6 +272,7 @@ public class CashierController {
         clear.setOnAction(event -> clearTable());
         placeOrder.setOnAction(event -> addOrder());
     }
+
     /**
      * Attempts to add a menu item to the current order. If there is insufficient inventory,
      * an alert is shown.
@@ -302,7 +297,7 @@ public class CashierController {
     /**
      * Shows an alert dialog with the specified title and message.
      *
-     * @param title The title of the alert dialog.
+     * @param title   The title of the alert dialog.
      * @param message The message to be displayed in the alert dialog.
      */
     private void showAlert(String title, String message) {
@@ -356,7 +351,7 @@ public class CashierController {
      * Updates the quantity of a specific item in the order. If the item does not exist in the order,
      * it is added.
      *
-     * @param item The MenuItem to update.
+     * @param item     The MenuItem to update.
      * @param quantity The new quantity of the item.
      */
     private void updateItemQuantity(MenuItem item, int quantity) {

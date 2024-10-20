@@ -12,13 +12,12 @@ import java.util.logging.Logger;
  * The LoginApplication class is the main entry point for the Panda Express POS application.
  *
  * <p>The class configures logging, loads the login FXML view, and displays it within a scene.
- * The application window is sized at 1200x800 pixels and is titled "Login".
+ * The application window is sized at 1200x800 pixels and is titled "Login".</p>
  */
 public class LoginApplication extends Application {
 
     /**
      * The start method is called when the JavaFX application is launched.
-     *
      *
      * @param stage the primary stage for the JavaFX application
      * @throws IOException if the FXML file cannot be loaded
@@ -41,7 +40,7 @@ public class LoginApplication extends Application {
 
     /**
      * The main method serves as the entry point for the JavaFX application.
-     * It calls launch() to start the JavaFX runtime and open the application.
+     * It calls {@code launch()} to start the JavaFX runtime and open the application.
      *
      * @param args command-line arguments
      */
