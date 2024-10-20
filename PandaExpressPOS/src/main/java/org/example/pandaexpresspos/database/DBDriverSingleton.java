@@ -1,9 +1,7 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
-import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
-import org.example.pandaexpresspos.models.wrappers.MenuItemToInventoryItem;
-import org.example.pandaexpresspos.models.wrappers.MenuItemWithQty;
+import org.example.pandaexpresspos.models.wrappers.*;
 
 import java.sql.*;
 import java.util.*;
@@ -12,6 +10,8 @@ import java.util.function.Function;
 /**
  * Singleton class that directly interacts with the PostgreSQL database via JDBC calls and converts results into data models.
  * Because this class is a singleton, only one instance may exist throughout the entire application at any point in time.
+ *
+ * @author Kevin Zhang
  */
 public class DBDriverSingleton {
 
