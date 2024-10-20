@@ -28,12 +28,6 @@ public class LoginController {
     private Employee currentUser;
 
     @FXML
-    private AnchorPane loginAnchorPane;
-
-    @FXML
-    private Button loginButton;
-
-    @FXML
     private TextField usernameTextField;
 
     private FXMLLoader loader;

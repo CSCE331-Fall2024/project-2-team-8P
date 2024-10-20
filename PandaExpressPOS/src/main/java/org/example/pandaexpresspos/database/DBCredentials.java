@@ -4,9 +4,6 @@ package org.example.pandaexpresspos.database;
  * The DBCredentials class holds the database connection credentials
  * for the Panda Express POS system.
  *
- * <p>Note: Hardcoding credentials in source code is generally considered
- * bad practice due to security concerns. This implementation is for simplicity
- * and can be modified later as needed.</p>
  */
 class DBCredentials {
     /** The username for database access */
