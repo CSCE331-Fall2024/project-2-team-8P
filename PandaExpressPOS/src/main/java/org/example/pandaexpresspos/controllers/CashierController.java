@@ -29,6 +29,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+
+/**
+ * CashierController is responsible for managing the behavior and functionality of the cashier
+ * interface in the POS system. It handles user interactions with the menu, manages the current
+ * order, and updates the UI accordingly.
+ *
+ * The controller uses a singleton database driver and snapshot to interact with the underlying
+ * database and inventory system. It also manages the cashier's logged-in status and keeps track
+ * of the items ordered, their quantities, and the total price.
+ */
 public class CashierController {
 
     private final DBDriverSingleton dbDriver = DBDriverSingleton.getInstance();
@@ -92,7 +102,12 @@ public class CashierController {
     private MenuItem lastSelectedItem = null;
 
     private StringBuilder currentQuantity = new StringBuilder();
-
+    /**
+     * Logs out the current user and returns them to the login screen.
+     *
+     * @param event ActionEvent triggered by clicking the logout button.
+     * @throws IOException if the login screen cannot be loaded.
+     */
     @FXML
     void logOutUser(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
@@ -109,7 +124,10 @@ public class CashierController {
             .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png")
             .toExternalForm();
 
-
+    /**
+     * Initializes the cashier controller by refreshing snapshots, creating the menu item grid,
+     * and initializing buttons and the order table.
+     */
     @FXML
     public void initialize() {
         dbSnapshot.refreshAllSnapshots();
@@ -120,14 +138,21 @@ public class CashierController {
         initializeButtons();
         initializeTableView();
     }
-
+    /**
+     * Sets the logged-in user and displays their name in the cashier text field.
+     *
+     * @param user Employee object representing the logged-in user.
+     */
     public void setLoggedInUser(Employee user) {
         loggedInUser = user;
         if (cashierTextField != null) {
             cashierTextField.setText("Cashier: " + loggedInUser.name);
         }
     }
-
+    /**
+     * Creates a grid layout of available menu items, displaying their name and image. Items
+     * with insufficient inventory are grayed out and disabled.
+     */
     public void createMenuItemGrid() {
         int columns = 5; // max columns per row
         int x = 0;
@@ -207,7 +232,9 @@ public class CashierController {
             }
         }
     }
-
+    /**
+     * Initializes the order table by setting the columns for item name, quantity, and price.
+     */
     private void initializeTableView() {
         nameColumn.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getKey().itemName)
@@ -222,7 +249,10 @@ public class CashierController {
         orderItems = FXCollections.observableArrayList(currentOrder.menuItems.entrySet());
         orderTable.setItems(orderItems);
     }
-
+    /**
+     * Initializes the numpad buttons, enter, clear, and place order buttons with their respective
+     * action handlers.
+     */
     private void initializeButtons() {
         // Numpad buttons
         Button[] numpadButtons = {
@@ -248,7 +278,13 @@ public class CashierController {
         clear.setOnAction(event -> clearTable());
         placeOrder.setOnAction(event -> addOrder());
     }
-
+    /**
+     * Attempts to add a menu item to the current order. If there is insufficient inventory,
+     * an alert is shown.
+     *
+     * @param item The MenuItem to add to the order.
+     * @return true if the item was added, false if inventory was insufficient.
+     */
     private Boolean tryAddItemToOrder(MenuItem item) {
         boolean hasEnoughInventory = item.isAvailable();
 
@@ -263,6 +299,12 @@ public class CashierController {
         return hasEnoughInventory;
     }
 
+    /**
+     * Shows an alert dialog with the specified title and message.
+     *
+     * @param title The title of the alert dialog.
+     * @param message The message to be displayed in the alert dialog.
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -271,10 +313,18 @@ public class CashierController {
         alert.showAndWait();
     }
 
+    /**
+     * Appends a number to the current quantity being entered for a menu item.
+     *
+     * @param num The number to append.
+     */
     private void appendQuantity(int num) {
         currentQuantity.append(num);
     }
 
+    /**
+     * Updates the quantity of the last selected item in the order based on the entered quantity.
+     */
     private void updateSelectedItemQuantity() {
         if (!lastSelectedItem.isAvailable()) {
             showAlert("Cannot Fulfill Order", "Inventory Item out of stock");
@@ -295,10 +345,20 @@ public class CashierController {
         currentQuantity.setLength(0);
     }
 
+    /**
+     * Clears the quantity being entered for a menu item.
+     */
     private void clearQuantity() {
         currentQuantity.setLength(0);
     }
 
+    /**
+     * Updates the quantity of a specific item in the order. If the item does not exist in the order,
+     * it is added.
+     *
+     * @param item The MenuItem to update.
+     * @param quantity The new quantity of the item.
+     */
     private void updateItemQuantity(MenuItem item, int quantity) {
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
             MenuItem prevItem = existingItem.getKey();
@@ -327,6 +387,11 @@ public class CashierController {
         updateTotals();
     }
 
+    /**
+     * Adds a new item to the current order or increases its quantity if already present.
+     *
+     * @param item The MenuItem to add to the order.
+     */
     private void addItemToOrder(MenuItem item) {
         for (Map.Entry<MenuItem, Integer> existingItem : currentOrder.menuItems.entrySet()) {
             MenuItem prevItem = existingItem.getKey();
@@ -351,6 +416,9 @@ public class CashierController {
         updateTotals();
     }
 
+    /**
+     * Clears the current order, resetting inventory quantities and UI elements.
+     */
     @FXML
     private void clearTable() {
         // Put back inventory if the order is cleared
@@ -377,6 +445,9 @@ public class CashierController {
         updateTotals();
     }
 
+    /**
+     * Places the current order by inserting it into the database and resetting the order.
+     */
     private void addOrder() {
         dbDriver.insertOrder(currentOrder);
 
@@ -394,6 +465,9 @@ public class CashierController {
         createMenuItemGrid();
     }
 
+    /**
+     * Resets the current order by creating a new Order object and adding base inventory items
+     */
     private void resetCurrentOrder() {
 
         // Add one because January = 0 in calendar
@@ -433,6 +507,9 @@ public class CashierController {
         }
     }
 
+    /**
+     * Updates the total price of the current order based on the items and their quantities.
+     */
     private void updateTotals() {
         double subtotal = 0;
         for (Map.Entry<MenuItem, Integer> entry : currentOrder.menuItems.entrySet()) {
