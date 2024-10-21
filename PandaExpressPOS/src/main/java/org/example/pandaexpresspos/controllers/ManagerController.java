@@ -37,6 +37,19 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.Optional;
 
+/**
+ * ManagerController is responsible for managing the behavior and functionality of the manager
+ * interface in the POS system. It handles user interactions with adding/updating menu items,
+ * inventory items, and employees, as well as viewing relevant reports and charts that are
+ * of interest to the manager.
+ *
+ * <p>The controller uses a singleton database driver and snapshot to interact with the underlying
+ * database and inventory system. It also updates the database when needed, allowing the cashier
+ * to work with the updated database.</p>
+ *
+ * @author Soham Nagawanshi
+ * @author Bradley James
+ */
 public class ManagerController {
 
     // Database logic
@@ -100,7 +113,9 @@ public class ManagerController {
                     .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png"))
             .toExternalForm();
 
-    // Enum to check which item tab user has selected
+    /**
+     * Enum to check which item tab user has selected
+     */
     enum ItemTab {
         INVENTORY_ITEMS(0),
         MENU_ITEMS(1),
@@ -129,7 +144,9 @@ public class ManagerController {
         }
     }
 
-    // Enum to check which report tab user has selected
+    /**
+     * Enum to check which report tab user has selected
+     */
     enum ReportTab {
 
         ORDER_HISTORY(0),
@@ -162,7 +179,9 @@ public class ManagerController {
         }
     }
 
-    // Initialize the state of the UI after FXML elements are injected
+    /**
+     * Initialize the state of the UI after FXML elements are injected
+     */
     @FXML
     public void initialize() {
         dbSnapshot.refreshAllSnapshots();
@@ -174,11 +193,21 @@ public class ManagerController {
 
     }
 
+    /**
+     * Determines the logged in user.
+     */
     public void setLoggedInUser(Employee user) {
         loggedInUser = user;
     }
 
     // Handle logout button click
+
+    /**
+     * Logs out the current user and returns them to the login screen.
+     *
+     * @param event ActionEvent triggered by clicking the logout button.
+     * @throws IOException if the login screen cannot be loaded.
+     */
     public void logout(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(LoginApplication.class.getResource("fxml/login-view.fxml"));
         // Create a new scene and set it to the stage
@@ -189,6 +218,14 @@ public class ManagerController {
     }
 
     // Handle generating reports
+
+    /**
+     * Generates the requested report based on the selected tab.
+     *
+     * @param event ActionEvent triggered by clicking the generate
+     *              report button.
+     * @throws IOException if the report cannot be loaded.
+     */
     public void generateReport(ActionEvent event) throws IOException {
         // Check which report tabl is selected
         ReportTab selectedTab = ReportTab.fromValue(managerReportTabPane.getSelectionModel().getSelectedIndex());
@@ -221,6 +258,13 @@ public class ManagerController {
 
 
     // Handle adding items; special case of update item
+
+    /**
+     * Adds new item to the database table determined by which tab the user is currently on, e.g., inventory items,
+     * menu items, or employees.
+     *
+     * @throws RuntimeException if the item is invalid.
+     */
     public void addItem() throws RuntimeException {
         // check if inventory items, menuitems, or employees is selected
         ItemTab selectedTab = ItemTab.fromValue(itemsTabPane.getSelectionModel().getSelectedIndex());
@@ -242,6 +286,13 @@ public class ManagerController {
     }
 
     // Use this to update or add new inventory items; if null inventory item is passed in, add new item
+
+    /**
+     * Adds or updates an inventory item.
+     *
+     * @param inventoryItem an optional representing the inventory item to add/update. Provide an empty optional to
+     *                      indicate that we're creating a new inventory item
+     */
     public void addOrUpdateInventoryItem(Optional<InventoryItem> inventoryItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
@@ -342,6 +393,13 @@ public class ManagerController {
     }
 
     // Use this to update or add new menu items; if null menu item is passed in, add new item
+
+    /**
+     * Adds or updates a menu item
+     *
+     * @param menuItem an optional representing the menu item to add/update. Provide an empty optional to
+     *                 indicate that we're creating a new menu item
+     */
     public void addOrUpdateMenuItem(Optional<MenuItem> menuItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
@@ -480,6 +538,13 @@ public class ManagerController {
     }
 
     // Use this to update or add employees; if null employee is passed in, add new employee
+
+    /**
+     * Adds or updates an employee
+     *
+     * @param employee an optional representing the employee to add/update. Provide an empty optional to
+     *                 indicate that we're creating a new employee
+     */
     public void addOrUpdateEmployee(Optional<Employee> employee) {
         Dialog<ButtonType> dialog = new Dialog<>();
 
@@ -580,6 +645,9 @@ public class ManagerController {
         });
     }
 
+    /**
+     * Fetches the 50 most recent orders from the database and display them in the UI
+     */
     public void fetchOrderHistory() {
         ordersTable.getItems().clear();
 
@@ -611,6 +679,10 @@ public class ManagerController {
         );
     }
 
+    /**
+     * Creates a summary based on item popularity as well as
+     * alert low inventory stock.
+     */
     public void fetchSummary() {
         summary.getChildren().clear();
         summary.setStyle("-fx-background-color: white;");
@@ -631,6 +703,10 @@ public class ManagerController {
     }
 
 
+    /**
+     * Generates Sales Report chart displaying menu item
+     * sales in an allotted item frame.
+     */
     public void fetchSalesReport() {
         Map<String, Integer> salesReportData = getSalesReportData();
         XYChart.Series newSeries = new XYChart.Series();
@@ -644,6 +720,14 @@ public class ManagerController {
         salesChart.getData().add(newSeries);
     }
 
+    /**
+     * Generates X/Z Report showing the total sales
+     * and orders per hour, determines whether
+     * to show the entire day or the hours since opening
+     * based on which report is being requested.
+     *
+     * @param wholeDay true if we're fetching the Z report, false for X report
+     */
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
         List<Double> hourlySales;
@@ -689,6 +773,10 @@ public class ManagerController {
 
     }
 
+    /**
+     * Generates the Product Usage chart with its respective data
+     * and updates it when certain parameters are changes.
+     */
     public void updateProductUsage() {
         Map<String, Integer> productUsageData = getProductUsageData();
         XYChart.Series newSeries = new XYChart.Series();
@@ -705,6 +793,10 @@ public class ManagerController {
         productUsageChart.getData().add(newSeries);
     }
 
+    /**
+     * Creates the inventory grid under the Inventory tab displaying
+     * all inventory items in the database.
+     */
     public void createInventoryGrid() {
         int columns = 5; // max columns per row
         int x = 0;
@@ -762,6 +854,10 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Creates the menu item grid under the Menu Items tab displaying
+     * all menu items in the database.
+     */
     public void createMenuItemsGrid() {
         int columns = 5; // max columns per row
         int x = 0;
@@ -818,6 +914,10 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Creates the employee grid under the Inventory tab displaying
+     * all inventory items in the database.
+     */
     public void createEmployeesGrid() {
         int columns = 5; // Max number of columns in row
         int x = 0;
@@ -876,6 +976,9 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Retrieves the most recent 50 orders placed.
+     */
     public void createOrdersTable() {
         ObservableList<Order> orderList = FXCollections.observableArrayList();
         orderList.addAll(dbSnapshot.getOrderSnapshot().values());
@@ -883,12 +986,18 @@ public class ManagerController {
         ordersTable.setItems(orderList);
     }
 
+    /**
+     * Initializes the start and end dates for the Sales Report.
+     */
     public void initSalesReportChart() {
         // Initialize date pickers to have the previous week as the default time period
         startDatePickerSalesReport.setValue(LocalDate.now().minusWeeks(1));
         endDatePickerSalesReport.setValue(LocalDate.now());
     }
 
+    /**
+     * Initializes the start and end dates for the Product Usage.
+     */
     public void createProductUsageChart() {
         startDatePickerProductUsage.setValue(LocalDate.now().minusWeeks(1));
         endDatePickerProductUsage.setValue(LocalDate.now());
@@ -900,6 +1009,10 @@ public class ManagerController {
     dictionary menuItem : sales
     Backend: menu item sales
      */
+
+    /**
+     * Retrieves Sales Report data from the database.
+     */
     private Map<String, Integer> getSalesReportData() {
         int startDateMonth = startDatePickerSalesReport.getValue().getMonthValue();
         int startDateDay = startDatePickerSalesReport.getValue().getDayOfMonth();
@@ -909,6 +1022,9 @@ public class ManagerController {
         return dbDriver.selectSalesReport(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
 
+    /**
+     * Retrieves Product Usage data from the database.
+     */
     private Map<String, Integer> getProductUsageData() {
         int startDateMonth = startDatePickerProductUsage.getValue().getMonthValue();
         int startDateDay = startDatePickerProductUsage.getValue().getDayOfMonth();
@@ -917,14 +1033,4 @@ public class ManagerController {
 
         return dbDriver.selectProductUsage(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
-
-    // Helper method to display error alert
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 }

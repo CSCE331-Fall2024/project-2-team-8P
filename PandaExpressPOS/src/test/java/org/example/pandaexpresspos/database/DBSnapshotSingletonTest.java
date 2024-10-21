@@ -4,10 +4,10 @@ import org.example.pandaexpresspos.models.InventoryItem;
 import org.example.pandaexpresspos.models.MenuItem;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import java.util.Map;
 
 import static java.lang.System.out;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DBSnapshotSingletonTest {
 

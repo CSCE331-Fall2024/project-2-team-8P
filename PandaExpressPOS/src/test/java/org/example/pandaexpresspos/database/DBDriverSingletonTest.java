@@ -1,7 +1,6 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
-import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +11,6 @@ import java.util.UUID;
 import static java.lang.System.err;
 import static java.lang.System.out;
 
-// NOTE: UUIDs are hardcoded here, which is bad practice, since that means these test cases
-// are coupled to a specific version of the DB; however, I'm going to leave it hardcoded
-// for now since I don't anticipate us clearing the database
 class DBDriverSingletonTest {
     private static DBDriverSingleton driver;
 
@@ -38,15 +34,11 @@ class DBDriverSingletonTest {
     @Test
     void insertOrder() {
         MenuItem menuItem = driver.selectRandomMenuItem();
-        System.out.println();
-        List<InventoryItemWithQty> associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
+        List<InventoryItem> associatedInventory = driver.selectMenuItemInventoryItems(menuItem.menuItemId);
 
         out.println("DB state before placing order:");
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
+        for (InventoryItem item : associatedInventory) {
+            out.println(item.itemName);
         }
 
         Order newOrder = new Order(
@@ -66,12 +58,9 @@ class DBDriverSingletonTest {
 
         printSeparator();
         out.println("DB state after placing order:");
-        associatedInventory = driver.selectMenuItemInventoryItems(menuItem);
-        for (InventoryItemWithQty itemWithQty : associatedInventory) {
-            out.println(
-                    itemWithQty.inventoryItem.itemName +
-                            " stock: " + itemWithQty.inventoryItem.availableStock
-            );
+        associatedInventory = driver.selectMenuItemInventoryItems(menuItem.menuItemId);
+        for (InventoryItem item : associatedInventory) {
+            out.println(item.itemName);
         }
 
         printSeparator();
