@@ -6,12 +6,18 @@ import org.example.pandaexpresspos.models.MenuItem;
  * The MenuItemWithQty class is a wrapper for MenuItem,
  * associating a menu item with a specific quantity.
  * This class is useful for tracking the quantity of a menu item in various contexts.
+ *
+ * @author Kevin Zhang
  */
 public class MenuItemWithQty {
-    /** The menu item being tracked */
+    /**
+     * The menu item being tracked
+     */
     public MenuItem menuItem;
 
-    /** The quantity of the menu item */
+    /**
+     * The quantity of the menu item
+     */
     public int quantity;
 
     /**

@@ -13,6 +13,8 @@ import java.util.logging.Logger;
  *
  * <p>The class configures logging, loads the login FXML view, and displays it within a scene.
  * The application window is sized at 1200x800 pixels and is titled "Login".</p>
+ *
+ * @author Kevin Zhang
  */
 public class LoginApplication extends Application {
 

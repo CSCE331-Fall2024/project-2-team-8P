@@ -14,6 +14,8 @@ import java.util.*;
  * <p>The snapshots are stored in Maps for quick access, using human-readable
  * keys for easier understanding. The snapshots can be refreshed
  * lazily to minimize latency.</p>
+ *
+ * @author Kevin Zhang
  */
 public class DBSnapshotSingleton {
     private static DBSnapshotSingleton instance;

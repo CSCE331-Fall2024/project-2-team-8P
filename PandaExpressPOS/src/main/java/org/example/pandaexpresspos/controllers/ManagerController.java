@@ -46,6 +46,9 @@ import java.util.Optional;
  * <p>The controller uses a singleton database driver and snapshot to interact with the underlying
  * database and inventory system. It also updates the database when needed, allowing the cashier
  * to work with the updated database.</p>
+ *
+ * @author Soham Nagawanshi
+ * @author Bradley James
  */
 public class ManagerController {
 
@@ -110,7 +113,9 @@ public class ManagerController {
                     .getResource("/org/example/pandaexpresspos/fxml/images/sample_image.png"))
             .toExternalForm();
 
-    // Enum to check which item tab user has selected
+    /**
+     * Enum to check which item tab user has selected
+     */
     enum ItemTab {
         INVENTORY_ITEMS(0),
         MENU_ITEMS(1),
@@ -139,7 +144,9 @@ public class ManagerController {
         }
     }
 
-    // Enum to check which report tab user has selected
+    /**
+     * Enum to check which report tab user has selected
+     */
     enum ReportTab {
 
         ORDER_HISTORY(0),
@@ -172,7 +179,9 @@ public class ManagerController {
         }
     }
 
-    // Initialize the state of the UI after FXML elements are injected
+    /**
+     * Initialize the state of the UI after FXML elements are injected
+     */
     @FXML
     public void initialize() {
         dbSnapshot.refreshAllSnapshots();
@@ -192,6 +201,7 @@ public class ManagerController {
     }
 
     // Handle logout button click
+
     /**
      * Logs out the current user and returns them to the login screen.
      *
@@ -208,11 +218,12 @@ public class ManagerController {
     }
 
     // Handle generating reports
+
     /**
      * Generates the requested report based on the selected tab.
      *
      * @param event ActionEvent triggered by clicking the generate
-     * report button.
+     *              report button.
      * @throws IOException if the report cannot be loaded.
      */
     public void generateReport(ActionEvent event) throws IOException {
@@ -247,8 +258,10 @@ public class ManagerController {
 
 
     // Handle adding items; special case of update item
+
     /**
-     * Determines which list to add the item to.
+     * Adds new item to the database table determined by which tab the user is currently on, e.g., inventory items,
+     * menu items, or employees.
      *
      * @throws RuntimeException if the item is invalid.
      */
@@ -273,8 +286,12 @@ public class ManagerController {
     }
 
     // Use this to update or add new inventory items; if null inventory item is passed in, add new item
+
     /**
-     * Adds/Updates an inventory item.
+     * Adds or updates an inventory item.
+     *
+     * @param inventoryItem an optional representing the inventory item to add/update. Provide an empty optional to
+     *                      indicate that we're creating a new inventory item
      */
     public void addOrUpdateInventoryItem(Optional<InventoryItem> inventoryItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -376,8 +393,12 @@ public class ManagerController {
     }
 
     // Use this to update or add new menu items; if null menu item is passed in, add new item
+
     /**
-     * Adds/Updates a menu item.
+     * Adds or updates a menu item
+     *
+     * @param menuItem an optional representing the menu item to add/update. Provide an empty optional to
+     *                 indicate that we're creating a new menu item
      */
     public void addOrUpdateMenuItem(Optional<MenuItem> menuItem) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -517,8 +538,12 @@ public class ManagerController {
     }
 
     // Use this to update or add employees; if null employee is passed in, add new employee
+
     /**
-     * Adds/Updates an employee.
+     * Adds or updates an employee
+     *
+     * @param employee an optional representing the employee to add/update. Provide an empty optional to
+     *                 indicate that we're creating a new employee
      */
     public void addOrUpdateEmployee(Optional<Employee> employee) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -620,7 +645,9 @@ public class ManagerController {
         });
     }
 
-
+    /**
+     * Fetches the 50 most recent orders from the database and display them in the UI
+     */
     public void fetchOrderHistory() {
         ordersTable.getItems().clear();
 
@@ -698,6 +725,8 @@ public class ManagerController {
      * and orders per hour, determines whether
      * to show the entire day or the hours since opening
      * based on which report is being requested.
+     *
+     * @param wholeDay true if we're fetching the Z report, false for X report
      */
     public void fetchXOrZReport(boolean wholeDay) {
         // Get sales per hour data from DBDriverSingleton
@@ -1004,17 +1033,4 @@ public class ManagerController {
 
         return dbDriver.selectProductUsage(startDateMonth, endDateMonth, startDateDay, endDateDay);
     }
-
-    // Helper method to display error alert
-    /**
-     * Shows alert message when input is invalid.
-     */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 }

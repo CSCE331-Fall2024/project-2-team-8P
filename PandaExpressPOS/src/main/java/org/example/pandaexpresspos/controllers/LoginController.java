@@ -7,9 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.example.pandaexpresspos.LoginApplication;
 import org.example.pandaexpresspos.database.DBDriverSingleton;
@@ -20,6 +18,9 @@ import java.io.IOException;
 /**
  * Controller for handling the login functionality in the Panda Express POS system.
  * Responsible for managing login input and redirecting to different views based on user roles (Cashier, Manager).
+ *
+ * @author Soham Nagawanshi
+ * @author Kevin Zhang
  */
 public class LoginController {
 

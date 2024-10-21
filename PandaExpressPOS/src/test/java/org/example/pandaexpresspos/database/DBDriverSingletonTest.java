@@ -1,7 +1,6 @@
 package org.example.pandaexpresspos.database;
 
 import org.example.pandaexpresspos.models.*;
-import org.example.pandaexpresspos.models.wrappers.InventoryItemWithQty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +11,6 @@ import java.util.UUID;
 import static java.lang.System.err;
 import static java.lang.System.out;
 
-// NOTE: UUIDs are hardcoded here, which is bad practice, since that means these test cases
-// are coupled to a specific version of the DB; however, I'm going to leave it hardcoded
-// for now since I don't anticipate us clearing the database
 class DBDriverSingletonTest {
     private static DBDriverSingleton driver;
 

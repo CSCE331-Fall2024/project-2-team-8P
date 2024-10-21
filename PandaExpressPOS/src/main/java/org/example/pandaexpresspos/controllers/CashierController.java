@@ -38,6 +38,9 @@ import java.util.*;
  * <p>The controller uses a singleton database driver and snapshot to interact with the underlying
  * database and inventory system. It also manages the cashier's logged-in status and keeps track
  * of the items ordered, their quantities, and the total price.</p>
+ *
+ * @author Shreyan Satheesh
+ * @author Soham Nagawanshi
  */
 public class CashierController {
 

@@ -20,6 +20,8 @@ import java.util.UUID;
  * Employee, InventoryItem, and MenuItem. Each mapping method handles
  * SQLException to ensure that errors during the mapping process are
  * appropriately reported.</p>
+ *
+ * @author Kevin Zhang
  */
 class SQLToJavaMapper {
 
