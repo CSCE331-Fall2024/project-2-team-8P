@@ -1,3 +1,5 @@
 module:org.example.pandaexpresspos
 org.example.pandaexpresspos
 org.example.pandaexpresspos.controllers
+org.example.pandaexpresspos.database
+org.example.pandaexpresspos.models
