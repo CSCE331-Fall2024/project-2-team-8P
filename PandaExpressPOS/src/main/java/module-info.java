@@ -12,5 +12,6 @@ module org.example.pandaexpresspos {
     exports org.example.pandaexpresspos.controllers;
     exports org.example.pandaexpresspos.database;
     exports org.example.pandaexpresspos.models;
+    exports org.example.pandaexpresspos.models.wrappers;
     opens org.example.pandaexpresspos.controllers to javafx.fxml;
 }
