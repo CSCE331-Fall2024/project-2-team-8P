@@ -15,37 +15,37 @@ employees = [
 
 cashiers = employees[2:]
 
-# Menu Item Datastructure (UUID, price, availableStock, itemName)
+# Menu Item Datastructure (UUID, price, availableStock, itemName, category)
 drinks = [
-    (uuid4(), 2.1, 451, 'Dr. Pepper'), 
-    (uuid4(), 2.1, 835, 'Aquafina'), 
-    (uuid4(), 2.1, 701, 'Sweet Tea'), 
-    (uuid4(), 2.1, 529, 'Pepsi')
+    (uuid4(), 2.1, 451, 'Dr. Pepper', 'drink'), 
+    (uuid4(), 2.1, 835, 'Aquafina', 'drink'), 
+    (uuid4(), 2.1, 701, 'Sweet Tea', 'drink'), 
+    (uuid4(), 2.1, 529, 'Pepsi', 'drink')
 ]
 
 sides = [
-    (uuid4(), 4.4, 382, 'Chow Mein'),
-    (uuid4(), 4.4, 980, 'Fried Rice'), 
-    (uuid4(), 4.4, 453, 'White Steamed Rice'), 
-    (uuid4(), 4.4, 647, 'Super Greens')
+    (uuid4(), 4.4, 382, 'Chow Mein', 'side'),
+    (uuid4(), 4.4, 980, 'Fried Rice', 'side'), 
+    (uuid4(), 4.4, 453, 'White Steamed Rice', 'side'), 
+    (uuid4(), 4.4, 647, 'Super Greens', 'side')
 ]    
 
 entrees = [
-    (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken'), 
-    (uuid4(), 5.2, 365, 'The Original Orange Chicken'), 
-    (uuid4(), 6.7, 761, 'Black Pepper Sirloin Steak'), 
-    (uuid4(), 6.7, 604, 'Honey Walnut Shrimp'), 
-    (uuid4(), 5.2, 536, 'Grilled Teriyaki Shrimp'), 
-    (uuid4(), 5.2, 245, 'Broccoli Beef'), 
-    (uuid4(), 5.2, 412, 'Kung Pao Chicken'), 
-    (uuid4(), 5.2, 611, 'Honey Sesame Chicken Breast'), 
-    (uuid4(), 5.2, 133, 'Beijing Beef'), 
-    (uuid4(), 5.2, 763, 'Black Pepper Chicken'), 
+    (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken', 'entree'), 
+    (uuid4(), 5.2, 365, 'The Original Orange Chicken', 'entree'), 
+    (uuid4(), 6.7, 761, 'Black Pepper Sirloin Steak', 'entree'), 
+    (uuid4(), 6.7, 604, 'Honey Walnut Shrimp', 'entree'), 
+    (uuid4(), 5.2, 536, 'Grilled Teriyaki Shrimp', 'entree'), 
+    (uuid4(), 5.2, 245, 'Broccoli Beef', 'entree'), 
+    (uuid4(), 5.2, 412, 'Kung Pao Chicken', 'entree'), 
+    (uuid4(), 5.2, 611, 'Honey Sesame Chicken Breast', 'entree'), 
+    (uuid4(), 5.2, 133, 'Beijing Beef', 'entree'), 
+    (uuid4(), 5.2, 763, 'Black Pepper Chicken', 'entree'), 
 ]
 
 appetizers = [
-    (uuid4(), 2.0, 279, 'Cream Cheese Rangoon'), 
-    (uuid4(), 2.0, 345, 'Chicken Egg Roll')
+    (uuid4(), 2.0, 279, 'Cream Cheese Rangoon', 'appetizer'), 
+    (uuid4(), 2.0, 345, 'Chicken Egg Roll', 'appetizer')
 ]
 
 
@@ -185,7 +185,7 @@ specific_items = {
 
 
 
-# orders (orderid, cashierid, month, day, hour, price)
+# orders (orderid, cashierid, month, day, hour, price, status)
 orders = [
     
 ]

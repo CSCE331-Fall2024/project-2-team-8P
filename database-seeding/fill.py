@@ -127,7 +127,7 @@ for month in months:
             # appending to list of orders
             # Note: will use this list to add to the table
             orders.append(
-                (str(orderid), str(cashier[0]), month, week, day, hour, round(sale_order, 2))
+                (str(orderid), str(cashier[0]), month, week, day, hour, round(sale_order, 2), "delivered")
             )
             
             # Maps menu items in this order to the current order
@@ -207,28 +207,28 @@ print("Done Creating Employees")
 for drink in drinks:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(drink[0]), drink[1], drink[2], drink[3]]
+        [str(drink[0]), drink[1], drink[2], drink[3], drink[4]]
 )
 print("Done Creating Drinks")
 
 for side in sides:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(side[0]), side[1], side[2], side[3]]
+        [str(side[0]), side[1], side[2], side[3], side[4]]
 )
 print("Done Creating Sides")
 
 for entree in entrees:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(entree[0]), entree[1], entree[2], entree[3]]
+        [str(entree[0]), entree[1], entree[2], entree[3], entree[4]]
 )
 print("Done Creating Entrees")
     
 for appetizer in appetizers:
         cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3]]
+        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3], appetizer[4]]
 )
 print("Done Creating Appetizers")
 
@@ -247,7 +247,7 @@ print("Done Creating Inventory Items")
 # Insert orders into files to save time (much faster than writing to db)
 file = open("orders.csv", 'w')
 writer = csv.writer(file)
-writer.writerow(["orderid", "cashierid", "month", "week", "day", "hour", "price"])
+writer.writerow(["orderid", "cashierid", "month", "week", "day", "hour", "price", "status"])
 writer.writerows(orders)
 file.close()
 print("Done creating orders")

@@ -28,7 +28,8 @@ CREATE TABLE \"order\" (
 	week INT,
 	day INT,
 	hour INT, 
-	price FLOAT
+	price FLOAT,
+	status VARCHAR(20)
 );
 '''
 
@@ -37,7 +38,8 @@ CREATE TABLE menuItem (
 	menuItemId UUID PRIMARY KEY,
 	price FLOAT,
 	availableStock INT,
-	itemName VARCHAR(100)
+	itemName VARCHAR(100),
+	category VARCHAR (20)
 );
 '''
 
@@ -103,7 +105,7 @@ VALUES (
 );
 '''
 i_order_table = '''
-INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price)
+INSERT INTO "order" (orderId, cashierId, month, week, day, hour, price, status)
 
 VALUES (
     %s,
@@ -112,14 +114,16 @@ VALUES (
  	%s,
 	%s,
 	%s,
+	%s,
 	%s
 );
 '''
 i_menu_item_table = '''
-INSERT INTO menuItem (menuItemId, price, availableStock, itemName)
+INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category)
 
 VALUES (
     %s,
+	%s,
 	%s,
 	%s,
 	%s
