@@ -207,28 +207,28 @@ print("Done Creating Employees")
 for drink in drinks:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(drink[0]), drink[1], drink[2], drink[3], drink[4]]
+        [str(drink[0]), drink[1], drink[2], drink[3], drink[4], drink[5]]
 )
 print("Done Creating Drinks")
 
 for side in sides:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(side[0]), side[1], side[2], side[3], side[4]]
+        [str(side[0]), side[1], side[2], side[3], side[4], side[5]]
 )
 print("Done Creating Sides")
 
 for entree in entrees:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(entree[0]), entree[1], entree[2], entree[3], entree[4]]
+        [str(entree[0]), entree[1], entree[2], entree[3], entree[4], entree[5]]
 )
 print("Done Creating Entrees")
     
 for appetizer in appetizers:
         cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3], appetizer[4]]
+        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3], appetizer[4], appetizer[5]]
 )
 print("Done Creating Appetizers")
 

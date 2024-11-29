@@ -17,35 +17,35 @@ cashiers = employees[2:]
 
 # Menu Item Datastructure (UUID, price, availableStock, itemName, category)
 drinks = [
-    (uuid4(), 2.1, 451, 'Dr. Pepper', 'drink'), 
-    (uuid4(), 2.1, 835, 'Aquafina', 'drink'), 
-    (uuid4(), 2.1, 701, 'Sweet Tea', 'drink'), 
-    (uuid4(), 2.1, 529, 'Pepsi', 'drink')
+    (uuid4(), 2.1, 451, 'Dr. Pepper', 'drink', '{"calories": 150, "fat": 0, "protein": 0, "sugar": 40, "carbohydrates": 41, "allergens": [], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 2.1, 835, 'Aquafina', 'drink', '{"calories": 0, "fat": 0, "protein": 0, "sugar": 0, "carbohydrates": 0, "allergens": [], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 2.1, 701, 'Sweet Tea', 'drink', '{"calories": 70, "fat": 0, "protein": 0, "sugar": 18, "carbohydrates": 18, "allergens": [], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 2.1, 529, 'Pepsi', 'drink', '{"calories": 150, "fat": 0, "protein": 0, "sugar": 41, "carbohydrates": 41, "allergens": [], "isPremium": false, "isSpicy": false}')
 ]
 
 sides = [
-    (uuid4(), 4.4, 382, 'Chow Mein', 'side'),
-    (uuid4(), 4.4, 980, 'Fried Rice', 'side'), 
-    (uuid4(), 4.4, 453, 'White Steamed Rice', 'side'), 
-    (uuid4(), 4.4, 647, 'Super Greens', 'side')
-]    
+    (uuid4(), 4.4, 382, 'Chow Mein', 'side', '{"calories": 510, "fat": 20, "protein": 13, "sugar": 5, "carbohydrates": 70, "allergens": ["wheat"], "isPremium": false, "isSpicy": false}'),
+    (uuid4(), 4.4, 980, 'Fried Rice', 'side', '{"calories": 520, "fat": 17, "protein": 11, "sugar": 2, "carbohydrates": 85, "allergens": ["egg", "soy"], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 4.4, 453, 'White Steamed Rice', 'side', '{"calories": 380, "fat": 0.5, "protein": 7, "sugar": 0, "carbohydrates": 87, "allergens": [], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 4.4, 647, 'Super Greens', 'side', '{"calories": 90, "fat": 2, "protein": 6, "sugar": 2, "carbohydrates": 13, "allergens": [], "isPremium": false, "isSpicy": false}')
+]
 
 entrees = [
-    (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken', 'entree'), 
-    (uuid4(), 5.2, 365, 'The Original Orange Chicken', 'entree'), 
-    (uuid4(), 6.7, 761, 'Black Pepper Sirloin Steak', 'entree'), 
-    (uuid4(), 6.7, 604, 'Honey Walnut Shrimp', 'entree'), 
-    (uuid4(), 5.2, 536, 'Grilled Teriyaki Shrimp', 'entree'), 
-    (uuid4(), 5.2, 245, 'Broccoli Beef', 'entree'), 
-    (uuid4(), 5.2, 412, 'Kung Pao Chicken', 'entree'), 
-    (uuid4(), 5.2, 611, 'Honey Sesame Chicken Breast', 'entree'), 
-    (uuid4(), 5.2, 133, 'Beijing Beef', 'entree'), 
-    (uuid4(), 5.2, 763, 'Black Pepper Chicken', 'entree'), 
+    (uuid4(), 5.2, 912, 'Hot Ones Blazing Bourbon Chicken', 'entree', '{"calories": 370, "fat": 15, "protein": 37, "sugar": 10, "carbohydrates": 24, "allergens": ["soy"], "isPremium": true, "isSpicy": true}'), 
+    (uuid4(), 5.2, 365, 'The Original Orange Chicken', 'entree', '{"calories": 490, "fat": 23, "protein": 25, "sugar": 19, "carbohydrates": 51, "allergens": ["soy", "wheat"], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 6.7, 761, 'Black Pepper Sirloin Steak', 'entree', '{"calories": 300, "fat": 10, "protein": 35, "sugar": 5, "carbohydrates": 15, "allergens": ["soy"], "isPremium": true, "isSpicy": true}'), 
+    (uuid4(), 6.7, 604, 'Honey Walnut Shrimp', 'entree', '{"calories": 360, "fat": 23, "protein": 13, "sugar": 9, "carbohydrates": 24, "allergens": ["shellfish", "nuts", "soy"], "isPremium": true, "isSpicy": false}'), 
+    (uuid4(), 5.2, 536, 'Grilled Teriyaki Shrimp', 'entree', '{"calories": 250, "fat": 7, "protein": 25, "sugar": 8, "carbohydrates": 20, "allergens": ["shellfish", "soy"], "isPremium": true, "isSpicy": false}'), 
+    (uuid4(), 5.2, 245, 'Broccoli Beef', 'entree', '{"calories": 150, "fat": 7, "protein": 9, "sugar": 5, "carbohydrates": 13, "allergens": ["soy"], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 5.2, 412, 'Kung Pao Chicken', 'entree', '{"calories": 290, "fat": 19, "protein": 19, "sugar": 7, "carbohydrates": 12, "allergens": ["soy", "nuts"], "isPremium": false, "isSpicy": true}'), 
+    (uuid4(), 5.2, 611, 'Honey Sesame Chicken Breast', 'entree', '{"calories": 420, "fat": 19, "protein": 21, "sugar": 16, "carbohydrates": 45, "allergens": ["soy", "wheat"], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 5.2, 133, 'Beijing Beef', 'entree', '{"calories": 470, "fat": 24, "protein": 21, "sugar": 12, "carbohydrates": 42, "allergens": ["soy", "wheat"], "isPremium": false, "isSpicy": true}'), 
+    (uuid4(), 5.2, 763, 'Black Pepper Chicken', 'entree', '{"calories": 280, "fat": 13, "protein": 30, "sugar": 6, "carbohydrates": 10, "allergens": ["soy"], "isPremium": false, "isSpicy": true}')
 ]
 
 appetizers = [
-    (uuid4(), 2.0, 279, 'Cream Cheese Rangoon', 'appetizer'), 
-    (uuid4(), 2.0, 345, 'Chicken Egg Roll', 'appetizer')
+    (uuid4(), 2.0, 279, 'Cream Cheese Rangoon', 'appetizer', '{"calories": 190, "fat": 10, "protein": 3, "sugar": 2, "carbohydrates": 21, "allergens": ["dairy", "wheat"], "isPremium": false, "isSpicy": false}'), 
+    (uuid4(), 2.0, 345, 'Chicken Egg Roll', 'appetizer', '{"calories": 200, "fat": 11, "protein": 7, "sugar": 3, "carbohydrates": 20, "allergens": ["soy", "wheat", "egg"], "isPremium": false, "isSpicy": false}')
 ]
 
 

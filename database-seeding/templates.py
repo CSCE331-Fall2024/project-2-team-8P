@@ -39,7 +39,8 @@ CREATE TABLE menuItem (
 	price FLOAT,
 	availableStock INT,
 	itemName VARCHAR(100),
-	category VARCHAR (20)
+	category VARCHAR (20),
+	nutritionInfo JSON
 );
 '''
 
@@ -119,10 +120,11 @@ VALUES (
 );
 '''
 i_menu_item_table = '''
-INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category)
+INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category, nutritionInfo)
 
 VALUES (
     %s,
+	%s,
 	%s,
 	%s,
 	%s,
