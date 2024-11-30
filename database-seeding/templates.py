@@ -18,6 +18,9 @@ CREATE TABLE employee (
 '''
 
 c_order_table = '''
+
+CREATE TYPE STATUS_ENUM AS ENUM ('placed', 'in progress', 'ready', 'delivered');
+
 CREATE TABLE \"order\" (
 	orderId UUID PRIMARY KEY,
 	cashierID UUID,
@@ -29,18 +32,22 @@ CREATE TABLE \"order\" (
 	day INT,
 	hour INT, 
 	price FLOAT,
-	status VARCHAR(20)
+	status STATUS_ENUM
 );
 '''
 
 c_menu_item_table = '''
+
+CREATE TYPE CATEGORY_ENUM AS ENUM ('side', 'entree', 'appetizer', 'drink');
+
 CREATE TABLE menuItem (
 	menuItemId UUID PRIMARY KEY,
 	price FLOAT,
 	availableStock INT,
 	itemName VARCHAR(100),
-	category VARCHAR (20),
-	nutritionInfo JSON
+	category CATEGORY_ENUM,
+	nutritionInfo JSON,
+	isDiscounted BOOLEAN
 );
 '''
 
@@ -120,10 +127,11 @@ VALUES (
 );
 '''
 i_menu_item_table = '''
-INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category, nutritionInfo)
+INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category, nutritionInfo, isDiscounted)
 
 VALUES (
     %s,
+	%s,
 	%s,
 	%s,
 	%s,
