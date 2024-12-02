@@ -3,10 +3,17 @@ from psycopg2 import sql
 # i_ = insert
 
 ### Table Deleteion
-delete_all = '''
+delete_tables = '''
 DROP TABLE {} CASCADE;
 '''
-table_name = ["employee", "order", "menuitem", "ordertomenuitem", "inventoryitem", "ordertoinventoryitem",  "menuitemtoinventoryitem"]
+
+delete_types = '''
+DROP TYPE CATEGORY_ENUM CASCADE;
+DROP TYPE STATUS_ENUM CASCADE;
+'''
+
+
+table_name = ["employee", "order", "menuitem", "ordertomenuitem", "inventoryitem", "ordertoinventoryitem",  "menuitemtoinventoryitem", "review"]
 
 ### Table Creation
 c_employee_table = '''
@@ -43,7 +50,6 @@ CREATE TYPE CATEGORY_ENUM AS ENUM ('side', 'entree', 'appetizer', 'drink');
 CREATE TABLE menuItem (
 	menuItemId UUID PRIMARY KEY,
 	price FLOAT,
-	availableStock INT,
 	itemName VARCHAR(100),
 	category CATEGORY_ENUM,
 	nutritionInfo JSON,
@@ -102,6 +108,14 @@ CREATE TABLE menuItemToInventoryItem (
 );
 '''
 
+c_review_table = '''
+CREATE TABLE review (
+    reviewId UUID PRIMARY KEY,
+	customerName VARCHAR(80),
+	review TEXT
+);
+'''
+
 #### Table Insertion
 i_employee_table = '''
 INSERT INTO employee (employeeId, isManager, name) 
@@ -127,11 +141,10 @@ VALUES (
 );
 '''
 i_menu_item_table = '''
-INSERT INTO menuItem (menuItemId, price, availableStock, itemName, category, nutritionInfo, isDiscounted)
+INSERT INTO menuItem (menuItemId, price, itemName, category, nutritionInfo, isDiscounted)
 
 VALUES (
     %s,
-	%s,
 	%s,
 	%s,
 	%s,
@@ -177,9 +190,20 @@ VALUES (
 );
 '''
 
+i_review_table = '''
+INSERT INTO review (reviewId, customerName, review)
+
+VALUES (
+    %s,
+	%s,
+	%s
+);
+
+'''
+
 create_tables = [c_employee_table, c_order_table, c_menu_item_table,
                 c_order_to_menu_table, c_inventory_item_table, c_order_to_inventory_table,
-                c_menu_to_inventory_table]
+                c_menu_to_inventory_table, c_review_table]
 insert_tables = [i_employee_table, i_order_table, i_menu_item_table, 
                  i_order_to_menu_item_table, i_inventory_item_table, i_order_to_inventory_item_table,
-                 i_menu_item_to_inventory_item_table]
+                 i_menu_item_to_inventory_item_table, i_review_table]

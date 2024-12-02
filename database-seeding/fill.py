@@ -95,7 +95,7 @@ for month in months:
                 menu_items_order.append(entree[0])
                 
                 # Add inventory items of menu item to our order
-                for item in specific_items[entree[3]]:
+                for item in specific_items[entree[2]]:
                     inventory_items_order.append(str(item[0]))
             
             if has_side:
@@ -103,7 +103,7 @@ for month in months:
                 sale_order += side[1]
                 menu_items_order.append(side[0])
                 # add menu item and inventory item id
-                for item in specific_items[side[3]]:
+                for item in specific_items[side[2]]:
                     inventory_items_order.append(str(item[0]))
                     
             # TODO: add logic to populate the database based on
@@ -112,7 +112,7 @@ for month in months:
                 appetizer = random.choice(list(appetizers))
                 sale_order += appetizer[1]
                 menu_items_order.append(appetizer[0])
-                for item in specific_items[appetizer[3]]:
+                for item in specific_items[appetizer[2]]:
                     inventory_items_order.append(str(item[0]))
 
             if has_drink:
@@ -165,19 +165,19 @@ for drink in drinks:
         )
 # Iterate through sides
 for side in sides:
-    for item in specific_items[side[3]]:
+    for item in specific_items[side[2]]:
         menu_to_inventory.append(
             (str(side[0]), str(item[0]), 1)
         )
 # Iterate through appetizers
 for app in appetizers:
-    for item in specific_items[app[3]]:
+    for item in specific_items[app[2]]:
         menu_to_inventory.append(
             (str(app[0]), str(item[0]), 1)
         )
 # Iterate through entrees
 for ent in entrees:
-    for item in specific_items[ent[3]]:
+    for item in specific_items[ent[2]]:
         menu_to_inventory.append(
             (str(ent[0]), str(item[0]), 1)
         )
@@ -207,28 +207,28 @@ print("Done Creating Employees")
 for drink in drinks:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(drink[0]), drink[1], drink[2], drink[3], drink[4], drink[5], drink[6]]
-)
+        [str(drink[0]), drink[1], drink[2], drink[3], drink[4], drink[5]]
+        )
 print("Done Creating Drinks")
 
 for side in sides:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(side[0]), side[1], side[2], side[3], side[4], side[5], side[6]]
+        [str(side[0]), side[1], side[2], side[3], side[4], side[5]]
 )
 print("Done Creating Sides")
 
 for entree in entrees:
     cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(entree[0]), entree[1], entree[2], entree[3], entree[4], entree[5], entree[6]]
+        [str(entree[0]), entree[1], entree[2], entree[3], entree[4], entree[5]]
 )
 print("Done Creating Entrees")
     
 for appetizer in appetizers:
         cur.execute(
         sql.SQL(i_menu_item_table),
-        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3], appetizer[4], appetizer[5], appetizer[6]]
+        [str(appetizer[0]), appetizer[1], appetizer[2], appetizer[3], appetizer[4], appetizer[5]]
 )
 print("Done Creating Appetizers")
 
@@ -243,6 +243,14 @@ for key, item in inventory_items.items():
         [str(item[0]), item[1], item[2], item[3]]
     )
 print("Done Creating Inventory Items")
+
+# Insert into review table
+for id, name, review in customer_review:
+    cur.execute(
+        sql.SQL(i_review_table),
+        [str(id), name, review]
+    )
+print("Done Creating Reviews")
 
 # Insert orders into files to save time (much faster than writing to db)
 file = open("orders.csv", 'w')
@@ -276,6 +284,7 @@ writer.writerows(menu_to_inventory)
 file.close()
 print("Done creating menu to inventory")
 print("Done Creating Orders")
+
 
 # commit changes and close the connection
 conn.commit()

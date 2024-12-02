@@ -8,8 +8,12 @@ cur = conn.cursor()
 
 for table in table_name:
     cur.execute(
-        sql.SQL(delete_all).format(sql.Identifier(table))
+        sql.SQL(delete_tables).format(sql.Identifier(table))
     )
+
+cur.execute(
+    sql.SQL(delete_types)
+)
 
 conn.commit()
 
